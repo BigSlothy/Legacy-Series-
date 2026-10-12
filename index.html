@@ -31,6 +31,117 @@
   .intro{max-width:640px; margin:0 auto 20px; text-align:center; color:var(--paper-dim); font-size:13px; line-height:1.5;}
   .intro b{color:var(--paper); font-weight:600;}
 
+  .view-toggle{
+    max-width:320px; margin:0 auto 20px; display:flex; background:var(--panel);
+    border:1px solid var(--steel-line); border-radius:6px; padding:3px;
+  }
+  .vt-btn{
+    flex:1; border:none; background:none; cursor:pointer; padding:9px 10px; border-radius:4px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.3px; color:var(--paper-dim);
+  }
+  .vt-btn.active{ background:var(--amber); color:#0b0d10; }
+
+
+  .team-top{ display:flex; align-items:center; gap:14px; padding:22px 22px 14px; position:relative; }
+  .team-badge{
+    flex:0 0 auto; width:56px; height:56px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; color:#0b0d10; letter-spacing:.5px;
+  }
+  .team-name{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; letter-spacing:.3px; line-height:1.1; }
+  .team-sub{ color:var(--paper-dim); font-size:12px; margin-top:4px; }
+  .team-pos{ margin-left:auto; text-align:right; flex:0 0 auto; }
+  .team-pos .v{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:26px; line-height:1; }
+  .team-pos .l{ font-size:9px; letter-spacing:.5px; color:var(--paper-dim); margin-top:3px; }
+  .roster{ margin:0 22px 18px; }
+  .roster-row{
+    display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--steel-line);
+    cursor:pointer; font-size:12.5px;
+  }
+  .roster-row:hover .r-name{ color:var(--amber); }
+  .roster-row .r-num{ font-family:'Rajdhani',sans-serif; font-weight:700; width:30px; color:var(--paper-dim); }
+  .roster-row .r-name{ flex:1; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; }
+  .roster-row .r-pos{ color:var(--paper-dim); font-size:11.5px; }
+  .roster-row .r-pts{ font-family:'Rajdhani',sans-serif; font-weight:700; width:52px; text-align:right; }
+
+  .team-list{ max-width:1180px; margin:0 auto; display:flex; flex-direction:column; gap:18px; }
+  .team-row{
+    display:grid; grid-template-columns:230px minmax(300px,1.25fr) 170px minmax(280px,1.15fr);
+    align-items:stretch; cursor:default;
+  }
+  .team-row > div{ position:relative; padding:20px 20px; border-left:1px solid var(--steel-line); min-width:0; }
+  .team-row > div:first-child{ border-left:none; }
+  .team-row .tr-id{ display:flex; flex-direction:column; justify-content:center; gap:14px; }
+  .team-row .tr-id .team-pos{ margin-left:0; text-align:left; }
+  .team-row .tr-id-text{ min-width:0; }
+  .team-row .tr-season .headline, .team-row .tr-season .stats{ margin-left:0; margin-right:0; }
+  .team-row .tr-season .stats{ margin-bottom:0; }
+  .team-row .tr-career .h, .team-row .tr-roster .h{ font-size:11px; letter-spacing:.5px; color:var(--paper-dim); margin-bottom:10px; }
+  .team-row .tr-career .chips{ flex-direction:column; align-items:flex-start; }
+  .team-row .roster{ margin:0; }
+  @media (max-width:1100px){
+    .team-row{ grid-template-columns:1fr 1fr; }
+    .team-row > div:nth-child(odd){ border-left:none; }
+    .team-row > div:nth-child(n+3){ border-top:1px solid var(--steel-line); }
+  }
+  @media (max-width:640px){
+    .team-row{ grid-template-columns:1fr; }
+    .team-row > div{ border-left:none; }
+    .team-row > div + div{ border-top:1px solid var(--steel-line); }
+    .team-row .tr-id{ flex-direction:row; align-items:center; justify-content:flex-start; flex-wrap:wrap; }
+    .team-row .tr-id .team-pos{ margin-left:auto; text-align:right; }
+  }
+
+  .driver-menu{
+    position:fixed; z-index:50; min-width:210px; background:var(--panel-2);
+    border:1px solid var(--steel-line); border-radius:6px; overflow:hidden;
+    box-shadow:0 18px 40px -10px rgba(0,0,0,.7);
+  }
+  .driver-menu .dm-title{
+    padding:10px 14px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:.3px; color:var(--paper-dim); border-bottom:1px solid var(--steel-line);
+  }
+  .driver-menu button{
+    display:block; width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    color:var(--paper); font-family:'Inter',sans-serif; font-size:13px; padding:11px 14px;
+  }
+  .driver-menu button:hover{ background:var(--panel); color:var(--amber); }
+  .driver-menu button + button{ border-top:1px solid var(--steel-line); }
+  .season-actions{ margin-top:16px; }
+
+  .drivers-wrap{
+    max-width:1180px; margin:0 auto; overflow-x:auto; border:1px solid var(--steel-line);
+    border-radius:6px; background:var(--panel);
+  }
+  .drivers-table{ width:100%; border-collapse:collapse; white-space:nowrap; font-size:13px; }
+  .drivers-table th, .drivers-table td{ padding:12px 14px; text-align:left; border-bottom:1px solid var(--steel-line); }
+  .drivers-table thead th{
+    background:var(--panel-2); color:var(--paper-dim); font-family:'Rajdhani',sans-serif;
+    font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase;
+  }
+  .drivers-table tr.grp th{ border-bottom:1px solid var(--steel-line); }
+  .drivers-table tr.grp th.grp-title{
+    text-align:center; color:var(--amber); font-size:17px; font-weight:700; letter-spacing:1.5px; padding:14px;
+  }
+  .drivers-table tbody tr:hover{ background:rgba(255,255,255,.03); }
+  .drivers-table td{ font-family:'Rajdhani',sans-serif; font-weight:600; font-size:15px; }
+  .drivers-table .c-sep{ border-left:1px solid var(--steel-line); }
+  .drivers-table .c-pts{ font-weight:700; color:var(--amber); }
+  .pos-wrap{ display:inline-flex; align-items:center; gap:8px; }
+  .pos-wrap b{ font-size:16px; min-width:20px; }
+  .name-link{
+    background:none; border:none; padding:0; cursor:pointer; text-align:left;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; color:var(--paper);
+    text-decoration:underline; text-decoration-color:var(--steel-line); text-underline-offset:4px;
+  }
+  .name-link:hover{ color:var(--amber); text-decoration-color:var(--amber); }
+  .name-link .n-num{ color:var(--paper-dim); font-weight:600; margin-right:2px; }
+  .n-tier{ font-family:'Inter',sans-serif; font-size:10px; letter-spacing:.7px; margin-top:3px; font-weight:600; }
+  .team-link{ font-size:14px; }
+  .team-detail{ max-width:1180px; margin:0 auto; }
+  .c-team{ font-family:'Inter',sans-serif; font-size:12.5px; line-height:1.35; }
+  .c-team b{ font-family:'Rajdhani',sans-serif; font-size:14px; }
+  .c-team div{ color:var(--paper-dim); font-weight:400; }
+
   .list-header{ max-width:1180px; margin:0 auto 18px; text-align:center; }
   .list-header h1{
     font-family:'Rajdhani',sans-serif; font-weight:700; font-size:24px; letter-spacing:.5px;
@@ -235,6 +346,8 @@
     color:var(--paper-dim); background:none; border:none; cursor:pointer; padding:0;
   }
   .back-link:hover{ color:var(--amber); }
+  .back-row{ display:flex; gap:18px; margin-bottom:16px; }
+  .back-row .back-link{ margin-bottom:0; }
   .page-title{ text-align:center; margin:0 auto 20px; max-width:420px; }
   .page-title h1{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:18px; margin:0 0 4px; letter-spacing:.3px; }
   .page-title p{ margin:0; font-size:11px; letter-spacing:.5px; color:var(--paper-dim); }
@@ -454,7 +567,7 @@ function pick(rand, arr, count){
 }
 
 function generateStats(d){
-  const rand = mulberry32(Number(d.number) * 2654435761 + 97);
+  const rand = mulberry32(Number(d.number) * 2654435761 + 4211);
 
   // Skill level drives every other number: 0 = back of the pack, 1 = series elite.
   const skill = clamp(rand() * 0.55 + Math.pow(rand(), 1.6) * 0.45, 0, 1);
@@ -515,13 +628,15 @@ function generateStats(d){
     const tag = `${r.year} ${r.half}`;
     (byTag[tag] = byTag[tag] || []).push(r);
   });
+  // Chance of winning any given season scales steeply with skill: the very best drivers
+  // win close to half their seasons, mid-pack drivers occasionally break through, and
+  // back-markers almost never do.
+  const pTitle = clamp(Math.pow(skill, 2.3) * 0.55, 0, 0.5);
   const titles = seasonTags.filter(tag => {
-    const list = byTag[tag];
-    if (!list || !list.length) return false;
-    const avgFin = list.reduce((s, r) => s + r.finish, 0) / list.length;
+    if (!byTag[tag] || !byTag[tag].length) return false;
     const [yr, half] = tag.split(' ');
     const seasonRand = mulberry32(Number(d.number) * 31 + Number(yr) * 7 + (half === 'Summer' ? 3 : 1));
-    return clamp(Math.round(avgFin + (seasonRand() - 0.5) * 5), 1, 40) === 1;
+    return seasonRand() < pTitle;
   });
   career.titles = titles;
 
@@ -554,7 +669,7 @@ const RACES_PER_SEASON = 15;
 function simulateCurrentSeason(drivers){
   const totals = {};
   drivers.forEach(d => {
-    d._rand = mulberry32(Number(d.number) * 2246822519 + 811);
+    d._rand = mulberry32(Number(d.number) * 2246822519 + 3079);
     totals[d.number] = { wins:0, top5:0, top10:0, poles:0, points:0, lapsLed:0, lapsRun:0, incTotal:0, dnfs:0, finishSum:0, startSum:0, streak:0, bestStreak:0 };
   });
 
@@ -651,19 +766,53 @@ function generateCareerLog(d){
 }
 
 const lastName = (full) => full.trim().split(/\s+/).slice(-1)[0];
-const SORTS = {
-  name:   { label: 'Sort: A–Z (Last Name)',       fn: (a,b) => lastName(a.name).localeCompare(lastName(b.name)) },
-  number: { label: 'Sort: Car Number (Low–High)', fn: (a,b) => Number(a.number) - Number(b.number) },
-  rank:   { label: 'Sort: Rank (Ruby–Bronze)',     fn: (a,b) => a.standingsPosition - b.standingsPosition },
-  default:{ label: 'Sort: Standings',             fn: (a,b) => a.standingsPosition - b.standingsPosition },
+function viewToggle(active){
+  return `
+    <div class="view-toggle">
+      <button class="vt-btn ${active === 'drivers' ? 'active' : ''}" onclick="location.hash=''">Drivers</button>
+      <button class="vt-btn ${active === 'teams' ? 'active' : ''}" onclick="location.hash='teams'">Teams</button>
+    </div>`;
+}
+
+const DRIVER_SORTS = {
+  default:   { label:'Sort: Points Standings/Rank',       fn:(a,b) => a.standingsPosition - b.standingsPosition },
+  team:      { label:'Sort: Team (A–Z)',                  fn:(a,b) => a.team.localeCompare(b.team) || (a.standingsPosition - b.standingsPosition) },
+  name:      { label:'Sort: A–Z (Last Name)',             fn:(a,b) => lastName(a.name).localeCompare(lastName(b.name)) },
+  number:    { label:'Sort: Car Number (Low–High)',       fn:(a,b) => Number(a.number) - Number(b.number) },
+  cPoints:   { label:'Sort: Career Points (Best–Worst)',  fn:(a,b) => b.career.points - a.career.points },
+  cWins:     { label:'Sort: Career Wins (Most–Least)',    fn:(a,b) => b.career.wins - a.career.wins },
+  champs:    { label:'Sort: Championships (Most–Least)',  fn:(a,b) => (b.career.champion.length - a.career.champion.length) || (b.career.titles.length - a.career.titles.length) },
 };
 
-function renderList(sortKey){
-  sortKey = sortKey || 'default';
-  document.getElementById('intro').textContent = "Click any driver card to open that racer's career statistics. Swap or add entries in DRIVERS at the top of the script to generate a card per racer.";
-  const sorted = [...DRIVERS].sort(SORTS[sortKey].fn);
+function driverRowHTML(d){
+  const tier = tierFor(d.standingsPosition);
+  return `
+    <tr style="box-shadow:inset 4px 0 0 ${tier.fill}">
+      <td class="c-pos">
+        <span class="pos-wrap">
+          <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${tier.fill}"/></svg>
+          <b>${d.standingsPosition}</b>
+        </span>
+      </td>
+      <td class="c-name">
+        <button class="name-link" onclick="openDriverMenu(event, this, '${d.number}')"><span class="n-num">#${d.number}</span> ${d.name}</button>
+        <div class="n-tier" style="color:${tier.fill}">${tier.name.toUpperCase()}</div>
+      </td>
+      <td class="c-team"><button class="name-link team-link" style="color:${TEAM_COLORS[d.team] || 'var(--amber)'}" onclick="location.hash='team-${teamSlug(d.team)}'">${d.team}</button><div>${d.car}</div></td>
+      <td>${d.wins}</td><td>${d.top5}</td><td>${d.top10}</td>
+      <td class="c-pts">${fmt(d.points)}</td>
+      <td class="c-sep">${d.career.wins}</td><td>${d.career.titles.length}</td><td>${d.career.champion.length}</td>
+    </tr>`;
+}
+
+function renderDrivers(sortKey){
+  sortKey = DRIVER_SORTS[sortKey] ? sortKey : 'default';
+  window.__lastSort = sortKey;
+  document.getElementById('intro').textContent = "Click a driver's name to choose between their current season stats and their career total stats.";
+  const sorted = [...DRIVERS].sort(DRIVER_SORTS[sortKey].fn);
   document.getElementById('app').innerHTML = `
-    <div class="list-header"><h1>Current Season Driver Cards</h1></div>
+    ${viewToggle('drivers')}
+    <div class="list-header"><h1>Driver Stats</h1></div>
     <div class="legend">
       ${TIERS.map(t => `
         <div class="legend-item">
@@ -674,16 +823,28 @@ function renderList(sortKey){
     </div>
     <div class="controls">
       <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
-        <span id="sortLabel">${SORTS[sortKey].label}</span>
+        <span id="sortLabel">${DRIVER_SORTS[sortKey].label}</span>
         <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
       </button>
       <div class="sort-menu" id="sortMenu">
+        <button data-sort="default">Points Standings/Rank</button>
+        <button data-sort="team">Team (A–Z)</button>
         <button data-sort="name">A–Z (Last Name)</button>
         <button data-sort="number">Car Number (Low–High)</button>
-        <button data-sort="rank">Rank (Ruby–Bronze)</button>
+        <button data-sort="cPoints">Career Points (Best–Worst)</button>
+        <button data-sort="cWins">Career Wins (Most–Least)</button>
+        <button data-sort="champs">Championships (Most–Least)</button>
       </div>
     </div>
-    <div class="grid">${sorted.map(cardHTML).join('')}</div>`;
+    <div class="drivers-wrap">
+      <table class="drivers-table">
+        <thead>
+          <tr class="grp"><th colspan="3"></th><th colspan="4" class="grp-title">CURRENT SEASON</th><th colspan="3" class="c-sep grp-title">CAREER</th></tr>
+          <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Wins</th><th>Top 5</th><th>Top 10</th><th>Points</th><th class="c-sep">Wins</th><th>Season Titles</th><th>Champion of the Year</th></tr>
+        </thead>
+        <tbody>${sorted.map(driverRowHTML).join('')}</tbody>
+      </table>
+    </div>`;
 
   const sortBtn = document.getElementById('sortBtn');
   const sortMenu = document.getElementById('sortMenu');
@@ -693,7 +854,7 @@ function renderList(sortKey){
     sortBtn.setAttribute('aria-expanded', open);
   });
   sortMenu.querySelectorAll('button[data-sort]').forEach(btn => {
-    btn.addEventListener('click', () => renderList(btn.dataset.sort));
+    btn.addEventListener('click', () => renderDrivers(btn.dataset.sort));
   });
   document.addEventListener('click', () => {
     sortMenu.classList.remove('open');
@@ -701,12 +862,199 @@ function renderList(sortKey){
   }, { once:true });
 }
 
+// ---------- Teams ----------
+const TEAM_COLORS = {
+  'Team Redline':'#E5484D', 'Team Vantage':'#3E8EF7', 'Apex Dynamics':'#F5A524',
+  'Ironclad Racing':'#9AA4B2', 'Steel City Motorsports':'#2EC4B6', 'Blackwood Racing':'#A78BFA',
+};
+const sumBy = (arr, fn) => arr.reduce((s, x) => s + fn(x), 0);
+
+function buildTeams(){
+  const names = [...new Set(DRIVERS.map(d => d.team))];
+  const teams = names.map(name => {
+    const m = DRIVERS.filter(d => d.team === name).sort((a, b) => a.standingsPosition - b.standingsPosition);
+    return {
+      name, members: m, color: TEAM_COLORS[name] || '#E8A33D',
+      cars: [...new Set(m.map(d => d.car))],
+      wins: sumBy(m, d => d.wins), top5: sumBy(m, d => d.top5), top10: sumBy(m, d => d.top10),
+      poles: sumBy(m, d => d.poles), points: sumBy(m, d => d.points), lapsLed: sumBy(m, d => d.lapsLed),
+      dnfs: sumBy(m, d => d.dnfs),
+      avgFinish: +(sumBy(m, d => d.avgFinish) / m.length).toFixed(1),
+      incRace: +(sumBy(m, d => d.incRace) / m.length).toFixed(1),
+      cWins: sumBy(m, d => d.career.wins), cTitles: sumBy(m, d => d.career.titles.length),
+      cChamps: sumBy(m, d => d.career.champion.length), cPoints: sumBy(m, d => d.career.points),
+    };
+  });
+  teams.sort((a, b) => b.points - a.points).forEach((t, i) => { t.standing = i + 1; });
+  return teams;
+}
+
+function teamCardHTML(t){
+  const initials = t.name.split(' ').filter(w => w.toLowerCase() !== 'team').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const best = t.members.reduce((a, b) => (b.points > a.points ? b : a));
+  const roster = t.members.map(d => {
+    const tier = tierFor(d.standingsPosition);
+    return `<div class="roster-row" onclick="openDriverMenu(event, this, '${d.number}')">
+      <span class="r-num">#${d.number}</span>
+      <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${tier.fill}"/></svg>
+      <span class="r-name">${d.name}</span>
+      <span class="r-pos">${ordinal(d.standingsPosition)}</span>
+      <span class="r-pts">${fmt(d.points)}</span>
+    </div>`;
+  }).join('');
+  return `
+  <div class="card team-row" style="border-color:${t.color}; cursor:default;">
+    <div class="tr-id">
+      <div class="team-badge" style="background:${t.color}">${initials}</div>
+      <div class="tr-id-text">
+        <div class="team-name">${t.name}</div>
+        <div class="team-sub">${t.members.length} drivers · ${t.cars.join(' · ')}</div>
+      </div>
+      <div class="team-pos"><div class="v" style="color:${t.color}">${ordinal(t.standing)}</div><div class="l">TEAM STANDING</div></div>
+    </div>
+    <div class="tr-season">
+      <div class="headline">
+        <div><div class="n">${t.wins}</div><div class="l">WINS</div></div>
+        <div><div class="n">${t.top5}</div><div class="l">TOP 5</div></div>
+        <div><div class="n">${t.top10}</div><div class="l">TOP 10</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="l">Season points</span><span class="v">${fmt(t.points)}</span></div>
+        <div class="stat"><span class="l">Poles</span><span class="v">${t.poles}</span></div>
+        <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(t.lapsLed)}</span></div>
+        <div class="stat"><span class="l">Avg finish</span><span class="v">${t.avgFinish}</span></div>
+        <div class="stat"><span class="l">Incidents / race</span><span class="v">${t.incRace}</span></div>
+        <div class="stat"><span class="l">DNFs</span><span class="v hot">${t.dnfs}</span></div>
+        <div class="stat" style="grid-column:1 / -1"><span class="l">Top driver</span><span class="v">#${best.number} ${best.name}</span></div>
+      </div>
+    </div>
+    <div class="tr-career">
+      <div class="h">TEAM CAREER TOTALS</div>
+      <div class="chips">
+        <span class="chip">${fmt(t.cWins)} Wins</span>
+        <span class="chip">${t.cTitles} Season Titles</span>
+        <span class="chip champ">${t.cChamps} Championships</span>
+      </div>
+    </div>
+    <div class="tr-roster">
+      <div class="h">DRIVER ROSTER · SEASON STANDING · POINTS</div>
+      <div class="roster">${roster}</div>
+    </div>
+  </div>`;
+}
+
+const TEAM_SORTS = {
+  default: { label:'Sort: Team Standings',          fn:(a,b) => a.standing - b.standing },
+  wins:    { label:'Sort: Season Wins (Most–Least)', fn:(a,b) => b.wins - a.wins },
+  career:  { label:'Sort: Career Wins (Most–Least)', fn:(a,b) => b.cWins - a.cWins },
+  name:    { label:'Sort: A–Z',                     fn:(a,b) => a.name.localeCompare(b.name) },
+};
+
+function renderTeams(sortKey){
+  sortKey = sortKey || 'default';
+  window.__lastTeamSort = sortKey;
+  document.getElementById('intro').textContent = "Team standings are the combined season points of every driver on the team. Click a driver in a roster to open their career card.";
+  const teams = buildTeams().sort(TEAM_SORTS[sortKey].fn);
+  document.getElementById('app').innerHTML = `
+    ${viewToggle('teams')}
+    <div class="list-header"><h1>Team Stats</h1></div>
+    <div class="controls">
+      <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
+        <span id="sortLabel">${TEAM_SORTS[sortKey].label}</span>
+        <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
+      </button>
+      <div class="sort-menu" id="sortMenu">
+        <button data-sort="default">Team Standings</button>
+        <button data-sort="wins">Season Wins (Most–Least)</button>
+        <button data-sort="career">Career Wins (Most–Least)</button>
+        <button data-sort="name">A–Z</button>
+      </div>
+    </div>
+    <div class="team-list">${teams.map(teamCardHTML).join('')}</div>`;
+  const sortBtn = document.getElementById('sortBtn');
+  const sortMenu = document.getElementById('sortMenu');
+  sortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = sortMenu.classList.toggle('open');
+    sortBtn.setAttribute('aria-expanded', open);
+  });
+  sortMenu.querySelectorAll('button[data-sort]').forEach(btn => {
+    btn.addEventListener('click', () => renderTeams(btn.dataset.sort));
+  });
+  document.addEventListener('click', () => {
+    sortMenu.classList.remove('open');
+    sortBtn.setAttribute('aria-expanded', 'false');
+  }, { once:true });
+}
+
+// ---------- Driver chooser menu (season card vs career card) ----------
+function closeDriverMenu(){
+  const m = document.getElementById('driverMenu');
+  if (m) m.remove();
+}
+function goDriver(hash){ closeDriverMenu(); location.hash = hash; }
+function openDriverMenu(e, el, num){
+  e.stopPropagation();
+  closeDriverMenu();
+  const d = byNumber(num);
+  const m = document.createElement('div');
+  m.className = 'driver-menu';
+  m.id = 'driverMenu';
+  m.innerHTML = `
+    <div class="dm-title">#${d.number} ${d.name}</div>
+    <button onclick="goDriver('season-${num}')">Current Season Stats</button>
+    <button onclick="goDriver('driver-${num}')">Career Total Stats</button>`;
+  document.body.appendChild(m);
+  const r = el.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left + 30, window.innerWidth - m.offsetWidth - 8));
+  let top = r.bottom + 4;
+  if (top + m.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - m.offsetHeight - 4);
+  m.style.left = left + 'px';
+  m.style.top = top + 'px';
+}
+document.addEventListener('click', closeDriverMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDriverMenu(); });
+window.addEventListener('hashchange', closeDriverMenu);
+
+function renderSeasonDetail(d){
+  document.getElementById('intro').textContent = '';
+  document.getElementById('app').innerHTML = `
+    <div class="detail-wrap">
+      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
+      <div class="list-header"><h1>Current Season Driver Card</h1></div>
+      ${cardHTML(d)}
+      <div class="season-actions">
+        <button class="log-btn" onclick="location.hash='driver-${d.number}'">View Career Card &rarr;</button>
+      </div>
+    </div>`;
+  window.scrollTo(0,0);
+}
+
+const teamSlug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+function renderTeamDetail(t){
+  document.getElementById('intro').textContent = '';
+  document.getElementById('app').innerHTML = `
+    <div class="team-detail">
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='teams')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+        <button class="back-link" onclick="location.hash='teams'">All Teams</button>
+      </div>
+      <div class="list-header"><h1>${t.name} — Team Stats</h1></div>
+      ${teamCardHTML(t)}
+    </div>`;
+  window.scrollTo(0,0);
+}
+
 function renderDetail(d){
   document.getElementById('intro').textContent = '';
   document.getElementById('app').innerHTML = `
     <div class="detail-wrap">
-      <button class="back-link" onclick="location.hash=''">&larr; All Drivers</button>
-      <div class="list-header"><h1>Career Total Driver Cards</h1></div>
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+      </div>
       <div class="page-title">
         <h1>The Legacy Series Driver Card</h1>
         <p>CAREER STATS · ${d.yearsActive} YEARS</p>
@@ -834,7 +1182,16 @@ function route(){
     const d = byNumber(hash.replace('log-',''));
     if (d){ renderLog(d); return; }
   }
-  renderList(window.__lastSort);
+  if (hash.startsWith('team-')){
+    const t = buildTeams().find(x => teamSlug(x.name) === hash.replace('team-',''));
+    if (t){ renderTeamDetail(t); return; }
+  }
+  if (hash.startsWith('season-')){
+    const d = byNumber(hash.replace('season-',''));
+    if (d){ renderSeasonDetail(d); return; }
+  }
+  if (hash === 'teams'){ renderTeams(window.__lastTeamSort); return; }
+  renderDrivers(window.__lastSort);
 }
 
 window.addEventListener('hashchange', route);
