@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Driver Cards — Legacy Series</title>
-<meta name="description" content="The Legacy Series — live driver cards, season standings, Ruby-to-Bronze rank tiers, and full career performance logs for the league.">
+<title>Driver Stats</title>
+<meta name="description" content="League driver stats, standings, teams, career logs and the Dash For Cash tournament.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="The Legacy Series — Driver Cards">
-<meta property="og:description" content="Live driver cards, season standings, Ruby-to-Bronze rank tiers, and full career performance logs for the league.">
-<meta property="og:site_name" content="The Legacy Series">
+<meta property="og:title" content="Driver Stats">
+<meta property="og:description" content="League driver stats, standings, teams, career logs and the Dash For Cash tournament.">
 <meta name="theme-color" content="#0A0C0E">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +31,7 @@
   .intro b{color:var(--paper); font-weight:600;}
 
   .view-toggle{
-    max-width:320px; margin:0 auto 20px; display:flex; background:var(--panel);
+    max-width:720px; margin:0 auto 20px; display:flex; background:var(--panel);
     border:1px solid var(--steel-line); border-radius:6px; padding:3px;
   }
   .vt-btn{
@@ -40,6 +39,7 @@
     font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.3px; color:var(--paper-dim);
   }
   .vt-btn.active{ background:var(--amber); color:#0b0d10; }
+  .vt-btn:nth-child(3){ flex:2.2; }
 
 
   .team-top{ display:flex; align-items:center; gap:14px; padding:22px 22px 14px; position:relative; }
@@ -70,6 +70,7 @@
   }
   .team-row > div{ position:relative; padding:20px 20px; border-left:1px solid var(--steel-line); min-width:0; }
   .team-row > div:first-child{ border-left:none; }
+  .team-row.clickable{ cursor:pointer; }
   .team-row .tr-id{ display:flex; flex-direction:column; justify-content:center; gap:14px; }
   .team-row .tr-id .team-pos{ margin-left:0; text-align:left; }
   .team-row .tr-id-text{ min-width:0; }
@@ -141,6 +142,74 @@
   .c-team{ font-family:'Inter',sans-serif; font-size:12.5px; line-height:1.35; }
   .c-team b{ font-family:'Rajdhani',sans-serif; font-size:14px; }
   .c-team div{ color:var(--paper-dim); font-weight:400; }
+
+  .hist-sub{ text-align:center; color:var(--paper-dim); font-size:13px; margin:-6px 0 22px; }
+  .hist-h{
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:1.2px;
+    color:var(--paper); border-left:4px solid var(--amber); padding:2px 0 2px 12px; margin:6px 0 14px;
+  }
+  .totals-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:12px; margin-bottom:28px; }
+  .tot{ background:var(--panel); border:1px solid var(--steel-line); border-radius:6px; padding:16px 10px; text-align:center; }
+  .tot .n{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:28px; color:var(--amber); line-height:1.1; }
+  .tot .l{ font-size:11px; letter-spacing:.4px; color:var(--paper-dim); margin-top:5px; }
+  .n-status{ font-family:'Inter',sans-serif; font-size:10.5px; color:var(--paper-dim); margin-top:3px; font-weight:500; }
+  .plain-name{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; }
+  .plain-name .n-num{ color:var(--paper-dim); font-weight:600; }
+  .drivers-table td.c-award{ white-space:normal; min-width:150px; }
+  .drivers-table td.c-award .chip{ font-size:11.5px; padding:3px 7px; }
+  .dim{ color:var(--paper-dim); }
+
+  .dash-wrap{ max-width:1180px; margin:0 auto; }
+  .dash-sub{ text-align:center; color:var(--paper-dim); font-size:13px; line-height:1.5; margin:-6px auto 22px; max-width:680px; }
+  .pool-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:26px; }
+  .dash-table .c-final{ font-weight:700; color:var(--paper); }
+  .dash-table td small{ display:block; font-family:'Inter',sans-serif; font-size:10.5px; color:var(--paper-dim); font-weight:500; }
+  .neg{ color:#E5694D; } .pos{ color:#3EA66B; }
+  .pos-badge{
+    display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; color:#101214;
+  }
+  .clean-pill{
+    display:inline-block; padding:2px 10px; border-radius:999px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px;
+    background:#F4E7D3; color:#6a3d12;
+  }
+  .clean-pill.p1{ background:#D8F3EA; color:#0e5a43; }
+  .mult{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12.5px; margin-right:6px; color:var(--paper-dim); }
+  .mult.m0{ color:var(--paper-dim); } .mult.m2{ color:var(--amber); } .mult.m4{ color:#E5694D; }
+  .rules-box{ margin-top:26px; border:1px solid var(--steel-line); border-radius:6px; background:var(--panel); }
+  .rules-box > summary{ padding:14px 16px; cursor:pointer; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:.5px; }
+  .rules-body{ padding:0 18px 18px; font-size:13px; line-height:1.6; color:var(--paper-dim); }
+  .rules-body h3{ font-family:'Rajdhani',sans-serif; font-size:14px; letter-spacing:.8px; color:var(--paper); margin:16px 0 6px; }
+  .rules-cols{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  .mini-table{ border-collapse:collapse; font-size:12.5px; }
+  .mini-table td{ padding:4px 16px 4px 0; border-bottom:1px solid var(--steel-line); }
+  .mini-table td:last-child{ color:var(--paper); font-weight:600; }
+
+  .cutoff{ display:flex; align-items:center; gap:14px; margin:26px 0 8px; }
+  .cutoff::before, .cutoff::after{ content:''; flex:1; border-top:2px dashed #E5694D; }
+  .cutoff span{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:2px; color:#E5694D; }
+  .cutoff-sub{ text-align:center; color:var(--paper-dim); font-size:12.5px; margin:0 0 14px; }
+  .pos-badge.out{ background:var(--panel-2); color:var(--paper-dim); border:1px solid var(--steel-line); }
+
+  .cutoff.in{ margin:4px 0 12px; }
+  .cutoff.in::before, .cutoff.in::after{ border-top-color:#3EA66B; }
+  .cutoff.in span{ color:#3EA66B; }
+
+  .name-line{ display:flex; align-items:center; gap:10px; }
+  .rank-tag{ display:inline-flex; align-items:center; gap:4px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.6px; text-transform:uppercase; }
+  .rank-tag .gem-sm{ width:14px; height:14px; }
+
+  .totals-flex{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-right:14px; }
+  .dash-btn{
+    flex:0 0 auto; border:none; cursor:pointer; background:var(--amber); color:#0b0d10; border-radius:5px; padding:10px 14px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.4px; white-space:nowrap;
+  }
+  .dash-btn:hover{ filter:brightness(1.08); }
+  .dash-tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tot.sm{ padding:12px 6px; }
+  .tot.sm .n{ font-size:20px; }
+  .tot.sm .n .of{ font-size:13px; color:var(--paper-dim); font-weight:600; }
+  .tot.sm .l{ font-size:10px; }
 
   .list-header{ max-width:1180px; margin:0 auto 18px; text-align:center; }
   .list-header h1{
@@ -258,6 +327,7 @@
     font-family:'Rajdhani',sans-serif; font-weight:600; font-size:12.5px;
     padding:5px 10px; border-radius:3px; background:var(--amber); color:#241a08;
   }
+  .chip.green{ background:#3EA66B; color:#06210f; }
   .chip.champ{ background:linear-gradient(135deg,#8b5cf6,#6d28d9); color:#fff; }
   .chip.clean{ background:var(--panel); border:1px solid var(--steel-line); color:var(--paper); }
 
@@ -356,561 +426,989 @@
     .card{ transition: transform .35s ease; }
     .card:hover{ transform: translateY(-4px); }
   }
+
+  .empty-state{ max-width:640px; margin:30px auto; text-align:center; padding:34px 26px; border:1px dashed var(--steel-line); border-radius:8px; background:var(--panel); }
+  .empty-state h2{ font-family:'Rajdhani',sans-serif; font-size:22px; margin:0 0 10px; }
+  .empty-state p{ color:var(--paper-dim); font-size:14px; line-height:1.6; margin:0; }
+  .inline-link{ color:var(--amber); text-decoration:underline; text-underline-offset:3px; }
+  .site-foot{ max-width:1180px; margin:40px auto 0; text-align:center; font-size:12px; color:var(--paper-dim); }
+  .site-foot a{ color:var(--paper-dim); }
+  .season-pick{ text-align:center; margin:-6px 0 18px; }
+  .season-select, .ad-in{
+    background:var(--panel); color:var(--paper); border:1px solid var(--steel-line); border-radius:5px;
+    padding:9px 12px; font-family:'Inter',sans-serif; font-size:13px;
+  }
+  .admin-wrap{ max-width:1180px; margin:0 auto; }
+  .ad-msg{ background:var(--panel-2); border:1px solid var(--amber); color:var(--paper); border-radius:6px; padding:12px 16px; margin:0 0 18px; font-size:13px; }
+  .ad-note{ color:var(--paper-dim); font-size:12.5px; line-height:1.55; margin:0 0 12px; }
+  .ad-row{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-bottom:10px; }
+  .ad-btn{ width:auto; padding:11px 22px; }
+  .ad-file{ display:inline-block; border:1px dashed var(--steel-line); border-radius:6px; padding:11px 16px; color:var(--paper-dim); font-size:13px; cursor:pointer; }
+  .ad-file.big{ display:block; text-align:center; padding:22px; font-size:14px; }
+  .ad-file input{ display:block; margin:8px auto 0; color:var(--paper-dim); max-width:100%; }
+  .ad-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin-bottom:12px; }
+  .ad-lab{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-dim); margin-bottom:10px; }
+  .ad-in{ width:100%; }
+  .ad-in.sm{ width:74px; }
+  .ad-text{ width:100%; background:var(--panel); color:var(--paper); border:1px solid var(--steel-line); border-radius:6px; padding:12px; font-family:'Inter',sans-serif; font-size:13px; line-height:1.6; margin-bottom:10px; }
+  .ad-teams{ display:flex; flex-direction:column; gap:10px; margin-bottom:10px; max-width:560px; }
+  .ad-team{ display:flex; align-items:center; gap:10px; }
+  .ad-team input[type=color]{ width:42px; height:38px; padding:2px; background:var(--panel); border:1px solid var(--steel-line); border-radius:5px; }
+  .ad-x{ background:none; border:1px solid var(--steel-line); color:var(--paper-dim); border-radius:5px; padding:8px 12px; cursor:pointer; font-size:12px; }
+  .ad-x:hover{ color:#E5694D; border-color:#E5694D; }
+  .ad-x.add:hover{ color:#3EA66B; border-color:#3EA66B; }
+  .ad-table td{ vertical-align:top; }
+  .ad-det summary{ cursor:pointer; color:var(--amber); font-size:12.5px; }
+  .ad-det{ min-width:200px; }
+  .ad-det .ad-lab{ margin:8px 0 0; }
+  .ad-msg.warn{ border-color:#E5694D; color:#f3b4a6; }
 </style>
 </head>
 <body>
-  <p class="intro" id="intro">Click any driver card to open that racer's career statistics. Swap or add entries in <b>DRIVERS</b> at the top of the script to generate a card per racer.</p>
-  <div id="app"></div>
+  <p class="intro" id="intro"></p>
+  <div id="app"><div class="empty-state"><p>Loading league data…</p></div></div>
+  <div class="site-foot"><a href="#admin">League admin</a></div>
 
 <script>
-// Bio info only — number, name, age, hometown, team, car. All performance numbers
-// (season stats, career stats, rank, awards) are randomly generated below so that
-// re-running the generator reshuffles every driver's results consistently.
-const DRIVERS = [
-  { number:"12", name:"John Bradford",    age:29, hometown:"Charlotte, NC, United States",       team:"Team Redline",            car:"Ford Mustang" },
-  { number:"27", name:"Devon Wallace",    age:34, hometown:"Indianapolis, IN, United States",     team:"Team Vantage",            car:"Chevrolet Camaro" },
-  { number:"55", name:"Lucas Ferreira",   age:24, hometown:"São Paulo, Brazil",                   team:"Apex Dynamics",           car:"Chevrolet Camaro" },
-  { number:"9",  name:"Ray Whitfield",    age:38, hometown:"Daytona Beach, FL, United States",    team:"Ironclad Racing",         car:"Toyota Camry" },
-  { number:"71", name:"Nate Kowalski",    age:22, hometown:"Winnipeg, MB, Canada",                team:"Steel City Motorsports",  car:"Ford Mustang" },
-  { number:"34", name:"Owen Marsh",       age:45, hometown:"Bristol, TN, United States",           team:"Blackwood Racing",        car:"Chevrolet Camaro" },
-  { number:"61", name:"Colin Draper",     age:27, hometown:"Toronto, ON, Canada",                 team:"Team Redline",            car:"Toyota Camry" },
-  { number:"88", name:"Tyler Bishop",     age:31, hometown:"Phoenix, AZ, United States",           team:"Team Vantage",            car:"Ford Mustang" },
-  { number:"17", name:"Aaron Voss",       age:36, hometown:"Tulsa, OK, United States",             team:"Steel City Motorsports",  car:"Chevrolet Camaro" },
-  { number:"45", name:"Jesse Marlow",     age:41, hometown:"Calgary, AB, Canada",                 team:"Blackwood Racing",        car:"Toyota Camry" },
-  { number:"3",  name:"Harlan Boyd",      age:19, hometown:"Talladega, AL, United States",         team:"Ironclad Racing",         car:"Ford Mustang" },
-  { number:"1",  name:"Marcus Webb",      age:33, hometown:"Nashville, TN, United States",          team:"Team Redline",            car:"Chevrolet Camaro" },
-  { number:"2",  name:"Dalton Reyes",     age:26, hometown:"Richmond, VA, United States",            team:"Team Vantage",            car:"Toyota Camry" },
-  { number:"4",  name:"Caleb Monroe",     age:40, hometown:"Columbus, OH, United States",            team:"Apex Dynamics",           car:"Ford Mustang" },
-  { number:"5",  name:"Isaac Bennett",    age:23, hometown:"Spokane, WA, United States",             team:"Ironclad Racing",         car:"Chevrolet Camaro" },
-  { number:"6",  name:"Trey Simmons",     age:37, hometown:"Boise, ID, United States",               team:"Steel City Motorsports",  car:"Toyota Camry" },
-  { number:"7",  name:"Logan Whitaker",   age:21, hometown:"Reno, NV, United States",                team:"Blackwood Racing",        car:"Ford Mustang" },
-  { number:"8",  name:"Grant Holloway",   age:44, hometown:"Mobile, AL, United States",              team:"Team Redline",            car:"Chevrolet Camaro" },
-  { number:"10", name:"Diego Marin",      age:28, hometown:"Rochester, NY, United States",           team:"Team Vantage",            car:"Toyota Camry" },
-  { number:"11", name:"Wesley Hale",      age:35, hometown:"Omaha, NE, United States",               team:"Apex Dynamics",           car:"Ford Mustang" },
-  { number:"13", name:"Connor Pruitt",    age:20, hometown:"Tucson, AZ, United States",              team:"Ironclad Racing",         car:"Chevrolet Camaro" },
-  { number:"14", name:"Blake Sorensen",   age:30, hometown:"Edmonton, AB, Canada",                   team:"Steel City Motorsports",  car:"Toyota Camry" },
-  { number:"15", name:"Austin Vance",     age:48, hometown:"Vancouver, BC, Canada",                  team:"Blackwood Racing",        car:"Ford Mustang" },
-  { number:"16", name:"Miles Donovan",    age:25, hometown:"Regina, SK, Canada",                     team:"Team Redline",            car:"Chevrolet Camaro" },
-  { number:"18", name:"Parker Lindqvist", age:32, hometown:"Hamilton, ON, Canada",                   team:"Team Vantage",            car:"Toyota Camry" },
-  { number:"19", name:"Garrett Nakamura", age:39, hometown:"Halifax, NS, Canada",                    team:"Apex Dynamics",           car:"Ford Mustang" },
-  { number:"20", name:"Evan Castellano",  age:24, hometown:"Baton Rouge, LA, United States",         team:"Ironclad Racing",         car:"Chevrolet Camaro" },
-  { number:"21", name:"Sawyer McAllister",age:42, hometown:"Wichita, KS, United States",             team:"Steel City Motorsports",  car:"Toyota Camry" },
-  { number:"23", name:"Julian Forsythe",  age:27, hometown:"Greenville, SC, United States",          team:"Blackwood Racing",        car:"Ford Mustang" },
-  { number:"24", name:"Spencer Odom",     age:22, hometown:"Fresno, CA, United States",              team:"Team Redline",            car:"Chevrolet Camaro" },
-];
+'use strict';
+// ============================================================================
+// League tracker. Everything on every page is calculated from real race results
+// (official iRacing event_result JSON files) stored in data/league-data.json.
+// Nothing is simulated. Edit the league through #admin, then upload the file it
+// downloads back to your repository.
+// ============================================================================
 
-const TIERS = [
-  { name:'Ruby',     min:1,  max:5,  fill:'#FF5C7A' },
-  { name:'Diamond',  min:6,  max:10, fill:'#8FC7FF' },
-  { name:'Platinum', min:11, max:15, fill:'#7EE8D0' },
-  { name:'Gold',     min:16, max:20, fill:'#F2C94C' },
-  { name:'Silver',   min:21, max:30, fill:'#C7CDD3' },
-  { name:'Bronze',   min:31, max:40, fill:'#C08A52' },
-];
-const tierFor = (pos) => TIERS.find(t => pos <= t.max) || TIERS[TIERS.length - 1];
-const ordinal = (n) => { const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); };
+/* ------------------------------ helpers ------------------------------ */
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 const fmt = (n) => Number(n).toLocaleString();
-const byNumber = (num) => DRIVERS.find(d => d.number === num);
+const ordinal = (n) => { const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+const sumOf = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+const slugify = (name) => String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const money = (c) => (c < 0 ? '-' : '') + '$' + (Math.abs(c) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const lastName = (full) => String(full).trim().split(/\s+/).slice(-1)[0];
+const gemSVG = (fill, cls) => `<svg class="${cls || 'gem-sm'}" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${esc(fill)}"/></svg>`;
 
-// Shared header markup (number plate, name, ratings, team/car, age/hometown, optional rank gem)
-function headerHTML(d, tier, showRank){
-  showRank = showRank !== false;
-  return `
-    <div class="head">
-      <div class="number-plate">${d.number}</div>
-      <div class="id"><div class="name">${d.name}</div></div>
-      <div class="ratings">
-        <div class="row"><div class="v">${d.iRating}</div><div class="l">IRATING</div></div>
-        <div class="row"><div class="v">${d.sr.toFixed(2)}</div><div class="l">SAFETY RATING</div></div>
-      </div>
-    </div>
-    <div class="subhead">
-      <div class="team"><b>${d.team}</b> · ${d.car}</div>
-      <div class="meta">Age ${d.age} · ${d.hometown}</div>
-    </div>
-    ${showRank ? `
-    <div class="rank">
-      <svg class="gem" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${tier.fill}"/></svg>
-      <div class="rtext">
-        <div class="tier" style="color:${tier.fill}">${tier.name.toUpperCase()}</div>
-        <div class="pos">${ordinal(d.standingsPosition)} in season points</div>
-      </div>
-    </div>` : ''}`;
-}
-
-// Season-stats card (grid view)
-function cardHTML(d){
-  const tier = tierFor(d.standingsPosition);
-  return `
-  <div class="card" style="border-color:${tier.fill}" onclick="location.hash='driver-${d.number}'">
-    ${headerHTML(d, tier)}
-    <div class="headline">
-      <div><div class="n">${d.wins}</div><div class="l">WINS</div></div>
-      <div><div class="n">${d.top5}</div><div class="l">TOP 5</div></div>
-      <div><div class="n">${d.top10}</div><div class="l">TOP 10</div></div>
-    </div>
-    <div class="stats">
-      <div class="stat"><span class="l">Season starts</span><span class="v">15</span></div>
-      <div class="stat"><span class="l">Season points</span><span class="v">${fmt(d.points)}</span></div>
-      <div class="stat"><span class="l">Avg finish</span><span class="v">${d.avgFinish}</span></div>
-      <div class="stat"><span class="l">Avg start</span><span class="v">${d.avgStart}</span></div>
-      <div class="stat"><span class="l">Poles</span><span class="v">${d.poles}</span></div>
-      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(d.lapsLed)}</span></div>
-      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(d.lapsRun)}</span></div>
-      <div class="stat"><span class="l">Incidents / race</span><span class="v">${d.incRace}</span></div>
-      <div class="stat"><span class="l">DNFs</span><span class="v hot">${d.dnfs}</span></div>
-      <div class="stat"><span class="l">Race wins in a row</span><span class="v good">${d.winsInARow}</span></div>
-    </div>
-    <div class="foot">THE LEGACY SERIES</div>
-  </div>`;
-}
-
-// Career-stats card (detail view), following the Career Stats card format
-// Tallies how many of a driver's seasons landed in each rank tier (Ruby..Bronze),
-// using the same per-season standing math as the Career Performance Log.
-function rankHistory(d){
-  const races = generateCareerLog(d);
-  const byTag = {};
-  races.forEach(r => { const tag = `${r.year} ${r.half}`; (byTag[tag] = byTag[tag] || []).push(r); });
-  const counts = {};
-  TIERS.forEach(t => { counts[t.name] = 0; });
-  Object.keys(byTag).forEach(tag => {
-    const [year, half] = tag.split(' ');
-    const s = seasonSummary(d, Number(year), half, byTag[tag]);
-    counts[s.tier.name]++;
-  });
-  return TIERS.map(t => ({ tier: t, count: counts[t.name] })).filter(r => r.count > 0);
-}
-
-function careerCardHTML(d){
-  const tier = tierFor(d.standingsPosition);
-  const c = d.career;
-  const chipRow = (arr, cls) => arr.length ? `<div class="chips">${arr.map(y=>`<span class="chip ${cls}">${y}</span>`).join('')}</div>` : `<div class="empty">—</div>`;
-  return `
-  <div class="card" style="border-color:#ffffff; cursor:default;">
-    ${headerHTML(d, tier, false)}
-    <div class="headline">
-      <div><div class="n">${c.wins}</div><div class="l">WINS</div></div>
-      <div><div class="n">${c.top5}</div><div class="l">TOP 5</div></div>
-      <div><div class="n">${c.top10}</div><div class="l">TOP 10</div></div>
-    </div>
-    <div class="stats">
-      <div class="stat"><span class="l">Career starts</span><span class="v">${fmt(c.starts)}</span></div>
-      <div class="stat"><span class="l">Career points</span><span class="v">${fmt(c.points)}</span></div>
-      <div class="stat"><span class="l">Avg finish</span><span class="v">${c.avgFinish}</span></div>
-      <div class="stat"><span class="l">Avg start</span><span class="v">${c.avgStart}</span></div>
-      <div class="stat"><span class="l">Poles</span><span class="v">${c.poles}</span></div>
-      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(c.lapsLed)}</span></div>
-      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(c.lapsRun)}</span></div>
-      <div class="stat"><span class="l">Incidents / race</span><span class="v">${c.incRace}</span></div>
-      <div class="stat"><span class="l">DNFs</span><span class="v hot">${c.dnfs}</span></div>
-      <div class="stat"><span class="l">Longest win streak</span><span class="v good">${c.streak || '—'}</span></div>
-    </div>
-    <div class="section">
-      <div class="h">SEASON TITLES WON</div>
-      ${c.titles.length ? `<div class="chips">${c.titles.map(t=>`<span class="chip">${t}</span>`).join('')}</div>` : `<div class="empty">No titles yet</div>`}
-    </div>
-    <div class="section"><div class="h">CHAMPION OF THE YEAR</div>${chipRow(c.champion,'champ')}</div>
-    <div class="section"><div class="h">CLEANEST DRIVER AWARD</div>${chipRow(c.cleanest,'clean')}</div>
-    <div class="section"><div class="h">MOST IMPROVED DRIVER</div>${chipRow(c.mostImproved,'clean')}</div>
-    <div class="section"><div class="h">ROOKIE OF THE SEASON</div>${chipRow(c.rookie,'clean')}</div>
-    <div class="section">
-      <div class="h">RANKS ACHIEVED</div>
-      <div class="rank-history">
-        ${rankHistory(d).map(r => `
-          <div class="rank-chip">
-            <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${r.tier.fill}"/></svg>
-            <span class="rank-chip-name" style="color:${r.tier.fill}">${r.tier.name}</span>
-            <span class="rank-chip-count">×${r.count}</span>
-          </div>`).join('')}
-      </div>
-    </div>
-    <div class="section">
-      <button class="log-btn" onclick="location.hash='log-${d.number}'">Career Performance Log &nearr;</button>
-    </div>
-    <div class="foot">THE LEGACY SERIES</div>
-  </div>`;
-}
-
-// --- Career Performance Log: simulates every race of a driver's career ---
-// Columns mirror an iRacing league event-result export: start/finish pos, status,
-// interval, laps led, laps completed, incidents, and points per race.
-const TRACKS = ["Daytona International Speedway","Talladega Superspeedway","Darlington Raceway","Bristol Motor Speedway",
-  "Martinsville Speedway","Richmond Raceway","Dover Motor Speedway","Charlotte Motor Speedway","Atlanta Motor Speedway",
-  "Texas Motor Speedway","Kansas Speedway","Las Vegas Motor Speedway","Homestead-Miami Speedway","Phoenix Raceway","Chicagoland Speedway"];
-const RACE_DISTANCE = 80; // laps, fixed for simulation
-const LEAGUE_CURRENT_YEAR = new Date().getFullYear(); // most recent season = this year
-
-function mulberry32(seed){
-  return function(){
-    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+/* ------------------------------ configuration ------------------------------ */
+const DEFAULT_CONFIG = {
+  leagueName: 'My League',
+  racesPerSeason: 15,
+  seasonsPerYear: 2,
+  tiers: [
+    { name: 'Ruby',     min: 1,  max: 5,  color: '#FF5C7A' },
+    { name: 'Diamond',  min: 6,  max: 10, color: '#8FC7FF' },
+    { name: 'Platinum', min: 11, max: 15, color: '#7EE8D0' },
+    { name: 'Gold',     min: 16, max: 20, color: '#F2C94C' },
+    { name: 'Silver',   min: 21, max: 30, color: '#C7CDD3' },
+    { name: 'Bronze',   min: 31, max: 40, color: '#C08A52' },
+  ],
+  dash: {
+    enabled: true, pot: 600, finalRaces: 5, maxDeductionPct: 100,
+    base:  [160, 100, 80, 64, 52, 40, 32, 26, 24, 22],   // $ by final standings position
+    share: [25, 20, 15, 12, 10, 7, 5, 3, 2, 1],          // % of the Clean Bonus Pool by cleanliness rank
+  },
+};
+function withDefaults(c){
+  c = c || {};
+  const d = c.dash || {};
+  return {
+    leagueName: c.leagueName || DEFAULT_CONFIG.leagueName,
+    racesPerSeason: Math.max(1, +c.racesPerSeason || DEFAULT_CONFIG.racesPerSeason),
+    seasonsPerYear: Math.max(1, +c.seasonsPerYear || DEFAULT_CONFIG.seasonsPerYear),
+    tiers: (c.tiers && c.tiers.length ? c.tiers : DEFAULT_CONFIG.tiers).map(t => ({ name: t.name, min: +t.min, max: +t.max, color: t.color || '#E8A33D' })),
+    dash: {
+      enabled: d.enabled !== false,
+      pot: +d.pot || DEFAULT_CONFIG.dash.pot,
+      finalRaces: Math.max(1, +d.finalRaces || DEFAULT_CONFIG.dash.finalRaces),
+      maxDeductionPct: d.maxDeductionPct == null ? 100 : +d.maxDeductionPct,
+      base: (d.base && d.base.length ? d.base : DEFAULT_CONFIG.dash.base).map(Number),
+      share: (d.share && d.share.length ? d.share : DEFAULT_CONFIG.dash.share).map(Number),
+    },
   };
 }
-function seededShuffle(arr, rand){
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--){
-    const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+
+/* ------------------------------ iRacing parser ------------------------------ */
+// <parse>
+// Turns one official iRacing "event_result" JSON export into a compact race record.
+function parseEventResult(raw){
+  const D = raw && raw.data;
+  if (!D || !Array.isArray(D.session_results)) throw new Error('This is not an iRacing event_result file.');
+  const sessions = D.session_results;
+  const race = sessions.find(s => s.simsession_type_name === 'Race')
+    || sessions.find(s => /race/i.test(s.simsession_type_name || ''))
+    || sessions[sessions.length - 1];
+  const rows = (race && race.results || []).filter(r => !r.ai);
+  if (!rows.length) throw new Error('No race results found in this file.');
+  const winnerLaps = Math.max(0, ...rows.map(r => r.laps_complete || 0));
+  const results = rows.map(r => ({
+    c: r.cust_id,
+    n: r.display_name,
+    car: r.car_name || '',
+    no: String(r.livery && r.livery.car_number != null ? r.livery.car_number : (r.car_number != null ? r.car_number : '')),
+    st: (r.starting_position >= 0 ? r.starting_position : r.starting_position_in_class || 0) + 1,
+    fin: r.finish_position + 1,
+    out: r.reason_out || 'Running',
+    iv: r.interval,
+    lc: r.laps_complete || 0,
+    ll: r.laps_lead || 0,
+    inc: r.incidents || 0,
+    pts: r.league_points == null || r.league_points < 0 ? 0 : r.league_points,
+    ir: r.newi_rating > 0 ? r.newi_rating : null,
+    srl: r.new_license_level > 0 ? r.new_license_level : null,
+    srs: r.new_sub_level > 0 ? r.new_sub_level : null,
+    cc: r.country_code || '',
+  })).sort((a, b) => a.fin - b.fin);
+  const track = D.track || {};
+  const cfgName = track.config_name && track.config_name !== 'N/A' ? ` ${track.config_name}` : '';
+  return {
+    id: D.subsession_id,
+    seasonId: D.league_season_id || 0,
+    seasonName: D.league_season_name || D.season_name || 'Season',
+    leagueName: D.league_name || '',
+    track: (track.track_name || 'Unknown track') + cfgName,
+    date: D.start_time,
+    laps: D.event_laps_complete || winnerLaps,
+    cautions: D.num_cautions || 0,
+    leadChanges: D.num_lead_changes || 0,
+    sof: D.event_strength_of_field || null,
+    results,
+  };
+}
+// </parse>
+
+/* ------------------------------ the league engine ------------------------------ */
+let DATA = { config: {}, teams: [], drivers: {}, seasons: {}, races: [] };
+let L = null;   // derived league, rebuilt from DATA whenever it changes
+
+function licenseClass(level){ return level >= 21 ? 'Pro' : level >= 17 ? 'A' : level >= 13 ? 'B' : level >= 9 ? 'C' : level >= 5 ? 'D' : 'R'; }
+
+function aggregate(rows){
+  const a = { races: rows.length, wins: 0, top5: 0, top10: 0, poles: 0, points: 0, lapsLed: 0, lapsRun: 0, inc: 0, dnfs: 0,
+    finishSum: 0, startSum: 0, bestStreak: 0 };
+  let run = 0;
+  rows.forEach(r => {
+    a.points += r.points; a.lapsLed += r.lapsLed; a.lapsRun += r.lapsComp; a.inc += r.inc;
+    a.finishSum += r.finish; a.startSum += r.start;
+    if (r.dnf) a.dnfs++;
+    if (r.finish <= 5) a.top5++;
+    if (r.finish <= 10) a.top10++;
+    if (r.start === 1) a.poles++;
+    if (r.finish === 1){ a.wins++; run++; a.bestStreak = Math.max(a.bestStreak, run); } else run = 0;
+  });
+  a.avgFinish = rows.length ? a.finishSum / rows.length : null;
+  a.avgStart = rows.length ? a.startSum / rows.length : null;
+  a.incRace = rows.length ? a.inc / rows.length : null;
   return a;
 }
-const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 
-// Randomly generates a driver's season stats, career stats, standings position, rank,
-// and awards, all derived from one skill value so everything stays internally consistent.
-function pick(rand, arr, count){
-  const a = seededShuffle(arr, rand);
-  return a.slice(0, Math.min(count, a.length));
-}
+function buildLeague(data){
+  const cfg = withDefaults(data.config);
+  const overrides = data.drivers || {};
+  const seasonOv = data.seasons || {};
+  const teams = (data.teams || []).map(t => ({ id: t.id, name: t.name, color: t.color || '#E8A33D' }));
+  const teamById = Object.fromEntries(teams.map(t => [t.id, t]));
+  const races = (data.races || []).filter(r => r.results && r.results.length)
+    .slice().sort((a, b) => new Date(a.date) - new Date(b.date) || a.id - b.id);
 
-function generateStats(d){
-  const rand = mulberry32(Number(d.number) * 2654435761 + 4211);
+  // seasons: every season that has races, plus any season added by hand
+  const seasonMap = new Map();
+  const getSeason = (id) => { if (!seasonMap.has(id)) seasonMap.set(id, { id, name: '', races: [] }); return seasonMap.get(id); };
+  Object.keys(seasonOv).forEach(k => getSeason(Number(k)));
+  races.forEach(r => getSeason(r.seasonId).races.push(r));
+  const seasons = [...seasonMap.values()];
+  seasons.forEach(se => {
+    const o = seasonOv[se.id] || {};
+    se.name = o.name || (se.races[0] ? se.races[0].seasonName : `Season ${Math.abs(se.id)}`);
+    se.startDate = se.races[0] ? se.races[0].date : (o.startDate || new Date().toISOString());
+  });
+  seasons.sort((a, b) => new Date(a.startDate) - new Date(b.startDate) || a.id - b.id);
+  seasons.forEach((se, i) => {
+    const o = seasonOv[se.id] || {};
+    se.index = i;
+    se.year = new Date(se.startDate).getUTCFullYear();
+    se.raceCount = se.races.length;
+    se.complete = typeof o.complete === 'boolean' ? o.complete
+      : ((i < seasons.length - 1 && se.raceCount > 0) || se.raceCount >= cfg.racesPerSeason);
+    se.races.forEach((r, k) => { r.week = k + 1; });
+  });
+  const seasonById = Object.fromEntries(seasons.map(se => [se.id, se]));
+  const current = seasons.length ? seasons[seasons.length - 1] : null;
 
-  // Skill level drives every other number: 0 = back of the pack, 1 = series elite.
-  const skill = clamp(rand() * 0.55 + Math.pow(rand(), 1.6) * 0.45, 0, 1);
-  const t = skill; // drives every stat below; standingsPosition is assigned afterward from actual season points
-
-  const iRating = clamp(Math.round(1400 + t * 4300 + (rand() - 0.5) * 350), 900, 6000);
-  const sr = clamp(+(1.7 + t * 3.4 + (rand() - 0.5) * 0.5).toFixed(2), 1.0, 5.0);
-
-  const wins = clamp(Math.round(t * 9 + (rand() - 0.5) * 2), 0, 12);
-  let top10 = clamp(Math.round(t * 14 + (rand() - 0.5) * 3), wins, 15);
-  let top5 = clamp(Math.round(top10 * (0.5 + t * 0.35)), wins, top10);
-  const avgFinish = +(4 + (1 - t) * 19 + (rand() - 0.5) * 2).toFixed(1);
-  const avgStart = +(avgFinish + (rand() - 0.5) * 2.5).toFixed(1);
-  const poles = clamp(Math.round(t * 7 + (rand() - 0.5) * 2), 0, 10);
-  const lapsLed = clamp(Math.round(t * 950 + rand() * 120), 0, 1200);
-  const lapsRun = Math.round(2050 + rand() * 450);
-  const incRace = +(0.5 + (1 - t) * 5.2 + (rand() - 0.5) * 0.5).toFixed(1);
-  const dnfs = clamp(Math.round((1 - t) * 7 + rand() * 2), 0, 9);
-  const winsInARow = wins > 0 ? clamp(Math.round(rand() * Math.min(wins, 4)), 0, wins) : 0;
-  const points = Math.round(850 + t * 2650 + rand() * 250);
-
-  // Career: scale season-level performance across however many seasons this driver has raced.
-  const yearsActive = clamp(Math.round(1 + rand() * 9), 1, 10);
-  const seasons = yearsActive * 2;
-  const spread = () => 0.55 + rand() * 0.55;
-  let cWins = Math.round(wins * seasons * spread() * 0.6);
-  let cTop5 = Math.max(cWins, Math.round(top5 * seasons * spread() * 0.6));
-  let cTop10 = Math.max(cTop5, Math.round(top10 * seasons * spread() * 0.6));
-  const starts = seasons * 15;
-  cTop10 = Math.min(cTop10, starts);
-  cTop5 = Math.min(cTop5, cTop10);
-  cWins = Math.min(cWins, cTop5);
-  const career = {
-    wins: cWins, top5: cTop5, top10: cTop10, starts,
-    points: Math.round(points * seasons * (0.85 + rand() * 0.3)),
-    avgFinish: +(avgFinish + (rand() - 0.5) * 1.5).toFixed(1),
-    avgStart: +(avgStart + (rand() - 0.5) * 1.5).toFixed(1),
-    poles: Math.min(starts, Math.round(poles * seasons * spread() * 0.5)),
-    lapsLed: Math.round(lapsLed * seasons * spread() * 0.5),
-    lapsRun: Math.round(lapsRun * seasons * (0.97 + rand() * 0.06)),
-    incRace: +(incRace + (rand() - 0.5) * 0.4).toFixed(1),
-    dnfs: Math.round(dnfs * seasons * spread() * 0.6),
-    streak: cWins > 0 ? `${clamp(Math.round(winsInARow + rand() * 3), 1, 8)} in a row` : null,
+  const teamFor = (id, seasonId) => {
+    const ov = overrides[id] || {};
+    if (ov.teamBySeason && Object.prototype.hasOwnProperty.call(ov.teamBySeason, seasonId)) return ov.teamBySeason[seasonId] || null;
+    return ov.team || null;
   };
 
-  // Awards. Season titles and Champion of the Year are derived from the driver's actual
-  // simulated per-season standing (same formula seasonSummary uses) so a 1st-place finish
-  // in the standings always shows up as a title — never randomly skipped or invented.
-  const seasonTags = [];
-  for (let k = 1; k <= yearsActive; k++){
-    const year = LEAGUE_CURRENT_YEAR - yearsActive + k;
-    seasonTags.push(`${year} Winter`, `${year} Summer`);
-  }
-
-  const races = generateCareerLog({ number: d.number, yearsActive, career });
-  const byTag = {};
+  // drivers and their race rows (chronological)
+  const driverMap = new Map();
   races.forEach(r => {
-    const tag = `${r.year} ${r.half}`;
-    (byTag[tag] = byTag[tag] || []).push(r);
-  });
-  // Chance of winning any given season scales steeply with skill: the very best drivers
-  // win close to half their seasons, mid-pack drivers occasionally break through, and
-  // back-markers almost never do.
-  const pTitle = clamp(Math.pow(skill, 2.3) * 0.55, 0, 0.5);
-  const titles = seasonTags.filter(tag => {
-    if (!byTag[tag] || !byTag[tag].length) return false;
-    const [yr, half] = tag.split(' ');
-    const seasonRand = mulberry32(Number(d.number) * 31 + Number(yr) * 7 + (half === 'Summer' ? 3 : 1));
-    return seasonRand() < pTitle;
-  });
-  career.titles = titles;
-
-  const years = [...new Set(seasonTags.map(s => s.split(' ')[0]))];
-  career.champion = years.filter(y => titles.includes(`${y} Winter`) && titles.includes(`${y} Summer`));
-
-  const cleanCount = incRace < 2 ? Math.round(rand() * 2) : (incRace < 3.2 ? Math.round(rand()) : 0);
-  career.cleanest = pick(rand, seasonTags, cleanCount).sort();
-
-  const improvedCount = (yearsActive >= 2 && rand() < 0.35) ? 1 : 0;
-  career.mostImproved = improvedCount ? pick(rand, seasonTags.slice(0, 4), 1) : [];
-
-  const firstYearTags = seasonTags.slice(0, 2);
-  const rookieCount = (yearsActive <= 3 && rand() < 0.5) ? 1 : 0;
-  career.rookie = rookieCount ? pick(rand, firstYearTags, 1) : [];
-
-  // Note: wins/top5/top10/poles/points/avgFinish/avgStart/lapsLed/lapsRun/incRace/dnfs/
-  // winsInARow above are only used to scale the career totals — the actual *current*
-  // season stats are filled in afterward by simulateCurrentSeason, which runs real
-  // head-to-head races across the whole field so race-winner math stays honest
-  // (15 races a season means at most 15 total wins can exist across every driver).
-  return { iRating, sr, skill, yearsActive, career };
-}
-
-DRIVERS.forEach(d => Object.assign(d, generateStats(d)));
-
-// Simulate the actual current 15-race season across the whole field, race by race, so
-// wins/poles/top-fives can never add up to more than the field actually raced for.
-const RACES_PER_SEASON = 15;
-function simulateCurrentSeason(drivers){
-  const totals = {};
-  drivers.forEach(d => {
-    d._rand = mulberry32(Number(d.number) * 2246822519 + 3079);
-    totals[d.number] = { wins:0, top5:0, top10:0, poles:0, points:0, lapsLed:0, lapsRun:0, incTotal:0, dnfs:0, finishSum:0, startSum:0, streak:0, bestStreak:0 };
-  });
-
-  for (let race = 0; race < RACES_PER_SEASON; race++){
-    // Qualifying determines the starting grid.
-    const grid = drivers.map(d => ({ d, score: d.skill + (d._rand() - 0.5) * 0.5 }))
-      .sort((a, b) => b.score - a.score);
-    const startPos = {};
-    grid.forEach((g, i) => { startPos[g.d.number] = i + 1; });
-
-    // The race itself: skill plus race-day variance, with a small DNF chance.
-    const results = drivers.map(d => {
-      const dnfChance = 0.015 + (1 - d.skill) * 0.045;
-      const isDNF = d._rand() < dnfChance;
-      const score = isDNF ? -1 - d._rand() : d.skill + (d._rand() - 0.5) * 0.65;
-      return { d, score, isDNF };
-    }).sort((a, b) => b.score - a.score);
-
-    results.forEach((r, i) => {
-      const d = r.d, a = totals[d.number];
-      const finish = i + 1, start = startPos[d.number];
-      a.finishSum += finish; a.startSum += start;
-      if (finish === 1) a.wins++;
-      if (finish <= 5) a.top5++;
-      if (finish <= 10) a.top10++;
-      if (start === 1) a.poles++;
-      a.points += Math.max(1, Math.round(43 - (finish - 1) * 0.95 - d._rand() * 2));
-      a.incTotal += Math.max(0, Math.round((1 - d.skill) * 4 + d._rand() * 3));
-      if (r.isDNF){ a.dnfs++; a.lapsRun += Math.round(RACE_DISTANCE * (0.1 + d._rand() * 0.7)); }
-      else { a.lapsRun += RACE_DISTANCE; }
-      if (finish === 1) a.lapsLed += Math.round(25 + d._rand() * 45);
-      else if (d._rand() < 0.1) a.lapsLed += Math.round(d._rand() * 10);
-      if (finish === 1){ a.streak++; a.bestStreak = Math.max(a.bestStreak, a.streak); } else { a.streak = 0; }
+    const winnerLaps = Math.max(0, ...r.results.map(x => x.lc));
+    r.results.forEach(res => {
+      let d = driverMap.get(res.c);
+      if (!d){ d = { id: res.c, rows: [] }; driverMap.set(res.c, d); }
+      const lapsDown = winnerLaps - res.lc;
+      // Same layout as iRacing: the leader shows "-", cars on the lead lap show their gap in seconds,
+      // and cars that are laps down show "-1L", "-2L" and so on.
+      const interval = res.fin === 1 ? '-'
+        : res.ivt ? res.ivt
+        : res.iv > 0 ? (res.iv / 10000).toFixed(4)
+        : lapsDown > 0 ? `-${lapsDown}L` : '-';
+      const dnf = res.out !== 'Running';
+      d.rows.push({
+        seasonId: r.seasonId, raceId: r.id, week: r.week, date: r.date, track: r.track,
+        start: res.st, finish: res.fin, status: dnf ? res.out : 'Running', dnf, interval,
+        lapsLed: res.ll, lapsComp: res.lc, inc: res.inc, points: res.pts, field: r.results.length,
+        teamId: teamFor(res.c, r.seasonId), number: res.no, carName: res.car, name: res.n,
+        ir: res.ir, srl: res.srl, srs: res.srs, cc: res.cc,
+      });
     });
-  }
-
-  drivers.forEach(d => {
-    const a = totals[d.number];
-    Object.assign(d, {
-      wins: a.wins, top5: a.top5, top10: a.top10, poles: a.poles, points: a.points,
-      lapsLed: a.lapsLed, lapsRun: a.lapsRun, dnfs: a.dnfs, winsInARow: a.bestStreak,
-      incRace: +(a.incTotal / RACES_PER_SEASON).toFixed(1),
-      avgFinish: +(a.finishSum / RACES_PER_SEASON).toFixed(1),
-      avgStart: +(a.startSum / RACES_PER_SEASON).toFixed(1),
-    });
-    delete d._rand;
   });
+  // drivers added by hand exist even before they have a result
+  Object.keys(overrides).forEach(k => {
+    const id = Number(k);
+    if (overrides[k] && overrides[k].manual && !driverMap.has(id)) driverMap.set(id, { id, rows: [] });
+  });
+  const drivers = [...driverMap.values()];
+  drivers.forEach(d => {
+    const last = d.rows.length ? d.rows[d.rows.length - 1] : null, ov = overrides[d.id] || {};
+    d.manual = !!ov.manual;
+    d.name = ov.name || (last ? last.name : `Driver ${Math.abs(d.id)}`);
+    d.number = ov.number || (last ? last.number : '');
+    d.age = ov.age || null;
+    d.hometown = ov.hometown || '';
+    d.car = last ? last.carName : '';
+    d.country = last ? last.cc : '';
+    d.iRating = ov.iRating != null && ov.iRating !== '' && !isNaN(+ov.iRating) ? +ov.iRating : (last ? last.ir : null);
+    d.srl = last ? last.srl : null;
+    d.sr = last && last.srs != null ? last.srs / 100 : null;
+    d.srOverride = ov.srText || '';
+    d.firstSeasonIndex = d.rows.length ? seasonById[d.rows[0].seasonId].index : Infinity;
+  });
+  const driverById = Object.fromEntries(drivers.map(d => [d.id, d]));
+
+  // standings for every season (hand-added drivers show in the current season even with no races yet)
+  seasons.forEach(se => {
+    const list = drivers.map(d => {
+      const rows = d.rows.filter(r => r.seasonId === se.id);
+      if (!rows.length && !(se === current && d.manual)) return null;
+      const rowsByRace = Object.fromEntries(rows.map(r => [r.raceId, r]));
+      return Object.assign({ d, rows, rowsByRace }, aggregate(rows));
+    }).filter(Boolean);
+    list.sort((a, b) => ((b.races > 0) - (a.races > 0)) || b.points - a.points || b.wins - a.wins || ((a.avgFinish == null ? 99 : a.avgFinish) - (b.avgFinish == null ? 99 : b.avgFinish)) || a.d.name.localeCompare(b.d.name));
+    // drivers who have not raced yet are listed but not ranked
+    list.forEach((st, i) => { st.standing = st.races > 0 ? i + 1 : null; st.behind = list[0].points - st.points; });
+    se.standings = list;
+    se.byId = Object.fromEntries(list.map(st => [st.d.id, st]));
+  });
+
+  // awards, decided only for completed seasons that have races
+  drivers.forEach(d => { d.titles = []; d.champion = []; d.cleanest = []; d.mostImproved = []; d.rookie = []; });
+  seasons.filter(se => se.complete && se.raceCount > 0 && se.standings.length).forEach(se => {
+    se.standings[0].d.titles.push(se.id);
+    const eligible = se.standings.filter(st => st.races >= Math.ceil(se.raceCount / 2));
+    if (eligible.length){
+      [...eligible].sort((a, b) => a.incRace - b.incRace || a.standing - b.standing)[0].d.cleanest.push(se.id);
+    }
+    if (se.index > 0){
+      const rk = se.standings.find(st => st.races > 0 && st.d.firstSeasonIndex === se.index);
+      if (rk) rk.d.rookie.push(se.id);
+      const prev = seasons[se.index - 1];
+      let best = null, bestGain = 0;
+      se.standings.forEach(st => {
+        const was = prev.byId[st.d.id];
+        if (was && was.races > 0 && st.races > 0 && was.standing - st.standing > bestGain){ bestGain = was.standing - st.standing; best = st; }
+      });
+      if (best) best.d.mostImproved.push(se.id);
+    }
+  });
+  const byYear = {};
+  seasons.forEach(se => { (byYear[se.year] = byYear[se.year] || []).push(se); });
+  Object.keys(byYear).forEach(y => {
+    const group = byYear[y];
+    if (group.length >= cfg.seasonsPerYear && group.every(se => se.complete && se.raceCount > 0 && se.standings.length)){
+      const w = group[0].standings[0].d;
+      if (group.every(se => se.standings[0].d === w)) w.champion.push(String(y));
+    }
+  });
+
+  // career and current-season summaries
+  drivers.forEach(d => {
+    const car = aggregate(d.rows);
+    car.streak = car.bestStreak === 0 ? null : car.bestStreak === 1 ? '1 win' : `${car.bestStreak} in a row`;
+    d.career = car;
+    d.cur = current && current.byId[d.id] ? current.byId[d.id] : null;
+    d.standingsPosition = d.cur ? d.cur.standing : null;
+  });
+
+  const tierFor = (pos) => {
+    if (pos == null) return UNRANKED;
+    const T = cfg.tiers;
+    return T.find(t => pos >= t.min && pos <= t.max) || (pos < T[0].min ? T[0] : T[T.length - 1]);
+  };
+
+  return { cfg, teams, teamById, seasons, seasonById, drivers, driverById, current, tierFor, teamFor, dashCache: {}, historyCache: {} };
 }
-simulateCurrentSeason(DRIVERS);
+const UNRANKED = { name: 'Unranked', min: 0, max: 0, color: '#6B7280' };
+const tierFor = (pos) => L.tierFor(pos);
+const posText = (n) => n == null ? '—' : ordinal(n);
+const teamOf = (d, seasonId) => { const id = L.teamFor(d.id, seasonId); return id && L.teamById[id] ? L.teamById[id] : null; };
+const currentTeam = (d) => L.current ? teamOf(d, L.current.id) : null;
+const seasonLabel = (id) => (L.seasonById[id] ? L.seasonById[id].name : String(id));
+const shortCar = (n) => String(n || '').replace(/^NASCAR Cup Series Next Gen /, '');
+const srText = (d) => d.srOverride ? d.srOverride : d.sr == null ? '—' : `${licenseClass(d.srl)} ${d.sr.toFixed(2)}`;
 
-// Standings come straight out of that simulated season's points.
-DRIVERS.sort((a, b) => b.points - a.points).forEach((d, i) => { d.standingsPosition = i + 1; });
-
-function generateCareerLog(d){
-  const c = d.career;
-  const totalSeasons = d.yearsActive * 2;
-  const totalRaces = totalSeasons * 15;
-  const rand = mulberry32(Number(d.number) * 7919 + 13);
-
-  const order = seededShuffle([...Array(totalRaces).keys()], rand);
-  const winSet  = new Set(order.slice(0, Math.min(c.wins, totalRaces)));
-  const rest1   = order.slice(c.wins);
-  const poleSet = new Set(rest1.slice(0, Math.min(c.poles, rest1.length)));
-  const rest2   = rest1.slice(c.poles);
-  const dnfSet  = new Set(rest2.slice(0, Math.min(c.dnfs, rest2.length)));
-
-  let lapsLedBudget = c.lapsLed;
-  const races = [];
-  for (let i = 0; i < totalRaces; i++){
-    const yearIndex = Math.floor(i / 30) + 1; // 1-based, within this driver's career
-    const actualYear = LEAGUE_CURRENT_YEAR - totalSeasons / 2 + yearIndex;
-    const half = (i % 30 < 15) ? 'Winter' : 'Summer';
-    const week = (i % 15) + 1;
-    const track = TRACKS[i % 15];
-    const isWin = winSet.has(i), isPole = poleSet.has(i), isDNF = dnfSet.has(i);
-
-    const start = isPole ? 1 : clamp(Math.round(c.avgStart + (rand() - 0.5) * 12), 1, 40);
-    let finish, status = 'Running', lapsComp = RACE_DISTANCE;
-    if (isWin){ finish = 1; }
-    else if (isDNF){ finish = clamp(Math.round(18 + rand() * 22), 1, 40); status = 'DNF'; lapsComp = Math.round(RACE_DISTANCE * (0.1 + rand() * 0.7)); }
-    else { finish = clamp(Math.round(c.avgFinish + (rand() - 0.5) * 9), 1, 40); }
-
-    const inc = Math.max(0, Math.round(c.incRace + (rand() - 0.5) * 3));
-    let lapsLed = 0;
-    if (isWin && lapsLedBudget > 0){ lapsLed = Math.min(lapsLedBudget, Math.round(10 + rand() * 45)); lapsLedBudget -= lapsLed; }
-    else if (rand() < 0.15 && lapsLedBudget > 0){ lapsLed = Math.min(lapsLedBudget, Math.round(rand() * 15)); lapsLedBudget -= lapsLed; }
-
-    const interval = finish === 1 ? '—' : (status === 'DNF' ? `${Math.max(1, RACE_DISTANCE - lapsComp)} Laps Down` : `-${(rand() * 24 + 0.3).toFixed(2)}s`);
-    const points = Math.max(1, Math.round(43 - (finish - 1) * 0.95 - rand() * 2));
-
-    races.push({ year: actualYear, half, week, track, start, finish, status, interval, lapsLed, lapsComp, inc, points });
+/* ------------------------------ The Dash For Cash ------------------------------ */
+// Top finishers after the final race are paid from the pot on the season's last races.
+// Each driver's incident points over those races = the % deducted from their base payout;
+// all deductions fund the Clean Bonus Pool, shared out by cleanliness rank.
+function getDash(sid){
+  if (L.dashCache[sid]) return L.dashCache[sid];
+  const se = L.seasonById[sid], cfg = L.cfg, dc = cfg.dash;
+  const ranked = se.standings.filter(st => st.standing != null);
+  const places = Math.min(dc.base.length, ranked.length);
+  const startWeek = se.complete ? Math.max(1, se.raceCount - dc.finalRaces + 1) : cfg.racesPerSeason - dc.finalRaces + 1;
+  let res;
+  if (!dc.enabled) res = { state: 'disabled', se };
+  else if (se.raceCount < startWeek) res = { state: 'notStarted', se, startWeek };
+  else {
+    const windowRaces = se.races.filter(r => r.week >= startWeek);
+    const incOf = (st) => windowRaces.map(r => st.rowsByRace[r.id] ? st.rowsByRace[r.id].inc : null);
+    const rows = ranked.slice(0, places).map((st, i) => {
+      const mults = incOf(st);
+      const incPts = sumOf(mults, x => x || 0);
+      const pct = Math.min(dc.maxDeductionPct, incPts);
+      const baseC = Math.round(dc.base[i] * 100);
+      const dedC = Math.round(baseC * pct / 100);
+      return { d: st.d, st, pos: i + 1, mults, incPts, pct, baseC, dedC, afterC: baseC - dedC };
+    });
+    const order = [...rows].sort((a, b) => (a.incPts - b.incPts) || (a.pos - b.pos));
+    const poolC = sumOf(rows, r => r.dedC);
+    let paid = 0;
+    order.forEach((r, i) => {
+      r.cleanRank = i + 1;
+      r.share = dc.share[i] || 0;
+      r.bonusC = Math.floor(poolC * r.share / 100);
+      paid += r.bonusC;
+    });
+    if (order.length) order[0].bonusC += poolC - paid;       // leftover cents go to the cleanest driver
+    rows.forEach(r => { r.finalC = r.afterC + r.bonusC; r.diffC = r.finalC - r.baseC; });
+    const payoutOrder = [...rows].sort((a, b) => b.finalC - a.finalC);
+    rows.forEach(r => { r.payoutRank = payoutOrder.indexOf(r) + 1; });
+    const cutPts = rows.length ? rows[rows.length - 1].st.points : 0;
+    const out = ranked.slice(places).map(st => {
+      const mults = incOf(st);
+      return { d: st.d, st, pos: st.standing, behind: cutPts - st.points, mults, incPts: sumOf(mults, x => x || 0) };
+    });
+    res = { state: 'ok', se, provisional: !se.complete, startWeek, windowRaces, rows, out, poolC,
+      basePaidC: sumOf(rows, r => r.afterC), cutPts, places };
   }
-  return races;
+  return (L.dashCache[sid] = res);
+}
+// A driver's Dash For Cash career across completed seasons.
+function dashCareer(d){
+  let earnedC = 0, inMoney = 0, seasons = 0; const ranks = [];
+  L.seasons.filter(se => se.complete && se.byId[d.id] && se.byId[d.id].races > 0).forEach(se => {
+    seasons++;
+    const dd = getDash(se.id);
+    if (dd.state !== 'ok') return;
+    const row = dd.rows.find(r => r.d === d);
+    if (row){ earnedC += row.finalC; inMoney++; ranks.push(row.cleanRank); }
+  });
+  return { earnedC, inMoney, seasons, ranks, avgClean: ranks.length ? sumOf(ranks, x => x) / ranks.length : null };
+}
+function rankHistory(d){
+  const counts = L.cfg.tiers.map(t => ({ tier: t, count: 0 }));
+  L.seasons.filter(se => se.complete && se.byId[d.id] && se.byId[d.id].races > 0).forEach(se => {
+    const t = tierFor(se.byId[d.id].standing);
+    counts.find(c => c.tier === t).count++;
+  });
+  return counts.filter(c => c.count > 0);
+}
+/* ------------------------------ teams ------------------------------ */
+// average of a stat over members who have actually raced this season
+function avgOver(members, key){
+  const raced = members.filter(d => d.cur.races > 0);
+  return raced.length ? sumOf(raced, d => d.cur[key]) / raced.length : null;
 }
 
-const lastName = (full) => full.trim().split(/\s+/).slice(-1)[0];
+function buildTeams(){
+  const cur = L.current;
+  const teams = L.teams.map(t => {
+    const members = cur ? L.drivers.filter(d => d.cur && currentTeam(d) === t).sort((a, b) => (a.standingsPosition ?? 999) - (b.standingsPosition ?? 999)) : [];
+    const h = getTeamHistory(t.id);
+    const tot = h.reduce((a, e) => { Object.keys(a).forEach(k => { a[k] += e.totals[k]; }); return a; }, emptyTotals());
+    return {
+      id: t.id, name: t.name, color: t.color, members,
+      cars: [...new Set(members.map(d => shortCar(d.car)))],
+      wins: sumOf(members, d => d.cur.wins), top5: sumOf(members, d => d.cur.top5), top10: sumOf(members, d => d.cur.top10),
+      poles: sumOf(members, d => d.cur.poles), points: sumOf(members, d => d.cur.points),
+      lapsLed: sumOf(members, d => d.cur.lapsLed), dnfs: sumOf(members, d => d.cur.dnfs),
+      avgFinish: avgOver(members, 'avgFinish'),
+      incRace: avgOver(members, 'incRace'),
+      cWins: tot.wins, cPoints: tot.points,
+      cTitles: sumOf(h, e => e.titles.length), cChamps: sumOf(h, e => e.champion.length),
+    };
+  });
+  teams.sort((a, b) => b.points - a.points || b.wins - a.wins);
+  let rank = 0;
+  teams.forEach(t => { t.standing = t.members.some(d => d.cur.races > 0) ? ++rank : null; });
+  return teams;
+}
+
+function emptyTotals(){ return { points: 0, wins: 0, top5: 0, top10: 0, poles: 0, inc: 0, dnfs: 0, races: 0 }; }
+
+// Every driver who raced for a team, grouped into stints of consecutive seasons.
+function getTeamHistory(teamId){
+  if (L.historyCache[teamId]) return L.historyCache[teamId];
+  const cur = L.current;
+  const entries = [];
+  L.drivers.forEach(d => {
+    const rows = d.rows.filter(r => r.teamId === teamId);
+    if (!rows.length) return;
+    const idxs = [...new Set(rows.map(r => L.seasonById[r.seasonId].index))].sort((a, b) => a - b);
+    let i = 0;
+    while (i < idxs.length){
+      let j = i;
+      while (j + 1 < idxs.length && idxs[j + 1] === idxs[j] + 1) j++;
+      const stintSeasons = L.seasons.filter(se => se.index >= idxs[i] && se.index <= idxs[j]);
+      const ids = new Set(stintSeasons.map(se => se.id));
+      const stintRows = rows.filter(r => ids.has(r.seasonId));
+      const a = aggregate(stintRows);
+      const years = [...new Set(stintSeasons.map(se => se.year))];
+      const present = !!cur && ids.has(cur.id);
+      const now = cur && d.cur ? currentTeam(d) : null;
+      entries.push({
+        d, name: d.name, number: d.number, seasons: stintSeasons,
+        startLabel: stintSeasons[0].name, endLabel: stintSeasons[stintSeasons.length - 1].name,
+        startYear: Math.min(...years), endYear: Math.max(...years), present,
+        status: present ? 'current' : (d.cur && now ? 'former' : 'historic'), nowWith: now ? now.name : null,
+        totals: { points: a.points, wins: a.wins, top5: a.top5, top10: a.top10, poles: a.poles, inc: a.inc, dnfs: a.dnfs, races: a.races },
+        titles: d.titles.filter(id => ids.has(id)),
+        champion: d.champion.filter(y => years.includes(Number(y))),
+      });
+      i = j + 1;
+    }
+  });
+  // drivers added by hand who are on the team this season but have no race yet
+  if (cur) L.drivers.forEach(d => {
+    if (d.cur && d.cur.races === 0 && currentTeam(d) && currentTeam(d).id === teamId){
+      entries.push({ d, name: d.name, number: d.number, seasons: [cur], startLabel: cur.name, endLabel: cur.name,
+        startYear: cur.year, endYear: cur.year, present: true, status: 'current', nowWith: null,
+        totals: { points: 0, wins: 0, top5: 0, top10: 0, poles: 0, inc: 0, dnfs: 0, races: 0 }, titles: [], champion: [] });
+    }
+  });
+  return (L.historyCache[teamId] = entries);
+}
+
+// Dash For Cash results for a team: every time one of its drivers made the tournament while driving for it.
+function teamDashStats(teamId){
+  const byDriver = new Map(), apps = [];
+  L.seasons.filter(se => se.complete).forEach(se => {
+    const dd = getDash(se.id);
+    if (dd.state !== 'ok') return;
+    dd.rows.forEach(r => {
+      if (r.st.rows[0].teamId !== teamId) return;
+      const e = { d: r.d, seasonId: se.id, pos: r.payoutRank, finalC: r.finalC };
+      apps.push(e);
+      if (!byDriver.has(r.d)) byDriver.set(r.d, []);
+      byDriver.get(r.d).push(e);
+    });
+  });
+  const avg = (f) => apps.length ? sumOf(apps, f) / apps.length : null;
+  return { apps, byDriver, count: apps.length, avgPos: avg(e => e.pos), totalC: sumOf(apps, e => e.finalC),
+    best: apps.length ? Math.min(...apps.map(e => e.pos)) : null };
+}
+
+/* ------------------------------ shared UI ------------------------------ */
+const setApp = (html, keepScroll) => { document.getElementById('app').innerHTML = html; if (!keepScroll) window.scrollTo(0, 0); };
+const setIntro = (t) => { document.getElementById('intro').textContent = t || ''; };
+const adminLink = '<a href="#admin" class="inline-link">League admin</a>';
+const f1 = (n) => n == null ? '—' : n.toFixed(1);
+
 function viewToggle(active){
   return `
     <div class="view-toggle">
       <button class="vt-btn ${active === 'drivers' ? 'active' : ''}" onclick="location.hash=''">Drivers</button>
       <button class="vt-btn ${active === 'teams' ? 'active' : ''}" onclick="location.hash='teams'">Teams</button>
+      <button class="vt-btn ${active === 'dash' ? 'active' : ''}" onclick="location.hash='dash'">The Dash For Cash tournament</button>
     </div>`;
 }
+function emptyState(title, body){
+  return `<div class="empty-state"><h2>${title}</h2><p>${body}</p></div>`;
+}
+const noDataState = () => emptyState('No race data yet',
+  `Add your first iRacing result file in the ${adminLink}, download the updated <b>league-data.json</b>, and upload it to your repository's <b>data</b> folder.`);
 
+function rankTag(standing){
+  const t = tierFor(standing);
+  return `<span class="rank-tag" style="color:${esc(t.color)}">${gemSVG(t.color)}${esc(t.name)}</span>`;
+}
+
+// Driver chooser: season stats or career stats
+function closeDriverMenu(){ const m = document.getElementById('driverMenu'); if (m) m.remove(); }
+function goTo(hash){ closeDriverMenu(); location.hash = hash; }
+function openDriverMenu(e, el, id){
+  e.stopPropagation();
+  closeDriverMenu();
+  const d = L.driverById[id];
+  const m = document.createElement('div');
+  m.className = 'driver-menu'; m.id = 'driverMenu';
+  m.innerHTML = `
+    <div class="dm-title">#${esc(d.number)} ${esc(d.name)}</div>
+    ${d.cur ? `<button onclick="goTo('season-${id}')">Current Season Stats</button>` : ''}
+    <button onclick="goTo('driver-${id}')">Career Total Stats</button>`;
+  document.body.appendChild(m);
+  const r = el.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left + 30, window.innerWidth - m.offsetWidth - 8));
+  let top = r.bottom + 4;
+  if (top + m.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - m.offsetHeight - 4);
+  m.style.left = left + 'px'; m.style.top = top + 'px';
+}
+document.addEventListener('click', closeDriverMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDriverMenu(); });
+window.addEventListener('hashchange', closeDriverMenu);
+
+function wireSortMenu(onPick){
+  const btn = document.getElementById('sortBtn'), menu = document.getElementById('sortMenu');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('button[data-sort]').forEach(b => b.addEventListener('click', () => onPick(b.dataset.sort)));
+  document.addEventListener('click', () => { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }, { once: true });
+}
+const sortControl = (label, options) => `
+  <div class="controls">
+    <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
+      <span id="sortLabel">${esc(label)}</span>
+      <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
+    </button>
+    <div class="sort-menu" id="sortMenu">${options.map(([k, t]) => `<button data-sort="${k}">${esc(t)}</button>`).join('')}</div>
+  </div>`;
+
+/* ------------------------------ Drivers page ------------------------------ */
 const DRIVER_SORTS = {
-  default:   { label:'Sort: Points Standings/Rank',       fn:(a,b) => a.standingsPosition - b.standingsPosition },
-  team:      { label:'Sort: Team (A–Z)',                  fn:(a,b) => a.team.localeCompare(b.team) || (a.standingsPosition - b.standingsPosition) },
-  name:      { label:'Sort: A–Z (Last Name)',             fn:(a,b) => lastName(a.name).localeCompare(lastName(b.name)) },
-  number:    { label:'Sort: Car Number (Low–High)',       fn:(a,b) => Number(a.number) - Number(b.number) },
-  cPoints:   { label:'Sort: Career Points (Best–Worst)',  fn:(a,b) => b.career.points - a.career.points },
-  cWins:     { label:'Sort: Career Wins (Most–Least)',    fn:(a,b) => b.career.wins - a.career.wins },
-  champs:    { label:'Sort: Championships (Most–Least)',  fn:(a,b) => (b.career.champion.length - a.career.champion.length) || (b.career.titles.length - a.career.titles.length) },
+  default: { label: 'Sort: Points Standings/Rank',      fn: (a, b) => (a.standingsPosition ?? 999) - (b.standingsPosition ?? 999) || a.name.localeCompare(b.name) },
+  team:    { label: 'Sort: Team (A–Z)',                 fn: (a, b) => (currentTeam(a) ? currentTeam(a).name : '~').localeCompare(currentTeam(b) ? currentTeam(b).name : '~') || ((a.standingsPosition ?? 999) - (b.standingsPosition ?? 999)) },
+  name:    { label: 'Sort: A–Z (Last Name)',            fn: (a, b) => lastName(a.name).localeCompare(lastName(b.name)) },
+  number:  { label: 'Sort: Car Number (Low–High)',      fn: (a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0) },
+  cPoints: { label: 'Sort: Career Points (Best–Worst)', fn: (a, b) => b.career.points - a.career.points },
+  cWins:   { label: 'Sort: Career Wins (Most–Least)',   fn: (a, b) => b.career.wins - a.career.wins },
+  champs:  { label: 'Sort: Championships (Most–Least)', fn: (a, b) => (b.champion.length - a.champion.length) || (b.titles.length - a.titles.length) },
 };
 
-function driverRowHTML(d){
-  const tier = tierFor(d.standingsPosition);
+function driverRowHTML(d, leaderPts){
+  const tier = tierFor(d.standingsPosition), c = d.cur, team = currentTeam(d);
+  const behind = leaderPts - c.points;
   return `
-    <tr style="box-shadow:inset 4px 0 0 ${tier.fill}">
-      <td class="c-pos">
-        <span class="pos-wrap">
-          <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${tier.fill}"/></svg>
-          <b>${d.standingsPosition}</b>
-        </span>
-      </td>
+    <tr style="box-shadow:inset 4px 0 0 ${esc(tier.color)}">
+      <td class="c-pos"><span class="pos-wrap">${gemSVG(tier.color)}<b>${d.standingsPosition == null ? "–" : d.standingsPosition}</b></span></td>
       <td class="c-name">
-        <button class="name-link" onclick="openDriverMenu(event, this, '${d.number}')"><span class="n-num">#${d.number}</span> ${d.name}</button>
-        <div class="n-tier" style="color:${tier.fill}">${tier.name.toUpperCase()}</div>
+        <button class="name-link" onclick="openDriverMenu(event, this, ${d.id})"><span class="n-num">#${esc(d.number)}</span> ${esc(d.name)}</button>
+        <div class="n-tier" style="color:${esc(tier.color)}">${esc(tier.name.toUpperCase())}</div>
       </td>
-      <td class="c-team"><button class="name-link team-link" style="color:${TEAM_COLORS[d.team] || 'var(--amber)'}" onclick="location.hash='team-${teamSlug(d.team)}'">${d.team}</button><div>${d.car}</div></td>
-      <td>${d.wins}</td><td>${d.top5}</td><td>${d.top10}</td>
-      <td class="c-pts">${fmt(d.points)}</td>
-      <td class="c-sep">${d.career.wins}</td><td>${d.career.titles.length}</td><td>${d.career.champion.length}</td>
+      <td class="c-team">${team
+        ? `<button class="name-link team-link" style="color:${esc(team.color)}" onclick="location.hash='team-${esc(team.id)}'">${esc(team.name)}</button>`
+        : '<span class="dim">—</span>'}<div>${esc(shortCar(d.car))}</div></td>
+      <td>${c.wins}</td><td>${c.top5}</td><td>${c.top10}</td><td>${c.poles}</td>
+      <td>${c.races}</td><td>${c.inc}</td>
+      <td class="c-pts">${fmt(c.points)}</td>
+      <td class="${behind > 0 ? 'neg' : ''}">${behind > 0 ? '-' + behind : 'Leader'}</td>
+      <td>${fmt(c.lapsRun)}</td>
     </tr>`;
 }
 
 function renderDrivers(sortKey){
   sortKey = DRIVER_SORTS[sortKey] ? sortKey : 'default';
   window.__lastSort = sortKey;
-  document.getElementById('intro').textContent = "Click a driver's name to choose between their current season stats and their career total stats.";
-  const sorted = [...DRIVERS].sort(DRIVER_SORTS[sortKey].fn);
-  document.getElementById('app').innerHTML = `
+  const se = L.current;
+  if (!se) { setIntro(''); setApp(`${viewToggle('drivers')}${noDataState()}`); return; }
+  setIntro("Click a driver's name to choose between their current season stats and their career total stats.");
+  const list = L.drivers.filter(d => d.cur).sort(DRIVER_SORTS[sortKey].fn);
+  const leaderPts = Math.max(...list.map(d => d.cur.points));
+  setApp(`
     ${viewToggle('drivers')}
     <div class="list-header"><h1>Driver Stats</h1></div>
+    <p class="dash-sub">${esc(se.name)} · ${se.raceCount} of ${L.cfg.racesPerSeason} races completed${se.complete ? ' · season complete' : ''}</p>
     <div class="legend">
-      ${TIERS.map(t => `
-        <div class="legend-item">
-          <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${t.fill}"/></svg>
-          <span style="color:${t.fill}">${t.name}</span>
-          <span class="legend-range">${ordinal(t.min)}–${ordinal(t.max)}</span>
-        </div>`).join('')}
+      ${L.cfg.tiers.map(t => `
+        <div class="legend-item">${gemSVG(t.color)}<span style="color:${esc(t.color)}">${esc(t.name)}</span>
+          <span class="legend-range">${ordinal(t.min)}–${ordinal(t.max)}</span></div>`).join('')}
     </div>
-    <div class="controls">
-      <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
-        <span id="sortLabel">${DRIVER_SORTS[sortKey].label}</span>
-        <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
-      </button>
-      <div class="sort-menu" id="sortMenu">
-        <button data-sort="default">Points Standings/Rank</button>
-        <button data-sort="team">Team (A–Z)</button>
-        <button data-sort="name">A–Z (Last Name)</button>
-        <button data-sort="number">Car Number (Low–High)</button>
-        <button data-sort="cPoints">Career Points (Best–Worst)</button>
-        <button data-sort="cWins">Career Wins (Most–Least)</button>
-        <button data-sort="champs">Championships (Most–Least)</button>
-      </div>
-    </div>
+    ${sortControl(DRIVER_SORTS[sortKey].label, Object.keys(DRIVER_SORTS).map(k => [k, DRIVER_SORTS[k].label.replace('Sort: ', '')]))}
     <div class="drivers-wrap">
       <table class="drivers-table">
         <thead>
-          <tr class="grp"><th colspan="3"></th><th colspan="4" class="grp-title">CURRENT SEASON</th><th colspan="3" class="c-sep grp-title">CAREER</th></tr>
-          <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Wins</th><th>Top 5</th><th>Top 10</th><th>Points</th><th class="c-sep">Wins</th><th>Season Titles</th><th>Champion of the Year</th></tr>
+          <tr class="grp"><th colspan="12" class="grp-title">CURRENT SEASON · ${esc(se.name.toUpperCase())}</th></tr>
+          <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Wins</th><th>Top 5</th><th>Top 10</th><th>Poles</th><th>Races</th><th>Incident Points</th><th>Points</th><th>Points Behind</th><th>Total Laps Run</th></tr>
         </thead>
-        <tbody>${sorted.map(driverRowHTML).join('')}</tbody>
+        <tbody>${list.map(d => driverRowHTML(d, leaderPts)).join('')}</tbody>
       </table>
-    </div>`;
-
-  const sortBtn = document.getElementById('sortBtn');
-  const sortMenu = document.getElementById('sortMenu');
-  sortBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = sortMenu.classList.toggle('open');
-    sortBtn.setAttribute('aria-expanded', open);
-  });
-  sortMenu.querySelectorAll('button[data-sort]').forEach(btn => {
-    btn.addEventListener('click', () => renderDrivers(btn.dataset.sort));
-  });
-  document.addEventListener('click', () => {
-    sortMenu.classList.remove('open');
-    sortBtn.setAttribute('aria-expanded', 'false');
-  }, { once:true });
+    </div>`);
+  wireSortMenu(renderDrivers);
 }
 
-// ---------- Teams ----------
-const TEAM_COLORS = {
-  'Team Redline':'#E5484D', 'Team Vantage':'#3E8EF7', 'Apex Dynamics':'#F5A524',
-  'Ironclad Racing':'#9AA4B2', 'Steel City Motorsports':'#2EC4B6', 'Blackwood Racing':'#A78BFA',
-};
-const sumBy = (arr, fn) => arr.reduce((s, x) => s + fn(x), 0);
-
-function buildTeams(){
-  const names = [...new Set(DRIVERS.map(d => d.team))];
-  const teams = names.map(name => {
-    const m = DRIVERS.filter(d => d.team === name).sort((a, b) => a.standingsPosition - b.standingsPosition);
-    return {
-      name, members: m, color: TEAM_COLORS[name] || '#E8A33D',
-      cars: [...new Set(m.map(d => d.car))],
-      wins: sumBy(m, d => d.wins), top5: sumBy(m, d => d.top5), top10: sumBy(m, d => d.top10),
-      poles: sumBy(m, d => d.poles), points: sumBy(m, d => d.points), lapsLed: sumBy(m, d => d.lapsLed),
-      dnfs: sumBy(m, d => d.dnfs),
-      avgFinish: +(sumBy(m, d => d.avgFinish) / m.length).toFixed(1),
-      incRace: +(sumBy(m, d => d.incRace) / m.length).toFixed(1),
-      cWins: sumBy(m, d => d.career.wins), cTitles: sumBy(m, d => d.career.titles.length),
-      cChamps: sumBy(m, d => d.career.champion.length), cPoints: sumBy(m, d => d.career.points),
-    };
-  });
-  teams.sort((a, b) => b.points - a.points).forEach((t, i) => { t.standing = i + 1; });
-  return teams;
-}
-
-function teamCardHTML(t){
-  const initials = t.name.split(' ').filter(w => w.toLowerCase() !== 'team').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const best = t.members.reduce((a, b) => (b.points > a.points ? b : a));
-  const roster = t.members.map(d => {
-    const tier = tierFor(d.standingsPosition);
-    return `<div class="roster-row" onclick="openDriverMenu(event, this, '${d.number}')">
-      <span class="r-num">#${d.number}</span>
-      <svg class="gem-sm" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${tier.fill}"/></svg>
-      <span class="r-name">${d.name}</span>
-      <span class="r-pos">${ordinal(d.standingsPosition)}</span>
-      <span class="r-pts">${fmt(d.points)}</span>
-    </div>`;
-  }).join('');
+/* ------------------------------ driver cards ------------------------------ */
+function headerHTML(d, showRank){
+  const team = currentTeam(d), c = d.cur, tier = c ? tierFor(d.standingsPosition) : null;
+  const meta = [d.age ? `Age ${esc(d.age)}` : '', d.hometown ? esc(d.hometown) : ''].filter(Boolean).join(' · ');
   return `
-  <div class="card team-row" style="border-color:${t.color}; cursor:default;">
-    <div class="tr-id">
-      <div class="team-badge" style="background:${t.color}">${initials}</div>
-      <div class="tr-id-text">
-        <div class="team-name">${t.name}</div>
-        <div class="team-sub">${t.members.length} drivers · ${t.cars.join(' · ')}</div>
+    <div class="head">
+      <div class="number-plate">${esc(d.number)}</div>
+      <div class="id"><div class="name">${esc(d.name)}</div></div>
+      <div class="ratings">
+        <div class="row"><div class="v">${d.iRating == null ? '—' : esc(d.iRating)}</div><div class="l">IRATING</div></div>
+        <div class="row"><div class="v">${esc(srText(d))}</div><div class="l">SAFETY RATING</div></div>
       </div>
-      <div class="team-pos"><div class="v" style="color:${t.color}">${ordinal(t.standing)}</div><div class="l">TEAM STANDING</div></div>
+    </div>
+    <div class="subhead">
+      <div class="team">${team ? `<b style="color:${esc(team.color)}">${esc(team.name)}</b> · ` : ''}${esc(shortCar(d.car))}</div>
+      ${meta ? `<div class="meta">${meta}</div>` : ''}
+    </div>
+    ${showRank && tier ? `
+    <div class="rank">
+      ${gemSVG(tier.color, 'gem')}
+      <div class="rtext">
+        <div class="tier" style="color:${esc(tier.color)}">${esc(tier.name.toUpperCase())}</div>
+        <div class="pos">${d.standingsPosition == null ? 'No races yet this season' : ordinal(d.standingsPosition) + ' in season points'}</div>
+      </div>
+    </div>` : ''}`;
+}
+
+function cardHTML(d){
+  const c = d.cur, tier = tierFor(d.standingsPosition);
+  return `
+  <div class="card" style="border-color:${esc(tier.color)}" onclick="location.hash='driver-${d.id}'">
+    ${headerHTML(d, true)}
+    <div class="headline">
+      <div><div class="n">${c.wins}</div><div class="l">WINS</div></div>
+      <div><div class="n">${c.top5}</div><div class="l">TOP 5</div></div>
+      <div><div class="n">${c.top10}</div><div class="l">TOP 10</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="l">Season starts</span><span class="v">${c.races}</span></div>
+      <div class="stat"><span class="l">Season points</span><span class="v">${fmt(c.points)}</span></div>
+      <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(c.avgFinish)}</span></div>
+      <div class="stat"><span class="l">Avg start</span><span class="v">${f1(c.avgStart)}</span></div>
+      <div class="stat"><span class="l">Poles</span><span class="v">${c.poles}</span></div>
+      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(c.lapsLed)}</span></div>
+      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(c.lapsRun)}</span></div>
+      <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(c.incRace)}</span></div>
+      <div class="stat"><span class="l">DNFs</span><span class="v hot">${c.dnfs}</span></div>
+      <div class="stat"><span class="l">Race wins in a row</span><span class="v good">${c.bestStreak}</span></div>
+    </div>
+    <div class="foot">${esc(L.cfg.leagueName.toUpperCase())}</div>
+  </div>`;
+}
+
+function chipRow(items, cls){
+  return items.length ? `<div class="chips">${items.map(x => `<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>` : '<div class="empty">—</div>';
+}
+
+function careerCardHTML(d){
+  const c = d.career, dc = dashCareer(d), ranks = rankHistory(d);
+  return `
+  <div class="card" style="border-color:#ffffff; cursor:default;">
+    ${headerHTML(d, false)}
+    <div class="headline">
+      <div><div class="n">${c.wins}</div><div class="l">WINS</div></div>
+      <div><div class="n">${c.top5}</div><div class="l">TOP 5</div></div>
+      <div><div class="n">${c.top10}</div><div class="l">TOP 10</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="l">Career starts</span><span class="v">${fmt(c.races)}</span></div>
+      <div class="stat"><span class="l">Career points</span><span class="v">${fmt(c.points)}</span></div>
+      <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(c.avgFinish)}</span></div>
+      <div class="stat"><span class="l">Avg start</span><span class="v">${f1(c.avgStart)}</span></div>
+      <div class="stat"><span class="l">Poles</span><span class="v">${c.poles}</span></div>
+      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(c.lapsLed)}</span></div>
+      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(c.lapsRun)}</span></div>
+      <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(c.incRace)}</span></div>
+      <div class="stat"><span class="l">DNFs</span><span class="v hot">${c.dnfs}</span></div>
+      <div class="stat"><span class="l">Longest win streak</span><span class="v good">${c.streak || '—'}</span></div>
+    </div>
+    <div class="section"><div class="h">SEASON TITLES WON</div>
+      ${d.titles.length ? chipRow(d.titles.map(seasonLabel), '') : '<div class="empty">No titles yet</div>'}</div>
+    <div class="section"><div class="h">CHAMPION OF THE YEAR</div>${chipRow(d.champion, 'champ')}</div>
+    <div class="section"><div class="h">CLEANEST DRIVER AWARD</div>${chipRow(d.cleanest.map(seasonLabel), 'clean')}</div>
+    <div class="section"><div class="h">MOST IMPROVED DRIVER</div>${chipRow(d.mostImproved.map(seasonLabel), 'clean')}</div>
+    <div class="section"><div class="h">ROOKIE OF THE SEASON</div>${chipRow(d.rookie.map(seasonLabel), 'clean')}</div>
+    <div class="section">
+      <div class="h">RANKS ACHIEVED</div>
+      ${ranks.length ? `<div class="rank-history">${ranks.map(r => `
+        <div class="rank-chip">${gemSVG(r.tier.color)}<span class="rank-chip-name" style="color:${esc(r.tier.color)}">${esc(r.tier.name)}</span>
+          <span class="rank-chip-count">×${r.count}</span></div>`).join('')}</div>`
+        : '<div class="empty">Ranks are awarded when a season is completed</div>'}
+    </div>
+    <div class="section">
+      <div class="h">THE DASH FOR CASH</div>
+      <div class="dash-tiles">
+        <div class="tot sm"><div class="n">${money(dc.earnedC)}</div><div class="l">Total Earned</div></div>
+        <div class="tot sm"><div class="n">${dc.inMoney}<span class="of"> / ${dc.seasons}</span></div><div class="l">Seasons In The Money</div></div>
+        <div class="tot sm"><div class="n">${dc.avgClean === null ? '—' : '#' + dc.avgClean.toFixed(1)}</div><div class="l">Avg Cleanliness Rank</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <button class="log-btn" onclick="location.hash='log-${d.id}'">Career Performance Log &nearr;</button>
+    </div>
+    <div class="foot">${esc(L.cfg.leagueName.toUpperCase())}</div>
+  </div>`;
+}
+
+function driverOr404(id){
+  const d = L.driverById[id];
+  if (!d) setApp(`<div class="detail-wrap"><button class="back-link" onclick="location.hash=''">&larr; All Drivers</button>${emptyState('Driver not found', 'That driver has no races in the league data.')}</div>`);
+  return d;
+}
+
+function renderDetail(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  setApp(`
+    <div class="detail-wrap">
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+      </div>
+      <div class="list-header"><h1>Career Total Driver Stats</h1></div>
+      <div class="page-title"><h1>${esc(L.cfg.leagueName)} Driver Card</h1><p>CAREER STATS · ${d.career.races} RACE${d.career.races === 1 ? '' : 'S'}</p></div>
+      ${careerCardHTML(d)}
+    </div>`);
+}
+
+function renderSeasonDetail(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  setApp(`
+    <div class="detail-wrap">
+      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
+      <div class="list-header"><h1>Current Season Driver Card</h1></div>
+      ${d.cur ? cardHTML(d) : emptyState('Not in the current season', `${esc(d.name)} has no races in ${esc(L.current.name)}.`)}
+      <div class="season-actions"><button class="log-btn" onclick="location.hash='driver-${d.id}'">View Career Card &rarr;</button></div>
+    </div>`);
+}
+
+/* ------------------------------ career performance log ------------------------------ */
+function seasonSummary(d, se){
+  const rows = d.rows.filter(r => r.seasonId === se.id);
+  const a = aggregate(rows), st = se.byId[d.id];
+  const awards = [];
+  if (d.titles.includes(se.id)) awards.push('Season Title');
+  if (d.champion.includes(String(se.year)) && se.index === Math.max(...L.seasons.filter(x => x.year === se.year).map(x => x.index))) awards.push('Champion of the Year');
+  if (d.cleanest.includes(se.id)) awards.push('Cleanest Driver Award');
+  if (d.mostImproved.includes(se.id)) awards.push('Most Improved Driver');
+  if (d.rookie.includes(se.id)) awards.push('Rookie of the Season');
+  return Object.assign({ rows, standing: st.standing, tier: tierFor(st.standing), awards }, a);
+}
+
+function dashSeasonLine(d, se){
+  const dd = getDash(se.id);
+  if (dd.state === 'disabled') return '';
+  if (dd.state === 'notStarted') return `Dash For Cash: begins at Race ${dd.startWeek}`;
+  const row = dd.rows.find(r => r.d === d);
+  const tag = dd.provisional ? ' <span class="dim">(live — season in progress)</span>' : '';
+  if (row) return `Dash For Cash: <b>${ordinal(row.pos)}</b> · ${dd.provisional ? 'projected' : 'earned'} <b>${money(row.finalC)}</b> · cleanliness rank <b>#${row.cleanRank}</b>${tag}`;
+  const o = dd.out.find(r => r.d === d);
+  return `Dash For Cash: <b>Out of the money</b>${o && o.behind > 0 ? ` · ${o.behind} pts behind the cut` : ''}${tag}`;
+}
+
+function renderLog(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  const mySeasons = L.seasons.filter(se => se.byId[d.id] && se.byId[d.id].races > 0);
+  const years = [...new Set(mySeasons.map(se => se.year))].sort((a, b) => b - a);
+  const raceRows = (rows) => rows.map(r => `
+    <tr class="${r.dnf ? 'dnf' : ''}">
+      <td>${r.week}</td><td>${new Date(r.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+      <td>${esc(r.track)}</td><td>${r.start}</td><td>${r.finish}</td><td>${esc(r.status)}</td>
+      <td>${esc(r.interval)}</td><td>${r.lapsLed}</td><td>${r.lapsComp}</td><td>${r.inc}</td><td>${r.points}</td>
+    </tr>`).join('');
+
+  const seasonBlock = (se) => {
+    const s = seasonSummary(d, se);
+    const awardText = s.awards.length ? s.awards.join(', ') : (se.complete ? 'No award this season' : 'Awards are decided when the season ends');
+    const dashLine = dashSeasonLine(d, se);
+    return `
+    <details class="season-acc">
+      <summary>
+        <span class="s-name">${esc(se.name)}</span>
+        <span class="s-stats">
+          <b>${s.wins}</b> Win${s.wins === 1 ? '' : 's'} · <b>${s.top5}</b> Top 5${s.top5 === 1 ? '' : 's'} ·
+          <b>${s.top10}</b> Top Ten${s.top10 === 1 ? '' : 's'} · <b>${fmt(s.points)}</b> Total Points ·
+          <span style="color:${esc(s.tier.color)}">${ordinal(s.standing)} · ${esc(s.tier.name)}</span>
+        </span>
+        <span class="count">${s.races} race${s.races === 1 ? '' : 's'}</span>
+      </summary>
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead><tr><th>Wk</th><th>Date</th><th>Track</th><th>Start</th><th>Fin</th><th>Status</th><th>Interval</th><th>Laps Led</th><th>Laps Comp</th><th>Inc</th><th>Pts</th></tr></thead>
+          <tbody>${raceRows(s.rows)}</tbody>
+          <tfoot><tr class="totals-row"><td colspan="11"><div class="totals-flex">
+            <div class="season-totals">
+              <span><b>${s.wins}</b> Wins · <b>${s.top5}</b> Top 5 · <b>${s.top10}</b> Top 10 · <b>${fmt(s.points)}</b> Pts</span>
+              <span><b>${fmt(s.lapsLed)}</b> Laps Led · <b>${fmt(s.lapsRun)}</b> Laps Run · <b>${s.inc}</b> Inc Pts · <b>${s.dnfs}</b> DNFs</span>
+              <span>${se.complete ? 'Final' : 'Current'} standing: <b>${ordinal(s.standing)}</b></span>
+              <span>${se.complete ? 'Final' : 'Current'} rank: <b style="color:${esc(s.tier.color)}">${esc(s.tier.name.toUpperCase())}</b></span>
+              <span class="${s.awards.length ? 'award-yes' : 'award-no'}">${esc(awardText)}</span>
+              ${dashLine ? `<span>${dashLine}</span>` : ''}
+            </div>
+            ${L.cfg.dash.enabled ? `<button class="dash-btn" onclick="location.hash='dash-${se.id}'">Dash For Cash standings &rarr;</button>` : ''}
+          </div></td></tr></tfoot>
+        </table>
+      </div>
+    </details>`;
+  };
+
+  const yearBlocks = years.map((y, idx) => {
+    const ss = mySeasons.filter(se => se.year === y).sort((a, b) => b.index - a.index);
+    return `
+    <details class="year-acc" ${idx === 0 ? 'open' : ''}>
+      <summary>${y} <span class="count">${sumOf(ss, se => se.byId[d.id].races)} races</span></summary>
+      <div class="year-body">${ss.map(seasonBlock).join('')}</div>
+    </details>`;
+  }).join('');
+
+  if (!mySeasons.length){
+    setApp(`<div class="log-wrap"><button class="back-link" onclick="location.hash='driver-${d.id}'">&larr; ${esc(d.name)}'s Career Card</button>${emptyState('No races yet', `${esc(d.name)} has no race results in the league data yet.`)}</div>`);
+    return;
+  }
+  setApp(`
+    <div class="log-wrap">
+      <button class="back-link" onclick="location.hash='driver-${d.id}'">&larr; ${esc(d.name)}'s Career Card</button>
+      <div class="page-title">
+        <h1>#${esc(d.number)} ${esc(d.name)} — Career Performance Log</h1>
+        <p>${d.career.races} RACE${d.career.races === 1 ? '' : 'S'} · ${mySeasons.length} SEASON${mySeasons.length === 1 ? '' : 'S'}</p>
+      </div>
+      ${yearBlocks}
+    </div>`);
+}
+
+/* ------------------------------ Dash For Cash page ------------------------------ */
+const BADGE_COLORS = ['#F5A524','#B9BEC6','#F28B6B','#5ED3B0','#A9A1F0','#78B4F2','#A4D65E','#F6B5CE','#FFD27A','#D5D5D5'];
+const multClass = (m) => m >= 8 ? 'm4' : m >= 4 ? 'm2' : 'm0';
+
+function renderDash(sid){
+  const se = sid != null && L.seasonById[sid] ? L.seasonById[sid] : L.current;
+  if (!se){ setIntro(''); setApp(`${viewToggle('dash')}${noDataState()}`); return; }
+  setIntro('');
+  const dc = L.cfg.dash, dd = getDash(se.id);
+  const isCurrent = se === L.current;
+  const select = `<select class="season-select" onchange="location.hash = this.value === '${L.current.id}' ? 'dash' : 'dash-' + this.value">
+    ${[...L.seasons].reverse().map(s => `<option value="${s.id}" ${s === se ? 'selected' : ''}>${esc(s.name)}${s.complete ? '' : ' (in progress)'}</option>`).join('')}</select>`;
+  const head = `
+    ${viewToggle('dash')}
+    <div class="dash-wrap">
+      <div class="list-header"><h1>The Dash For Cash Tournament</h1></div>
+      <div class="season-pick">${select}</div>`;
+
+  if (dd.state === 'disabled'){ setApp(`${head}${emptyState('The Dash For Cash is switched off', `Turn it on in the ${adminLink}.`)}</div>`); return; }
+  if (dd.state === 'notStarted'){
+    setApp(`${head}${emptyState('The Dash For Cash has not started', `It covers the final ${dc.finalRaces} races of the season, starting at Race ${dd.startWeek}. ${esc(se.name)} has completed ${se.raceCount} of ${L.cfg.racesPerSeason} races.`)}</div>`);
+    return;
+  }
+  const { rows, out, poolC, basePaidC, cutPts, windowRaces, startWeek } = dd;
+  const first = windowRaces[0].week, lastW = windowRaces[windowRaces.length - 1].week;
+  const nameCell = (d, standing, st) => {
+    const team = teamOf(d, se.id);
+    return `
+      <td class="c-name"><div class="name-line"><button class="name-link" onclick="openDriverMenu(event, this, ${d.id})">${esc(d.name)}</button>${rankTag(standing)}</div>
+        <div class="n-status">#${esc(st.rows[0].number)}${team ? ' · ' + esc(team.name) : ''}</div></td>`;
+  };
+  const tile = (n, l) => `<div class="tot"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  const multCells = (mults, pts) => `${mults.map(m => m == null ? '<span class="mult m0">–</span>' : `<span class="mult ${multClass(m)}">${m}x</span>`).join('')}<small>${pts} incident points</small>`;
+  const body = rows.map(r => `
+    <tr>
+      <td><span class="pos-badge" style="background:${BADGE_COLORS[r.pos - 1] || '#D5D5D5'}">${r.pos}</span></td>
+      ${nameCell(r.d, r.pos, r.st)}
+      <td>${fmt(r.st.points)}</td>
+      <td>${multCells(r.mults, r.incPts)}</td>
+      <td>${money(r.baseC)}</td>
+      <td class="${r.dedC ? 'neg' : ''}">${r.dedC ? '-' + money(r.dedC) : money(0)}<small>${r.pct}%</small></td>
+      <td>${money(r.afterC)}</td>
+      <td>${r.cleanRank <= 3 ? `<span class="clean-pill ${r.cleanRank === 1 ? 'p1' : ''}">#${r.cleanRank}</span>` : `#${r.cleanRank}`}</td>
+      <td class="pos">${r.share}%</td>
+      <td class="pos">+${money(r.bonusC)}</td>
+      <td class="c-final">${money(r.finalC)}</td>
+      <td class="${r.diffC >= 0 ? 'pos' : 'neg'}">${r.diffC >= 0 ? '+' : ''}${money(r.diffC)}</td>
+    </tr>`).join('');
+  const outRows = out.map(o => `
+    <tr>
+      <td><span class="pos-badge out">${o.pos}</span></td>
+      ${nameCell(o.d, o.pos, o.st)}
+      <td>${fmt(o.st.points)}</td>
+      <td class="${o.behind > 0 ? 'neg' : ''}">${o.behind > 0 ? '-' + o.behind + ' pts' : 'Tied with the cut'}</td>
+      <td>${multCells(o.mults, o.incPts)}</td>
+    </tr>`).join('');
+
+  setApp(`
+    ${head}
+      <p class="dash-sub">${dd.provisional
+        ? `<b class="neg">LIVE</b> — ${esc(se.name)} is in progress (${se.raceCount} of ${L.cfg.racesPerSeason} races). Standings and payouts below are projected from the current standings.`
+        : `The final ${windowRaces.length} races (Races ${first}–${lastW}) of ${esc(se.name)}.`}
+        Only the top ${dc.base.length} in the standings are eligible for the $${fmt(dc.pot)} prize pool.</p>
+      <div class="hist-h">PRIZE POOL BREAKDOWN</div>
+      <div class="pool-grid">
+        ${tile(money(dc.pot * 100), 'Total prize pool')}${tile(money(basePaidC), 'Base payouts paid')}
+        ${tile(money(poolC), 'Clean bonus pool')}${tile((poolC / (dc.pot * 100) * 100).toFixed(1) + '%', 'Pool % of prize')}
+      </div>
+      <div class="hist-h">FINAL PAYOUTS</div>
+      <div class="cutoff in"><span>IN THE MONEY</span></div>
+      <div class="drivers-wrap">
+        <table class="drivers-table dash-table">
+          <thead><tr><th>Pos</th><th>Driver</th><th>Season points</th><th>Last ${windowRaces.length} races</th><th>Base</th><th>Deduction</th><th>After ded.</th>
+            <th>Clean rank</th><th>Clean %</th><th>Bonus</th><th>Final</th><th>vs base</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+      ${out.length ? `
+      <div class="cutoff"><span>OUT OF THE MONEY</span></div>
+      <p class="cutoff-sub">Every other driver in the league. Points behind the last paid position (${fmt(cutPts)} pts) show how far from the payout line they are.</p>
+      <div class="drivers-wrap">
+        <table class="drivers-table dash-table">
+          <thead><tr><th>Pos</th><th>Driver</th><th>Season points</th><th>Behind the cut</th><th>Last ${windowRaces.length} races</th></tr></thead>
+          <tbody>${outRows}</tbody>
+        </table>
+      </div>` : ''}
+      <details class="rules-box">
+        <summary>Dash For Cash rules</summary>
+        <div class="rules-body">
+          <p>The Dash For Cash covers the final ${dc.finalRaces} races of the ${L.cfg.racesPerSeason}-race season. Only the top ${dc.base.length} drivers in the overall standings after the final race are eligible for the $${fmt(dc.pot)} prize pool.</p>
+          <div class="rules-cols">
+            <div><h3>1. BASE POSITIONAL PAYOUTS</h3>
+              <table class="mini-table">${dc.base.map((b, i) => `<tr><td>${ordinal(i + 1)}</td><td>$${fmt(b)}</td></tr>`).join('')}</table></div>
+            <div><h3>3. CLEAN BONUS POOL SHARES</h3>
+              <table class="mini-table">${dc.share.map((b, i) => `<tr><td>${i === 0 ? '1st (cleanest)' : i === dc.share.length - 1 ? ordinal(i + 1) + ' (dirtiest)' : ordinal(i + 1) + ' cleanest'}</td><td>${b}%</td></tr>`).join('')}</table></div>
+          </div>
+          <h3>2. INCIDENT PENALTY RULE (LAST ${dc.finalRaces} RACES ONLY)</h3>
+          <p>Each driver's incident points for every race in the window are added up. That total is the percentage deducted from the driver's base payout${dc.maxDeductionPct < 100 || true ? ` (never more than ${dc.maxDeductionPct}%)` : ''}, and all deducted money goes into the Clean Bonus Pool.</p>
+          <h3>FINAL PAYOUT</h3>
+          <p>(Base payout − % deduction) + share of the Clean Bonus Pool. Cleanliness ranks go to the fewest total incident points; ties are broken by the better standing.</p>
+        </div>
+      </details>
+    </div>`);
+}
+/* ------------------------------ Teams pages ------------------------------ */
+function teamCardHTML(t){
+  const initials = t.name.split(/\s+/).filter(w => w.toLowerCase() !== 'team').map(w => w[0]).join('').slice(0, 2).toUpperCase() || t.name.slice(0, 2).toUpperCase();
+  const best = t.members.length ? t.members.reduce((a, b) => (b.cur.points > a.cur.points ? b : a)) : null;
+  const f1 = (n) => n == null ? '—' : n.toFixed(1);
+  const roster = t.members.map(d => `
+    <div class="roster-row" onclick="openDriverMenu(event, this, ${d.id})">
+      <span class="r-num">#${esc(d.number)}</span>${gemSVG(tierFor(d.standingsPosition).color)}
+      <span class="r-name">${esc(d.name)}</span><span class="r-pos">${ordinal(d.standingsPosition)}</span>
+      <span class="r-pts">${fmt(d.cur.points)}</span>
+    </div>`).join('') || '<div class="empty">No drivers on this team in the current season</div>';
+  return `
+  <div class="card team-row" data-id="${esc(t.id)}" style="border-color:${esc(t.color)};">
+    <div class="tr-id">
+      <div class="team-badge" style="background:${esc(t.color)}">${esc(initials)}</div>
+      <div class="tr-id-text">
+        <div class="team-name">${esc(t.name)}</div>
+        <div class="team-sub">${t.members.length} driver${t.members.length === 1 ? '' : 's'}${t.cars.length ? ' · ' + esc(t.cars.join(' · ')) : ''}</div>
+      </div>
+      <div class="team-pos"><div class="v" style="color:${esc(t.color)}">${t.standing ? ordinal(t.standing) : '—'}</div><div class="l">TEAM STANDING</div></div>
     </div>
     <div class="tr-season">
       <div class="headline">
@@ -922,10 +1420,10 @@ function teamCardHTML(t){
         <div class="stat"><span class="l">Season points</span><span class="v">${fmt(t.points)}</span></div>
         <div class="stat"><span class="l">Poles</span><span class="v">${t.poles}</span></div>
         <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(t.lapsLed)}</span></div>
-        <div class="stat"><span class="l">Avg finish</span><span class="v">${t.avgFinish}</span></div>
-        <div class="stat"><span class="l">Incidents / race</span><span class="v">${t.incRace}</span></div>
+        <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(t.avgFinish)}</span></div>
+        <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(t.incRace)}</span></div>
         <div class="stat"><span class="l">DNFs</span><span class="v hot">${t.dnfs}</span></div>
-        <div class="stat" style="grid-column:1 / -1"><span class="l">Top driver</span><span class="v">#${best.number} ${best.name}</span></div>
+        <div class="stat" style="grid-column:1 / -1"><span class="l">Top driver</span><span class="v">${best ? '#' + esc(best.number) + ' ' + esc(best.name) : '—'}</span></div>
       </div>
     </div>
     <div class="tr-career">
@@ -944,258 +1442,622 @@ function teamCardHTML(t){
 }
 
 const TEAM_SORTS = {
-  default: { label:'Sort: Team Standings',          fn:(a,b) => a.standing - b.standing },
-  wins:    { label:'Sort: Season Wins (Most–Least)', fn:(a,b) => b.wins - a.wins },
-  career:  { label:'Sort: Career Wins (Most–Least)', fn:(a,b) => b.cWins - a.cWins },
-  name:    { label:'Sort: A–Z',                     fn:(a,b) => a.name.localeCompare(b.name) },
+  default: { label: 'Sort: Team Standings',           fn: (a, b) => (a.standing || 99) - (b.standing || 99) },
+  wins:    { label: 'Sort: Season Wins (Most–Least)', fn: (a, b) => b.wins - a.wins },
+  career:  { label: 'Sort: Career Wins (Most–Least)', fn: (a, b) => b.cWins - a.cWins },
+  name:    { label: 'Sort: A–Z',                      fn: (a, b) => a.name.localeCompare(b.name) },
 };
 
 function renderTeams(sortKey){
-  sortKey = sortKey || 'default';
+  sortKey = TEAM_SORTS[sortKey] ? sortKey : 'default';
   window.__lastTeamSort = sortKey;
-  document.getElementById('intro').textContent = "Team standings are the combined season points of every driver on the team. Click a driver in a roster to open their career card.";
+  if (!L.teams.length){
+    setIntro('');
+    setApp(`${viewToggle('teams')}${emptyState('No teams yet', `Add your teams in the ${adminLink} and assign each driver to one.`)}`);
+    return;
+  }
+  setIntro('Team standings are the combined season points of every driver on the team. Click a team to open its page, or a driver in a roster to choose their season or career stats.');
   const teams = buildTeams().sort(TEAM_SORTS[sortKey].fn);
-  document.getElementById('app').innerHTML = `
+  setApp(`
     ${viewToggle('teams')}
     <div class="list-header"><h1>Team Stats</h1></div>
-    <div class="controls">
-      <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
-        <span id="sortLabel">${TEAM_SORTS[sortKey].label}</span>
-        <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
-      </button>
-      <div class="sort-menu" id="sortMenu">
-        <button data-sort="default">Team Standings</button>
-        <button data-sort="wins">Season Wins (Most–Least)</button>
-        <button data-sort="career">Career Wins (Most–Least)</button>
-        <button data-sort="name">A–Z</button>
-      </div>
-    </div>
-    <div class="team-list">${teams.map(teamCardHTML).join('')}</div>`;
-  const sortBtn = document.getElementById('sortBtn');
-  const sortMenu = document.getElementById('sortMenu');
-  sortBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = sortMenu.classList.toggle('open');
-    sortBtn.setAttribute('aria-expanded', open);
+    ${sortControl(TEAM_SORTS[sortKey].label, Object.keys(TEAM_SORTS).map(k => [k, TEAM_SORTS[k].label.replace('Sort: ', '')]))}
+    <div class="team-list">${teams.map(teamCardHTML).join('')}</div>`);
+  document.querySelectorAll('.team-list .team-row').forEach(el => {
+    el.classList.add('clickable');
+    el.addEventListener('click', () => { location.hash = 'team-' + el.dataset.id; });
   });
-  sortMenu.querySelectorAll('button[data-sort]').forEach(btn => {
-    btn.addEventListener('click', () => renderTeams(btn.dataset.sort));
-  });
-  document.addEventListener('click', () => {
-    sortMenu.classList.remove('open');
-    sortBtn.setAttribute('aria-expanded', 'false');
-  }, { once:true });
+  wireSortMenu(renderTeams);
 }
 
-// ---------- Driver chooser menu (season card vs career card) ----------
-function closeDriverMenu(){
-  const m = document.getElementById('driverMenu');
-  if (m) m.remove();
-}
-function goDriver(hash){ closeDriverMenu(); location.hash = hash; }
-function openDriverMenu(e, el, num){
-  e.stopPropagation();
-  closeDriverMenu();
-  const d = byNumber(num);
-  const m = document.createElement('div');
-  m.className = 'driver-menu';
-  m.id = 'driverMenu';
-  m.innerHTML = `
-    <div class="dm-title">#${d.number} ${d.name}</div>
-    <button onclick="goDriver('season-${num}')">Current Season Stats</button>
-    <button onclick="goDriver('driver-${num}')">Career Total Stats</button>`;
-  document.body.appendChild(m);
-  const r = el.getBoundingClientRect();
-  const left = Math.max(8, Math.min(r.left + 30, window.innerWidth - m.offsetWidth - 8));
-  let top = r.bottom + 4;
-  if (top + m.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - m.offsetHeight - 4);
-  m.style.left = left + 'px';
-  m.style.top = top + 'px';
-}
-document.addEventListener('click', closeDriverMenu);
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDriverMenu(); });
-window.addEventListener('hashchange', closeDriverMenu);
-
-function renderSeasonDetail(d){
-  document.getElementById('intro').textContent = '';
-  document.getElementById('app').innerHTML = `
-    <div class="detail-wrap">
-      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
-      <div class="list-header"><h1>Current Season Driver Card</h1></div>
-      ${cardHTML(d)}
-      <div class="season-actions">
-        <button class="log-btn" onclick="location.hash='driver-${d.number}'">View Career Card &rarr;</button>
-      </div>
-    </div>`;
-  window.scrollTo(0,0);
-}
-
-const teamSlug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-
-function renderTeamDetail(t){
-  document.getElementById('intro').textContent = '';
-  document.getElementById('app').innerHTML = `
+function renderTeamDetail(id){
+  const t = buildTeams().find(x => x.id === id);
+  if (!t){ setApp(`<div class="team-detail"><button class="back-link" onclick="location.hash='teams'">&larr; All Teams</button>${emptyState('Team not found', 'That team is not in the league data.')}</div>`); return; }
+  setIntro('');
+  setApp(`
     <div class="team-detail">
       <div class="back-row">
         <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='teams')">&larr; Back</button>
         <button class="back-link" onclick="location.hash=''">All Drivers</button>
         <button class="back-link" onclick="location.hash='teams'">All Teams</button>
       </div>
-      <div class="list-header"><h1>${t.name} — Team Stats</h1></div>
+      <div class="list-header"><h1>${esc(t.name)} — Team Stats</h1></div>
       ${teamCardHTML(t)}
-    </div>`;
-  window.scrollTo(0,0);
+      <div class="season-actions"><button class="log-btn" onclick="location.hash='teamhistory-${esc(t.id)}'">Team History &amp; Statistics &rarr;</button></div>
+    </div>`);
 }
 
-function renderDetail(d){
-  document.getElementById('intro').textContent = '';
-  document.getElementById('app').innerHTML = `
-    <div class="detail-wrap">
+function renderTeamHistory(id){
+  const t = buildTeams().find(x => x.id === id);
+  if (!t){ renderTeamDetail(id); return; }
+  setIntro('');
+  const entries = getTeamHistory(id);
+  const all = entries.reduce((a, e) => { Object.keys(a).forEach(k => { a[k] += e.totals[k]; }); return a; }, emptyTotals());
+  const tile = (n, l) => `<div class="tot"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  const timeline = (e) => {
+    const end = e.present ? 'Present' : e.endLabel;
+    return e.startLabel === end ? e.startLabel : `${e.startLabel} – ${end}`;
+  };
+  const chipList = (arr, cls) => arr.length ? `<div class="chips">${arr.map(x => `<span class="chip ${cls || ''}">${esc(x)}</span>`).join('')}</div>` : '<span class="dim">—</span>';
+  const statusLabel = (e) => e.status === 'current' ? 'Current driver' : e.status === 'former' ? `Now with ${esc(e.nowWith)}` : 'Not racing this season';
+  const rowHTML = (e) => `
+    <tr>
+      <td class="c-name"><button class="name-link" onclick="openDriverMenu(event, this, ${e.d.id})"><span class="n-num">#${esc(e.number)}</span> ${esc(e.name)}</button>
+        <div class="n-status">${statusLabel(e)}</div></td>
+      <td>${esc(timeline(e))}</td>
+      <td class="c-pts">${fmt(e.totals.points)}</td>
+      <td>${e.totals.wins}</td><td>${e.totals.top5}</td><td>${e.totals.top10}</td>
+      <td>${e.totals.poles}</td><td>${e.totals.inc}</td><td>${e.totals.dnfs}</td>
+      <td class="c-award">${chipList(e.titles.map(seasonLabel))}</td>
+      <td class="c-award">${chipList(e.champion, 'champ')}</td>
+    </tr>`;
+  const table = (list) => list.length ? `
+    <div class="drivers-wrap" style="margin-bottom:26px">
+      <table class="drivers-table">
+        <thead><tr><th>Driver</th><th>Years With Team</th><th>Points</th><th>Wins</th><th>Top 5s</th><th>Top 10s</th>
+          <th>Poles</th><th>Incidents</th><th>DNFs</th><th>Season Titles</th><th>Champion of the Year</th></tr></thead>
+        <tbody>${list.map(rowHTML).join('')}</tbody>
+      </table>
+    </div>` : '<p class="hist-sub" style="margin:0 0 26px">None yet.</p>';
+  const current = entries.filter(e => e.status === 'current').sort((a, b) => a.d.standingsPosition - b.d.standingsPosition);
+  const past = entries.filter(e => e.status !== 'current').sort((a, b) => b.seasons[b.seasons.length - 1].index - a.seasons[a.seasons.length - 1].index);
+
+  const dash = teamDashStats(id);
+  const dashRows = [...dash.byDriver.entries()].map(([d, list]) => ({
+    d, list, total: sumOf(list, e => e.finalC), avgPos: sumOf(list, e => e.pos) / list.length, best: Math.min(...list.map(e => e.pos)),
+  })).sort((a, b) => b.total - a.total);
+  const dashTable = dashRows.length ? `
+    <div class="drivers-wrap" style="margin-bottom:26px">
+      <table class="drivers-table">
+        <thead><tr><th>Driver</th><th>Times In The Money</th><th>Avg Finish (Payout Order)</th><th>Best Finish</th><th>Total Earned</th><th>Seasons In The Money (payout finish · payout)</th></tr></thead>
+        <tbody>${dashRows.map(r => `
+          <tr>
+            <td class="c-name"><button class="name-link" onclick="openDriverMenu(event, this, ${r.d.id})"><span class="n-num">#${esc(r.d.number)}</span> ${esc(r.d.name)}</button></td>
+            <td>${r.list.length}</td><td>${ordinal(Math.round(r.avgPos))} <small class="dim">(${r.avgPos.toFixed(1)})</small></td>
+            <td>${ordinal(r.best)}</td><td class="c-pts">${money(r.total)}</td>
+            <td class="c-award"><div class="chips">${r.list.map(e => `<span class="chip green">${esc(seasonLabel(e.seasonId))} · ${ordinal(e.pos)} · ${money(e.finalC)}</span>`).join('')}</div></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>` : '<p class="hist-sub" style="margin:0 0 26px">No driver has made the Dash For Cash for this team yet. Results appear once a season is completed.</p>';
+
+  setApp(`
+    <div class="team-detail">
       <div class="back-row">
-        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
-        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='team-${esc(id)}')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash='team-${esc(id)}'">Team Page</button>
+        <button class="back-link" onclick="location.hash='teams'">All Teams</button>
       </div>
-      <div class="page-title">
-        <h1>The Legacy Series Driver Card</h1>
-        <p>CAREER STATS · ${d.yearsActive} YEARS</p>
+      <div class="list-header"><h1>${esc(t.name)} — History &amp; Statistics</h1></div>
+      <p class="hist-sub">${entries.length} driver stint${entries.length === 1 ? '' : 's'} all-time</p>
+      <div class="hist-h" style="border-color:${esc(t.color)}">ALL-TIME TEAM TOTALS · EVERY DRIVER COMBINED</div>
+      <div class="totals-grid">
+        ${tile(fmt(all.points), 'Total Combined Points')}${tile(fmt(all.wins), 'Wins')}${tile(fmt(all.top5), 'Top 5s')}
+        ${tile(fmt(all.top10), 'Top 10s')}${tile(fmt(all.poles), 'Poles')}${tile(fmt(all.inc), 'Incident Points')}${tile(fmt(all.dnfs), 'DNFs')}
       </div>
-      ${careerCardHTML(d)}
-    </div>`;
+      <div class="hist-h" style="border-color:${esc(t.color)}">THE DASH FOR CASH · ALL-TIME TEAM RESULTS</div>
+      <div class="totals-grid">
+        ${tile(dash.count, 'Times A Driver Made The Tournament')}
+        ${tile(dash.avgPos === null ? '—' : dash.avgPos.toFixed(1), 'Avg Finishing Position (Payout Order)')}
+        ${tile(money(dash.totalC), 'Total Money Earned')}
+        ${tile(dash.best === null ? '—' : ordinal(dash.best), 'Best Finish')}
+      </div>
+      <div class="hist-h" style="border-color:${esc(t.color)}">DRIVERS WHO WERE IN THE MONEY</div>
+      ${dashTable}
+      <div class="hist-h" style="border-color:${esc(t.color)}">CURRENT DRIVERS</div>
+      ${table(current)}
+      <div class="hist-h" style="border-color:${esc(t.color)}">HISTORIC DRIVERS</div>
+      ${table(past)}
+    </div>`);
 }
 
-function seasonSummary(d, year, half, list){
-  const c = d.career;
-  const wins = list.filter(r => r.finish === 1).length;
-  const top5 = list.filter(r => r.finish <= 5).length;
-  const top10 = list.filter(r => r.finish <= 10).length;
-  const points = list.reduce((s,r) => s + r.points, 0);
-  const lapsLed = list.reduce((s,r) => s + r.lapsLed, 0);
-  const lapsRun = list.reduce((s,r) => s + r.lapsComp, 0);
-  const incTotal = list.reduce((s,r) => s + r.inc, 0);
-  const dnfs = list.filter(r => r.status === 'DNF').length;
-  const avgFinish = list.reduce((s,r) => s + r.finish, 0) / list.length;
+/* ------------------------------ Admin ------------------------------ */
+// Edits happen in memory; "Download league-data.json" saves them. Upload that file to
+// your repository (data/league-data.json) to publish the changes for everyone.
+let adminMsg = '', adminRaceId = null;
+function rebuild(){ DATA.seasons = DATA.seasons || {}; DATA.drivers = DATA.drivers || {}; DATA.teams = DATA.teams || []; DATA.races = DATA.races || []; L = buildLeague(DATA); document.title = `${L.cfg.leagueName} — Driver Stats`; }
+const ensureOv = (id) => (DATA.drivers[id] = DATA.drivers[id] || {});
+const numList = (str) => String(str).split(/[,\s]+/).filter(Boolean).map(Number).filter(n => !isNaN(n));
+const toInt = (v, d) => { const n = parseInt(v, 10); return isNaN(n) ? d : n; };
+const toNum = (v, d) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
+const dateLabel = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+const nextNegativeId = (taken) => { let id = -1; while (taken(id)) id--; return id; };
 
-  const tag = `${year} ${half}`;
-  // Champion of the Year requires finishing P1 in the standings both seasons of that year,
-  // so the P1 result applies to Winter and Summer alike even though the title is awarded once.
-  const isChampionshipYear = c.champion.includes(String(year));
-  const isSeasonTitle = c.titles.includes(tag);
-
-  const awards = [];
-  if (isSeasonTitle) awards.push('Season Title');
-  if (half === 'Summer' && isChampionshipYear) awards.push('Champion of the Year');
-  if (c.cleanest.includes(tag)) awards.push('Cleanest Driver Award');
-  if (c.mostImproved.includes(tag)) awards.push('Most Improved Driver');
-  if (c.rookie.includes(tag)) awards.push('Rookie of the Season');
-
-  // A season title or a full-year championship means this driver topped the standings that season.
-  let standing, tier;
-  if (isSeasonTitle || isChampionshipYear){
-    standing = 1; tier = TIERS[0];
-  } else {
-    const rand = mulberry32(Number(d.number) * 31 + year * 7 + (half === 'Summer' ? 3 : 1));
-    standing = clamp(Math.round(avgFinish + (rand() - 0.5) * 5), 1, 40);
-    tier = tierFor(standing);
-  }
-
-  return { wins, top5, top10, points, lapsLed, lapsRun, incTotal, dnfs, standing, tier, awards };
+/* ---- league settings ---- */
+function adminSet(field, val){
+  DATA.config = withDefaults(DATA.config);
+  if (field === 'leagueName') DATA.config.leagueName = val.trim() || DEFAULT_CONFIG.leagueName;
+  else DATA.config[field] = Math.max(1, +val || 1);
+  rebuild();
+}
+function adminSetDash(field, val){
+  DATA.config = withDefaults(DATA.config);
+  const d = DATA.config.dash;
+  if (field === 'enabled') d.enabled = !!val;
+  else if (field === 'base' || field === 'share'){ const l = numList(val); if (l.length) d[field] = l; }
+  else d[field] = +val || 0;
+  rebuild(); renderAdmin(true);
+}
+function adminSetTiers(text){
+  const tiers = String(text).split('\n').map(l => l.split(',').map(x => x.trim())).filter(p => p.length >= 3 && p[0])
+    .map(p => ({ name: p[0], min: +p[1], max: +p[2], color: p[3] || '#E8A33D' })).filter(t => !isNaN(t.min) && !isNaN(t.max));
+  if (!tiers.length){ adminMsg = 'Rank tiers need at least one line like: Ruby, 1, 5, #FF5C7A'; renderAdmin(true); return; }
+  DATA.config = withDefaults(DATA.config);
+  DATA.config.tiers = tiers.sort((a, b) => a.min - b.min);
+  rebuild(); renderAdmin(true);
 }
 
-function renderLog(d){
-  document.getElementById('intro').textContent = '';
-  const races = generateCareerLog(d);
-
-  const byYear = {};
-  races.forEach(r => {
-    byYear[r.year] = byYear[r.year] || { Winter: [], Summer: [] };
-    byYear[r.year][r.half].push(r);
+/* ---- teams ---- */
+function adminAddTeam(){
+  const name = document.getElementById('newTeamName').value.trim();
+  if (!name) return;
+  let id = slugify(name) || 'team', n = 2;
+  while (DATA.teams.some(t => t.id === id)) id = slugify(name) + '-' + n++;
+  DATA.teams.push({ id, name, color: document.getElementById('newTeamColor').value });
+  rebuild(); renderAdmin(true);
+}
+function adminTeamField(id, field, val){
+  const t = DATA.teams.find(x => x.id === id);
+  if (t){ t[field] = val; rebuild(); }
+}
+function adminRemoveTeam(id){
+  DATA.teams = DATA.teams.filter(t => t.id !== id);
+  Object.values(DATA.drivers).forEach(ov => {
+    if (ov.team === id) ov.team = '';
+    if (ov.teamBySeason) Object.keys(ov.teamBySeason).forEach(k => { if (ov.teamBySeason[k] === id) delete ov.teamBySeason[k]; });
   });
-  const years = Object.keys(byYear).map(Number).sort((a, b) => b - a); // newest first
+  rebuild(); renderAdmin(true);
+}
 
-  const tableRows = (list) => list.map(r => `
-    <tr class="${r.status === 'DNF' ? 'dnf' : ''}">
-      <td>${r.week}</td><td>${r.track}</td><td>${r.start}</td><td>${r.finish}</td><td>${r.status}</td>
-      <td>${r.interval}</td><td>${r.lapsLed}</td><td>${r.lapsComp}</td><td>${r.inc}</td><td>${r.points}</td>
-    </tr>`).join('');
+/* ---- seasons ---- */
+function adminSeasonField(id, field, val){
+  const o = (DATA.seasons[id] = DATA.seasons[id] || {});
+  if (field === 'name') o.name = val.trim();
+  else if (field === 'complete'){ if (val === 'auto') delete o.complete; else o.complete = val === 'yes'; }
+  rebuild();
+}
+function adminAddSeason(){
+  const name = document.getElementById('newSeasonName').value.trim();
+  const date = document.getElementById('newSeasonDate').value;
+  if (!name) { adminMsg = 'Give the new season a name.'; renderAdmin(true); return; }
+  const id = nextNegativeId(i => DATA.seasons[i] || DATA.races.some(r => r.seasonId === i));
+  DATA.seasons[id] = { name, startDate: (date || new Date().toISOString().slice(0, 10)) + 'T12:00:00Z' };
+  rebuild(); adminMsg = `Added ${name}.`; renderAdmin(true);
+}
+function adminRemoveSeason(id){
+  if (DATA.races.some(r => r.seasonId === id)){ adminMsg = 'Remove or move that season\'s races first.'; renderAdmin(true); return; }
+  delete DATA.seasons[id];
+  rebuild(); renderAdmin(true);
+}
 
-  const seasonBlock = (year, half, list) => {
-    if (!list.length) return '';
-    const s = seasonSummary(d, year, half, list);
-    const awardText = s.awards.length ? s.awards.join(', ') : 'No award this season';
+/* ---- drivers ---- */
+function adminDriverField(id, field, val){
+  // Clearing a field removes the override and goes back to what the race files say.
+  const ov = ensureOv(id), t = String(val).trim();
+  if (field === 'age'){ const n = parseInt(t, 10); if (n > 0) ov.age = n; else delete ov.age; }
+  else if (field === 'iRating'){ const n = parseInt(t, 10); if (n > 0) ov.iRating = n; else delete ov.iRating; }
+  else if (t === '') delete ov[field];
+  else ov[field] = t;
+  rebuild();
+}
+function adminDriverTeam(id, val){ ensureOv(id).team = val; rebuild(); }
+function adminDriverSeasonTeam(id, sid, val){
+  const ov = ensureOv(id);
+  ov.teamBySeason = ov.teamBySeason || {};
+  if (val === '__default__') delete ov.teamBySeason[sid]; else ov.teamBySeason[sid] = val;
+  rebuild();
+}
+function adminAddDriver(){
+  const g = (i) => document.getElementById(i).value.trim();
+  const name = g('newDrvName');
+  if (!name){ adminMsg = 'Enter the driver\'s name.'; renderAdmin(true); return; }
+  let id = parseInt(g('newDrvId'), 10);
+  if (!id || id < 0){ id = nextNegativeId(i => DATA.drivers[i] || (L.driverById[i])); }
+  else if (L.driverById[id] || DATA.drivers[id]){ adminMsg = `A driver with iRacing customer ID ${id} already exists.`; renderAdmin(true); return; }
+  DATA.drivers[id] = { manual: true, name, number: g('newDrvNum'), hometown: g('newDrvTown'), team: g('newDrvTeam') };
+  const age = parseInt(g('newDrvAge'), 10); if (age > 0) DATA.drivers[id].age = age;
+  rebuild(); adminMsg = `Added ${name}. They appear on the Drivers page with zero stats until they have results.`; renderAdmin(true);
+}
+function adminRemoveDriver(id){
+  DATA.races.forEach(r => { r.results = r.results.filter(x => x.c !== id); });
+  delete DATA.drivers[id];
+  rebuild(); adminMsg = 'Driver and all of their results removed.'; renderAdmin(true);
+}
+
+/* ---- races ---- */
+function adminRemoveRace(id){
+  DATA.races = DATA.races.filter(r => r.id !== id);
+  if (adminRaceId === id) adminRaceId = null;
+  rebuild(); adminMsg = 'Race removed.'; renderAdmin();
+}
+function adminEditRace(id){ adminRaceId = id; adminMsg = ''; renderAdmin(); }
+function adminCloseRace(){ adminRaceId = null; renderAdmin(); }
+function adminNewRace(){
+  const sid = Number(document.getElementById('newRaceSeason').value);
+  const track = document.getElementById('newRaceTrack').value.trim() || 'Track';
+  const date = document.getElementById('newRaceDate').value || new Date().toISOString().slice(0, 10);
+  if (isNaN(sid) || !L.seasonById[sid]){ adminMsg = 'Add a season first (see Seasons).'; renderAdmin(true); return; }
+  const id = nextNegativeId(i => DATA.races.some(r => r.id === i));
+  DATA.races.push({ id, seasonId: sid, seasonName: L.seasonById[sid].name, leagueName: '', track, date: date + 'T12:00:00Z', laps: 0, cautions: 0, leadChanges: 0, sof: null, results: [] });
+  adminRaceId = id; rebuild(); adminMsg = 'Race created. Add each driver\'s result below.'; renderAdmin();
+}
+const getRace = () => DATA.races.find(r => r.id === adminRaceId);
+function adminRaceField(field, val){
+  const r = getRace(); if (!r) return;
+  if (field === 'track') r.track = val.trim();
+  else if (field === 'date') r.date = val + (r.date && r.date.length > 10 ? r.date.slice(10) : 'T12:00:00Z');
+  else if (field === 'laps') r.laps = toInt(val, 0);
+  else if (field === 'seasonId'){ r.seasonId = Number(val); r.seasonName = L.seasonById[r.seasonId] ? L.seasonById[r.seasonId].name : r.seasonName; }
+  rebuild();
+}
+function adminResultField(i, field, val){
+  const r = getRace(); if (!r || !r.results[i]) return;
+  const row = r.results[i];
+  if (field === 'c'){
+    const d = L.driverById[val];
+    row.c = Number(val); row.n = d ? d.name : row.n;
+    if (d && !row.no) row.no = d.number;
+  }
+  else if (field === 'no') row.no = val.trim();
+  else if (field === 'out') row.out = val.trim() || 'Running';
+  else if (field === 'gap'){
+    // Seconds behind the leader ("2.7952"), the raw number from the iRacing file ("27952"),
+    // laps down ("-1L", "-43L"), or any other text.
+    const t = val.trim();
+    delete row.ivt;
+    if (t === '' || t === '-') row.iv = -1;
+    else if (/^[+-]?\d+(\.\d+)?$/.test(t)){
+      const n = Math.abs(parseFloat(t));
+      row.iv = Math.round(/^[+-]?\d{4,}$/.test(t) ? n : n * 10000);
+    } else {
+      const m = t.match(/^[+-]?\s*(\d+)\s*(?:L|laps?)(?:\s*down)?$/i);
+      row.ivt = m ? `-${m[1]}L` : t;
+      row.iv = -1;
+    }
+  }
+  else row[field] = toInt(val, 0);
+  rebuild();
+}
+function adminAddResult(){
+  const r = getRace(); if (!r) return;
+  const id = Number(document.getElementById('newResultDriver').value);
+  const d = L.driverById[id];
+  if (!d){ adminMsg = 'Pick a driver first (add drivers under Drivers).'; renderAdmin(true); return; }
+  if (r.results.some(x => x.c === id)){ adminMsg = `${d.name} already has a result in this race.`; renderAdmin(true); return; }
+  const next = r.results.length + 1;
+  r.results.push({ c: id, n: d.name, car: d.car || '', no: d.number || '', st: next, fin: next, out: 'Running', iv: -1,
+    lc: r.laps || 0, ll: 0, inc: 0, pts: 0, ir: null, srl: null, srs: null, cc: d.country || '' });
+  rebuild(); adminMsg = ''; renderAdmin(true);
+}
+function adminRemoveResult(i){
+  const r = getRace(); if (!r) return;
+  r.results.splice(i, 1);
+  rebuild(); renderAdmin(true);
+}
+
+/* ---- files ---- */
+async function adminAddFiles(fileList){
+  const msgs = [];
+  for (const f of fileList){
+    try {
+      const race = parseEventResult(JSON.parse(await f.text()));
+      const had = DATA.races.some(r => r.id === race.id);
+      DATA.races = DATA.races.filter(r => r.id !== race.id).concat([race]);
+      msgs.push(`${had ? 'Updated' : 'Added'} ${race.track} · ${race.seasonName} (${race.results.length} drivers)`);
+    } catch (e) { msgs.push(`${f.name}: ${e.message}`); }
+  }
+  rebuild(); adminMsg = msgs.join(' | '); renderAdmin();
+}
+async function adminLoadFile(file){
+  try { DATA = normalizeData(JSON.parse(await file.text())); rebuild(); adminRaceId = null; adminMsg = 'Loaded league-data.json.'; }
+  catch (e) { adminMsg = 'Could not read that file: ' + e.message; }
+  renderAdmin();
+}
+function serializeData(){
+  const cleaned = {};
+  Object.keys(DATA.drivers).forEach(id => {
+    const ov = DATA.drivers[id], o = {};
+    ['name', 'number', 'hometown', 'team', 'srText'].forEach(k => { if (ov[k]) o[k] = ov[k]; });
+    if (ov.manual) o.manual = true;
+    if (ov.age) o.age = ov.age;
+    if (ov.iRating) o.iRating = ov.iRating;
+    if (ov.teamBySeason && Object.keys(ov.teamBySeason).length) o.teamBySeason = ov.teamBySeason;
+    if (Object.keys(o).length) cleaned[id] = o;
+  });
+  const seasons = {};
+  Object.keys(DATA.seasons).forEach(id => { if (Object.keys(DATA.seasons[id]).length) seasons[id] = DATA.seasons[id]; });
+  const head = JSON.stringify({ config: withDefaults(DATA.config), teams: DATA.teams, seasons, drivers: cleaned }, null, 2);
+  const races = DATA.races.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+  return head.replace(/\n}$/, ',\n  "races": [\n' + races.map(r => '    ' + JSON.stringify(r)).join(',\n') + '\n  ]\n}\n');
+}
+function adminDownload(){
+  const blob = new Blob([serializeData()], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'league-data.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  adminMsg = 'Downloaded. Upload it to your repository as data/league-data.json to publish.'; renderAdmin(true);
+}
+
+/* ---- pages ---- */
+function renderAdmin(keepScroll){
+  setIntro('');
+  if (adminRaceId != null && getRace()) return renderRaceEditor(keepScroll);
+  adminRaceId = null;
+  const cfg = L.cfg, dc = cfg.dash;
+  const teamOpts = (sel, extra) => `${extra || ''}<option value="" ${sel === '' ? 'selected' : ''}>No team</option>` +
+    DATA.teams.map(t => `<option value="${esc(t.id)}" ${sel === t.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
+  const drivers = [...L.drivers].sort((a, b) => a.name.localeCompare(b.name));
+  const raceList = [...DATA.races].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const seasonOpts = [...L.seasons].reverse().map(se => `<option value="${se.id}">${esc(se.name)}</option>`).join('');
+
+  const seasonRows = [...L.seasons].reverse().map(se => {
+    const o = DATA.seasons[se.id] || {};
+    const mode = typeof o.complete === 'boolean' ? (o.complete ? 'yes' : 'no') : 'auto';
+    return `<tr>
+      <td><input class="ad-in" value="${esc(se.name)}" onchange="adminSeasonField(${se.id},'name',this.value)"></td>
+      <td>${se.year}</td><td>${se.raceCount}</td>
+      <td><select class="ad-in" onchange="adminSeasonField(${se.id},'complete',this.value)">
+        <option value="auto" ${mode === 'auto' ? 'selected' : ''}>Automatic (${se.complete ? 'complete' : 'in progress'})</option>
+        <option value="yes" ${mode === 'yes' ? 'selected' : ''}>Mark complete</option>
+        <option value="no" ${mode === 'no' ? 'selected' : ''}>Mark in progress</option></select></td>
+      <td>${se.raceCount === 0 ? `<button class="ad-x" onclick="adminRemoveSeason(${se.id})">Remove</button>` : ''}</td></tr>`;
+  }).join('');
+
+  const baseSR = (d) => d.sr == null ? '' : `${licenseClass(d.srl)} ${d.sr.toFixed(2)}`;
+  const driverRows = drivers.map(d => {
+    const ov = DATA.drivers[d.id] || {};
+    const last = d.rows.length ? d.rows[d.rows.length - 1] : null;
     return `
-    <details class="season-acc">
-      <summary>
-        <span class="s-name">${half} ${year}</span>
-        <span class="s-stats">
-          <b>${s.wins}</b> Win${s.wins === 1 ? '' : 's'} · <b>${s.top5}</b> Top 5${s.top5 === 1 ? '' : 's'} ·
-          <b>${s.top10}</b> Top Ten${s.top10 === 1 ? '' : 's'} · <b>${fmt(s.points)}</b> Total Points ·
-          <span style="color:${s.tier.fill}">${ordinal(s.standing)} · ${s.tier.name}</span>
-        </span>
-        <span class="count">${list.length} races</span>
-      </summary>
-      <div class="log-table-wrap">
-        <table class="log-table">
-          <thead><tr><th>Wk</th><th>Track</th><th>Start</th><th>Fin</th><th>Status</th><th>Interval</th><th>Laps Led</th><th>Laps Comp</th><th>Inc</th><th>Pts</th></tr></thead>
-          <tbody>${tableRows(list)}</tbody>
-          <tfoot><tr class="totals-row"><td colspan="10">
-            <div class="season-totals">
-              <span><b>${s.wins}</b> Wins · <b>${s.top5}</b> Top 5 · <b>${s.top10}</b> Top 10 · <b>${fmt(s.points)}</b> Pts</span>
-              <span><b>${fmt(s.lapsLed)}</b> Laps Led · <b>${fmt(s.lapsRun)}</b> Laps Run · <b>${s.incTotal}</b> Inc Pts · <b>${s.dnfs}</b> DNFs</span>
-              <span>Final standing: <b>${ordinal(s.standing)}</b></span>
-              <span>Final rank: <b style="color:${s.tier.fill}">${s.tier.name.toUpperCase()}</b></span>
-              <span class="${s.awards.length ? 'award-yes' : 'award-no'}">${awardText}</span>
-            </div>
-          </td></tr></tfoot>
+      <tr>
+        <td><input class="ad-in" value="${esc(d.name)}" onchange="adminDriverField(${d.id},'name',this.value)">
+          <div class="n-status">${d.manual ? 'Added by hand' : 'From race files · ID ' + d.id}${ov.name && last && ov.name !== last.name ? ' · iRacing: ' + esc(last.name) : ''}</div></td>
+        <td><input class="ad-in sm" value="${esc(d.number)}" onchange="adminDriverField(${d.id},'number',this.value)"></td>
+        <td><input class="ad-in sm" type="number" min="1" value="${esc(ov.age || '')}" onchange="adminDriverField(${d.id},'age',this.value)"></td>
+        <td><input class="ad-in" value="${esc(ov.hometown || '')}" placeholder="City, State, Country" onchange="adminDriverField(${d.id},'hometown',this.value)"></td>
+        <td><input class="ad-in sm" type="number" value="${esc(d.iRating == null ? '' : d.iRating)}" onchange="adminDriverField(${d.id},'iRating',this.value)"></td>
+        <td><input class="ad-in sm" value="${esc(d.srOverride || baseSR(d))}" placeholder="A 3.57" onchange="adminDriverField(${d.id},'srText',this.value)"></td>
+        <td><select class="ad-in" onchange="adminDriverTeam(${d.id}, this.value)">${teamOpts(ov.team || '')}</select></td>
+        <td>${L.seasons.length > 1 ? `<details class="ad-det"><summary>By season</summary>${L.seasons.map(se => {
+          const cur = ov.teamBySeason && Object.prototype.hasOwnProperty.call(ov.teamBySeason, se.id) ? (ov.teamBySeason[se.id] || '') : '__default__';
+          return `<label class="ad-lab">${esc(se.name)}<select class="ad-in" onchange="adminDriverSeasonTeam(${d.id},'${se.id}', this.value)">
+            ${teamOpts(cur, `<option value="__default__" ${cur === '__default__' ? 'selected' : ''}>Same as default</option>`)}</select></label>`;
+        }).join('')}</details>` : '<span class="dim">—</span>'}</td>
+        <td><button class="ad-x" onclick="if(confirm('Remove ${esc(d.name).replace(/'/g, '')} and every result they have?')) adminRemoveDriver(${d.id})">Remove</button></td>
+      </tr>`;
+  }).join('');
+
+  setApp(`
+    <div class="admin-wrap">
+      <div class="back-row"><button class="back-link" onclick="location.hash=''">&larr; Back to the site</button></div>
+      <div class="list-header"><h1>League Admin</h1></div>
+      <p class="dash-sub">Changes here are made in your browser only. When you're happy, press <b>Download league-data.json</b> and upload it to your repository's <b>data</b> folder to publish.</p>
+      ${adminMsg ? `<div class="ad-msg">${esc(adminMsg)}</div>` : ''}
+
+      <div class="hist-h">SAVE / LOAD</div>
+      <div class="ad-row">
+        <button class="log-btn ad-btn" onclick="adminDownload()">Download league-data.json</button>
+        <label class="ad-file">Load an existing league-data.json<input type="file" accept=".json" onchange="adminLoadFile(this.files[0])"></label>
+      </div>
+
+      <div class="hist-h">SEASONS</div>
+      <p class="ad-note">Seasons are created automatically from your race files. Rename them, force one complete or in progress, or add an empty season to set up your roster before the first race.</p>
+      <div class="drivers-wrap">
+        <table class="drivers-table ad-table">
+          <thead><tr><th>Name</th><th>Year</th><th>Races</th><th>Status</th><th></th></tr></thead>
+          <tbody>${seasonRows || '<tr><td colspan="5" class="dim">No seasons yet.</td></tr>'}</tbody>
         </table>
       </div>
-    </details>`;
-  };
-
-  const yearBlocks = years.map((y, idx) => `
-    <details class="year-acc" ${idx === 0 ? 'open' : ''}>
-      <summary>${y} Season <span class="count">${byYear[y].Winter.length + byYear[y].Summer.length} races</span></summary>
-      <div class="year-body">
-        ${seasonBlock(y, 'Winter', byYear[y].Winter)}
-        ${seasonBlock(y, 'Summer', byYear[y].Summer)}
+      <div class="ad-row" style="margin-top:12px">
+        <input class="ad-in" id="newSeasonName" placeholder="New season name" style="max-width:240px">
+        <input class="ad-in" id="newSeasonDate" type="date" style="max-width:170px">
+        <button class="ad-x add" onclick="adminAddSeason()">Add season</button>
       </div>
-    </details>`).join('');
 
-  document.getElementById('app').innerHTML = `
-    <div class="log-wrap">
-      <button class="back-link" onclick="location.hash='driver-${d.number}'">&larr; ${d.name}'s Career Card</button>
-      <div class="page-title">
-        <h1>#${d.number} ${d.name} — Career Performance Log</h1>
-        <p>${years[years.length-1]}–${years[0]} · ${races.length} RACES SIMULATED · EVERY WINTER &amp; SUMMER SEASON, 15 RACES EACH</p>
+      <div class="hist-h">RACE RESULTS</div>
+      <p class="ad-note">Add an official iRacing <b>.json</b> result file, or create a race by hand. Use <b>Edit</b> to change any driver's start, finish, laps, incidents or points. Every statistic on the site is calculated from these results, so editing them updates everything.</p>
+      <label class="ad-file big">Add iRacing result file(s) (.json)<input type="file" accept=".json" multiple onchange="adminAddFiles(this.files)"></label>
+      <div class="ad-row" style="margin:14px 0">
+        <select class="ad-in" id="newRaceSeason" style="max-width:220px">${seasonOpts || '<option value="">No seasons</option>'}</select>
+        <input class="ad-in" id="newRaceTrack" placeholder="Track" style="max-width:220px">
+        <input class="ad-in" id="newRaceDate" type="date" style="max-width:170px">
+        <button class="ad-x add" onclick="adminNewRace()">Create race by hand</button>
       </div>
-      ${yearBlocks}
-    </div>`;
-  window.scrollTo(0,0);
+      <div class="drivers-wrap">
+        <table class="drivers-table">
+          <thead><tr><th>Date</th><th>Season</th><th>Wk</th><th>Track</th><th>Drivers</th><th>Winner</th><th></th></tr></thead>
+          <tbody>${raceList.length ? raceList.map(r => {
+            const w = r.results.find(x => x.fin === 1);
+            const se = L.seasonById[r.seasonId];
+            const wk = se ? se.races.find(x => x.id === r.id) : null;
+            return `<tr><td>${dateLabel(r.date)}</td>
+              <td>${esc(se ? se.name : r.seasonName)}</td><td>${wk ? wk.week : ''}</td><td>${esc(r.track)}</td><td>${r.results.length}</td>
+              <td>${w ? esc(w.n) : ''}</td>
+              <td><button class="ad-x add" onclick="adminEditRace(${r.id})">Edit</button>
+                <button class="ad-x" onclick="if(confirm('Remove this race?')) adminRemoveRace(${r.id})">Remove</button></td></tr>`;
+          }).join('') : '<tr><td colspan="7" class="dim">No races yet.</td></tr>'}</tbody>
+        </table>
+      </div>
+
+      <div class="hist-h">LEAGUE SETTINGS</div>
+      <div class="ad-grid">
+        <label class="ad-lab">League name<input class="ad-in" value="${esc(cfg.leagueName)}" onchange="adminSet('leagueName', this.value)"></label>
+        <label class="ad-lab">Races per season<input class="ad-in" type="number" min="1" value="${cfg.racesPerSeason}" onchange="adminSet('racesPerSeason', this.value)"></label>
+        <label class="ad-lab">Seasons per year<input class="ad-in" type="number" min="1" value="${cfg.seasonsPerYear}" onchange="adminSet('seasonsPerYear', this.value)"></label>
+      </div>
+      <p class="ad-note">A season counts as complete once it has the full number of races (or when the next season starts), unless you force it above. Titles, awards and the Dash For Cash payouts are decided when a season completes. Champion of the Year needs the same driver to win every season of a year.</p>
+
+      <div class="hist-h">RANK TIERS</div>
+      <p class="ad-note">One per line: <b>Name, first place, last place, color</b></p>
+      <textarea class="ad-text" rows="${cfg.tiers.length + 1}" onchange="adminSetTiers(this.value)">${esc(cfg.tiers.map(t => `${t.name}, ${t.min}, ${t.max}, ${t.color}`).join('\n'))}</textarea>
+
+      <div class="hist-h">THE DASH FOR CASH</div>
+      <div class="ad-grid">
+        <label class="ad-lab">Enabled<select class="ad-in" onchange="adminSetDash('enabled', this.value === '1')"><option value="1" ${dc.enabled ? 'selected' : ''}>On</option><option value="0" ${dc.enabled ? '' : 'selected'}>Off</option></select></label>
+        <label class="ad-lab">Prize pool ($)<input class="ad-in" type="number" min="0" value="${dc.pot}" onchange="adminSetDash('pot', this.value)"></label>
+        <label class="ad-lab">Final races counted<input class="ad-in" type="number" min="1" value="${dc.finalRaces}" onchange="adminSetDash('finalRaces', this.value)"></label>
+        <label class="ad-lab">Max deduction (%)<input class="ad-in" type="number" min="0" max="100" value="${dc.maxDeductionPct}" onchange="adminSetDash('maxDeductionPct', this.value)"></label>
+      </div>
+      <label class="ad-lab">Base payouts by position ($, comma separated)<input class="ad-in" value="${esc(dc.base.join(', '))}" onchange="adminSetDash('base', this.value)"></label>
+      <label class="ad-lab">Clean bonus shares by cleanliness rank (%, comma separated)<input class="ad-in" value="${esc(dc.share.join(', '))}" onchange="adminSetDash('share', this.value)"></label>
+      <p class="ad-note">Base payouts add up to $${fmt(sumOf(dc.base, x => x))} against a $${fmt(dc.pot)} pool, and bonus shares add up to ${sumOf(dc.share, x => x)}%.</p>
+
+      <div class="hist-h">TEAMS</div>
+      <div class="ad-teams">
+        ${DATA.teams.map(t => `
+          <div class="ad-team">
+            <input type="color" value="${esc(t.color)}" onchange="adminTeamField('${esc(t.id)}','color',this.value)">
+            <input class="ad-in" value="${esc(t.name)}" onchange="adminTeamField('${esc(t.id)}','name',this.value)">
+            <button class="ad-x" onclick="if(confirm('Remove this team?')) adminRemoveTeam('${esc(t.id)}')">Remove</button>
+          </div>`).join('') || '<p class="ad-note">No teams yet.</p>'}
+        <div class="ad-team">
+          <input type="color" id="newTeamColor" value="#E8A33D"><input class="ad-in" id="newTeamName" placeholder="New team name">
+          <button class="ad-x add" onclick="adminAddTeam()">Add team</button>
+        </div>
+      </div>
+
+      <div class="hist-h">ADD A DRIVER</div>
+      <p class="ad-note">Add a driver without a race result, for example to set up your roster before the season starts. They show on the Drivers page with zero stats and fill in once they have results. The iRacing customer ID is optional; if you know it, results from iRacing files will match them automatically.</p>
+      <div class="ad-grid">
+        <label class="ad-lab">Name<input class="ad-in" id="newDrvName" placeholder="Full name"></label>
+        <label class="ad-lab">iRacing customer ID (optional)<input class="ad-in" id="newDrvId" type="number" placeholder="e.g. 703766"></label>
+        <label class="ad-lab">Car #<input class="ad-in" id="newDrvNum"></label>
+        <label class="ad-lab">Age<input class="ad-in" id="newDrvAge" type="number" min="1"></label>
+        <label class="ad-lab">Hometown<input class="ad-in" id="newDrvTown" placeholder="City, State, Country"></label>
+        <label class="ad-lab">Team<select class="ad-in" id="newDrvTeam">${teamOpts('')}</select></label>
+      </div>
+      <button class="ad-x add" onclick="adminAddDriver()">Add driver</button>
+
+      <div class="hist-h" style="margin-top:28px">DRIVERS</div>
+      <p class="ad-note">Every driver here can be edited, including the ones added automatically from race files. Change any field and it applies straight away; clear a name, car number, iRating or safety rating to go back to what iRacing reported. iRacing gives no team, age or hometown, so fill those in here. Use "By season" if a driver changed teams.</p>
+      <div class="drivers-wrap">
+        <table class="drivers-table ad-table">
+          <thead><tr><th>Name</th><th>Car #</th><th>Age</th><th>Hometown</th><th>iRating</th><th>Safety rating</th><th>Team</th><th>Team history</th><th></th></tr></thead>
+          <tbody>${driverRows || '<tr><td colspan="9" class="dim">No drivers yet.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="ad-row" style="margin-top:20px"><button class="log-btn ad-btn" onclick="location.hash=''">Preview the site</button></div>
+    </div>`, keepScroll);
 }
+
+function renderRaceEditor(keepScroll){
+  const r = getRace();
+  const drivers = [...L.drivers].sort((a, b) => a.name.localeCompare(b.name));
+  const driverOpts = (sel) => drivers.map(d => `<option value="${d.id}" ${d.id === sel ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
+  const order = r.results.map((x, i) => ({ x, i })).sort((a, b) => a.x.fin - b.x.fin);
+  const finishes = r.results.map(x => x.fin);
+  const warn = [];
+  if (r.results.length && !finishes.includes(1)) warn.push('No driver has finishing position 1.');
+  if (new Set(finishes).size !== finishes.length) warn.push('Two drivers share the same finishing position.');
+  if (new Set(r.results.map(x => x.c)).size !== r.results.length) warn.push('A driver appears more than once.');
+  if (new Set(r.results.map(x => x.st)).size !== r.results.length) warn.push('Two drivers share the same starting position.');
+  const led = sumOf(r.results, x => x.ll), laps = r.laps || Math.max(0, ...r.results.map(x => x.lc));
+  if (r.results.length && laps && led !== laps) warn.push(`Laps led add up to ${led}, but the race was ${laps} laps.`);
+  const row = ({ x, i }) => `
+    <tr>
+      <td><select class="ad-in" onchange="adminResultField(${i},'c',this.value)">${driverOpts(x.c)}</select></td>
+      <td><input class="ad-in sm" value="${esc(x.no)}" onchange="adminResultField(${i},'no',this.value)"></td>
+      <td><input class="ad-in sm" type="number" min="1" value="${x.st}" onchange="adminResultField(${i},'st',this.value)"></td>
+      <td><input class="ad-in sm" type="number" min="1" value="${x.fin}" onchange="adminResultField(${i},'fin',this.value)"></td>
+      <td><input class="ad-in" style="width:120px" value="${esc(x.out)}" onchange="adminResultField(${i},'out',this.value)"></td>
+      <td><input class="ad-in sm" type="text" value="${esc(x.fin === 1 ? '-' : (x.ivt || (x.iv > 0 ? (x.iv / 10000).toFixed(4) : '')))}" placeholder="${x.fin === 1 ? '-' : '2.7952 or -1L'}" onchange="adminResultField(${i},'gap',this.value)"></td>
+      <td><input class="ad-in sm" type="number" min="0" value="${x.lc}" onchange="adminResultField(${i},'lc',this.value)"></td>
+      <td><input class="ad-in sm" type="number" min="0" value="${x.ll}" onchange="adminResultField(${i},'ll',this.value)"></td>
+      <td><input class="ad-in sm" type="number" min="0" value="${x.inc}" onchange="adminResultField(${i},'inc',this.value)"></td>
+      <td><input class="ad-in sm" type="number" value="${x.pts}" onchange="adminResultField(${i},'pts',this.value)"></td>
+      <td><button class="ad-x" onclick="adminRemoveResult(${i})">Remove</button></td>
+    </tr>`;
+  setApp(`
+    <div class="admin-wrap">
+      <div class="back-row"><button class="back-link" onclick="adminCloseRace()">&larr; Back to admin</button></div>
+      <div class="list-header"><h1>Edit Race</h1></div>
+      <p class="dash-sub">Changes apply straight away in this browser. Press <b>Back to admin</b>, then <b>Download league-data.json</b> to save them.</p>
+      ${adminMsg ? `<div class="ad-msg">${esc(adminMsg)}</div>` : ''}
+      ${warn.length ? `<div class="ad-msg warn">${warn.map(esc).join('<br>')}</div>` : ''}
+      <div class="ad-grid">
+        <label class="ad-lab">Season<select class="ad-in" onchange="adminRaceField('seasonId', this.value)">${[...L.seasons].reverse().map(se => `<option value="${se.id}" ${se.id === r.seasonId ? 'selected' : ''}>${esc(se.name)}</option>`).join('')}</select></label>
+        <label class="ad-lab">Track<input class="ad-in" value="${esc(r.track)}" onchange="adminRaceField('track', this.value)"></label>
+        <label class="ad-lab">Date<input class="ad-in" type="date" value="${esc(String(r.date).slice(0, 10))}" onchange="adminRaceField('date', this.value)"></label>
+        <label class="ad-lab">Race length (laps)<input class="ad-in" type="number" min="0" value="${r.laps || 0}" onchange="adminRaceField('laps', this.value)"></label>
+      </div>
+      <div class="hist-h">RESULTS (${r.results.length} DRIVERS)</div>
+      <div class="drivers-wrap">
+        <table class="drivers-table ad-table">
+          <thead><tr><th>Driver</th><th>Car #</th><th>Start</th><th>Finish</th><th>Status</th><th>Gap</th><th>Laps done</th><th>Laps led</th><th>Incidents</th><th>Points</th><th></th></tr></thead>
+          <tbody>${order.map(row).join('') || '<tr><td colspan="11" class="dim">No results yet. Add a driver below.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="ad-row" style="margin-top:14px">
+        <select class="ad-in" id="newResultDriver" style="max-width:260px">${driverOpts(-1)}</select>
+        <button class="ad-x add" onclick="adminAddResult()">Add driver to this race</button>
+      </div>
+      <p class="ad-note">Gap works like iRacing: the leader shows <b>-</b>, cars on the lead lap show their gap in seconds (for example <b>2.7952</b>, or the raw number from the iRacing file such as <b>27952</b>), and cars laps down show <b>-1L</b>, <b>-43L</b> and so on. Leave it blank to work it out from laps completed. Status is "Running" for a normal finish; anything else (for example "Crash" or "Disconnected") counts as a DNF. Points are entered as awarded by your league scoring.</p>
+      <div class="ad-row" style="margin-top:18px">
+        <button class="log-btn ad-btn" onclick="adminCloseRace()">Done</button>
+        <button class="ad-x" onclick="if(confirm('Delete this whole race?')) adminRemoveRace(${r.id})">Delete race</button>
+      </div>
+    </div>`, keepScroll);
+}
+
+/* ------------------------------ boot and routing ------------------------------ */
+function normalizeData(d){
+  d = d || {};
+  return { config: d.config || {}, teams: Array.isArray(d.teams) ? d.teams : [], seasons: d.seasons || {}, drivers: d.drivers || {}, races: Array.isArray(d.races) ? d.races : [] };
+}
+let loadError = '';
 
 function route(){
-  const hash = location.hash.replace('#','');
-  if (hash.startsWith('driver-')){
-    const d = byNumber(hash.replace('driver-',''));
-    if (d){ renderDetail(d); window.scrollTo(0,0); return; }
+  closeDriverMenu();
+  const hash = location.hash.replace('#', '');
+  if (hash === 'admin'){ renderAdmin(); return; }
+  if (loadError && !L.drivers.length){
+    setIntro('');
+    setApp(emptyState('Could not load the league data', `${esc(loadError)}<br><br>If you opened this file straight from your computer, browsers block loading data that way — open the published website instead, or load a file in the ${adminLink}.`));
+    return;
   }
-  if (hash.startsWith('log-')){
-    const d = byNumber(hash.replace('log-',''));
-    if (d){ renderLog(d); return; }
+  const m = hash.match(/^([a-z]+)(?:-(.+))?$/) || [];
+  switch (m[1]){
+    case 'driver':      return renderDetail(m[2]);
+    case 'season':      return renderSeasonDetail(m[2]);
+    case 'log':         return renderLog(m[2]);
+    case 'teams':       return renderTeams(window.__lastTeamSort);
+    case 'team':        return renderTeamDetail(m[2]);
+    case 'teamhistory': return renderTeamHistory(m[2]);
+    case 'dash':        return renderDash(m[2]);
+    default:            return renderDrivers(window.__lastSort);
   }
-  if (hash.startsWith('team-')){
-    const t = buildTeams().find(x => teamSlug(x.name) === hash.replace('team-',''));
-    if (t){ renderTeamDetail(t); return; }
-  }
-  if (hash.startsWith('season-')){
-    const d = byNumber(hash.replace('season-',''));
-    if (d){ renderSeasonDetail(d); return; }
-  }
-  if (hash === 'teams'){ renderTeams(window.__lastTeamSort); return; }
-  renderDrivers(window.__lastSort);
 }
 
+async function boot(){
+  DATA = normalizeData({});
+  try {
+    const res = await fetch('data/league-data.json?v=' + Date.now());
+    if (!res.ok) throw new Error(`data/league-data.json returned ${res.status}`);
+    DATA = normalizeData(await res.json());
+  } catch (e) { loadError = e.message; }
+  rebuild();
+  route();
+}
 window.addEventListener('hashchange', route);
-route();
+if (typeof document !== 'undefined' && document.getElementById('app')) boot();
 </script>
 </body>
 </html>
