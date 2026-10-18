@@ -467,7 +467,6 @@
 <body>
   <p class="intro" id="intro"></p>
   <div id="app"><div class="empty-state"><p>Loading league data…</p></div></div>
-  <div class="site-foot"><a href="#admin">League admin</a></div>
 
 <script>
 'use strict';
@@ -923,7 +922,6 @@ function teamDashStats(teamId){
 /* ------------------------------ shared UI ------------------------------ */
 const setApp = (html, keepScroll) => { document.getElementById('app').innerHTML = html; if (!keepScroll) window.scrollTo(0, 0); };
 const setIntro = (t) => { document.getElementById('intro').textContent = t || ''; };
-const adminLink = '<a href="#admin" class="inline-link">League admin</a>';
 const f1 = (n) => n == null ? '—' : n.toFixed(1);
 
 function viewToggle(active){
@@ -937,8 +935,7 @@ function viewToggle(active){
 function emptyState(title, body){
   return `<div class="empty-state"><h2>${title}</h2><p>${body}</p></div>`;
 }
-const noDataState = () => emptyState('No race data yet',
-  `Add your first iRacing result file in the ${adminLink}, download the updated <b>league-data.json</b>, and upload it to your repository's <b>data</b> folder.`);
+const noDataState = () => emptyState('No race data yet', 'No race results have been added yet. Check back soon!');
 
 function rankTag(standing){
   const t = tierFor(standing);
@@ -1303,7 +1300,7 @@ function renderDash(sid){
       <div class="list-header"><h1>The Dash For Cash Tournament</h1></div>
       <div class="season-pick">${select}</div>`;
 
-  if (dd.state === 'disabled'){ setApp(`${head}${emptyState('The Dash For Cash is switched off', `Turn it on in the ${adminLink}.`)}</div>`); return; }
+  if (dd.state === 'disabled'){ setApp(`${head}${emptyState('The Dash For Cash is not running', 'The Dash For Cash is not active for this league right now.')}</div>`); return; }
   if (dd.state === 'notStarted'){
     setApp(`${head}${emptyState('The Dash For Cash has not started', `It covers the final ${dc.finalRaces} races of the season, starting at Race ${dd.startWeek}. ${esc(se.name)} has completed ${se.raceCount} of ${L.cfg.racesPerSeason} races.`)}</div>`);
     return;
@@ -1453,7 +1450,7 @@ function renderTeams(sortKey){
   window.__lastTeamSort = sortKey;
   if (!L.teams.length){
     setIntro('');
-    setApp(`${viewToggle('teams')}${emptyState('No teams yet', `Add your teams in the ${adminLink} and assign each driver to one.`)}`);
+    setApp(`${viewToggle('teams')}${emptyState('No teams yet', 'No teams have been set up for this league yet. Check back soon!')}`);
     return;
   }
   setIntro('Team standings are the combined season points of every driver on the team. Click a team to open its page, or a driver in a roster to choose their season or career stats.');
@@ -2030,7 +2027,7 @@ function route(){
   if (hash === 'admin'){ renderAdmin(); return; }
   if (loadError && !L.drivers.length){
     setIntro('');
-    setApp(emptyState('Could not load the league data', `${esc(loadError)}<br><br>If you opened this file straight from your computer, browsers block loading data that way — open the published website instead, or load a file in the ${adminLink}.`));
+    setApp(emptyState('Could not load the league data', `${esc(loadError)}<br><br>If you opened this file straight from your computer, browsers block loading data that way — open the published website instead.`));
     return;
   }
   const m = hash.match(/^([a-z]+)(?:-(.+))?$/) || [];
