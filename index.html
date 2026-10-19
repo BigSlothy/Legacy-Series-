@@ -8,8 +8,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Driver Stats">
 <meta property="og:description" content="League driver stats, standings, teams, career logs and the Dash For Cash tournament.">
-<meta name="theme-color" content="#0A0C0E">
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0A0C0E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -434,34 +434,10 @@
   .site-foot{ max-width:1180px; margin:40px auto 0; text-align:center; font-size:12px; color:var(--paper-dim); }
   .site-foot a{ color:var(--paper-dim); }
   .season-pick{ text-align:center; margin:-6px 0 18px; }
-  .season-select, .ad-in{
+  .season-select{
     background:var(--panel); color:var(--paper); border:1px solid var(--steel-line); border-radius:5px;
     padding:9px 12px; font-family:'Inter',sans-serif; font-size:13px;
   }
-  .admin-wrap{ max-width:1180px; margin:0 auto; }
-  .ad-msg{ background:var(--panel-2); border:1px solid var(--amber); color:var(--paper); border-radius:6px; padding:12px 16px; margin:0 0 18px; font-size:13px; }
-  .ad-note{ color:var(--paper-dim); font-size:12.5px; line-height:1.55; margin:0 0 12px; }
-  .ad-row{ display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-bottom:10px; }
-  .ad-btn{ width:auto; padding:11px 22px; }
-  .ad-file{ display:inline-block; border:1px dashed var(--steel-line); border-radius:6px; padding:11px 16px; color:var(--paper-dim); font-size:13px; cursor:pointer; }
-  .ad-file.big{ display:block; text-align:center; padding:22px; font-size:14px; }
-  .ad-file input{ display:block; margin:8px auto 0; color:var(--paper-dim); max-width:100%; }
-  .ad-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin-bottom:12px; }
-  .ad-lab{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-dim); margin-bottom:10px; }
-  .ad-in{ width:100%; }
-  .ad-in.sm{ width:74px; }
-  .ad-text{ width:100%; background:var(--panel); color:var(--paper); border:1px solid var(--steel-line); border-radius:6px; padding:12px; font-family:'Inter',sans-serif; font-size:13px; line-height:1.6; margin-bottom:10px; }
-  .ad-teams{ display:flex; flex-direction:column; gap:10px; margin-bottom:10px; max-width:560px; }
-  .ad-team{ display:flex; align-items:center; gap:10px; }
-  .ad-team input[type=color]{ width:42px; height:38px; padding:2px; background:var(--panel); border:1px solid var(--steel-line); border-radius:5px; }
-  .ad-x{ background:none; border:1px solid var(--steel-line); color:var(--paper-dim); border-radius:5px; padding:8px 12px; cursor:pointer; font-size:12px; }
-  .ad-x:hover{ color:#E5694D; border-color:#E5694D; }
-  .ad-x.add:hover{ color:#3EA66B; border-color:#3EA66B; }
-  .ad-table td{ vertical-align:top; }
-  .ad-det summary{ cursor:pointer; color:var(--amber); font-size:12.5px; }
-  .ad-det{ min-width:200px; }
-  .ad-det .ad-lab{ margin:8px 0 0; }
-  .ad-msg.warn{ border-color:#E5694D; color:#f3b4a6; }
 </style>
 </head>
 <body>
@@ -471,11 +447,13 @@
 <script>
 'use strict';
 // ============================================================================
-// League tracker. Everything on every page is calculated from real race results
-// (official iRacing event_result JSON files) stored in data/league-data.json.
-// Nothing is simulated. Edit the league through #admin, then upload the file it
-// downloads back to your repository.
+// League tracker. Every page is calculated from real race results (official iRacing
+// event_result data) stored in data/league-data.json. Nothing is simulated.
 // ============================================================================
+
+// Build flags set by the build script.
+const PRIVATE = false;
+const HOME = PRIVATE ? 'drivers' : '';
 
 /* ------------------------------ helpers ------------------------------ */
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -527,53 +505,6 @@ function withDefaults(c){
 }
 
 /* ------------------------------ iRacing parser ------------------------------ */
-// <parse>
-// Turns one official iRacing "event_result" JSON export into a compact race record.
-function parseEventResult(raw){
-  const D = raw && raw.data;
-  if (!D || !Array.isArray(D.session_results)) throw new Error('This is not an iRacing event_result file.');
-  const sessions = D.session_results;
-  const race = sessions.find(s => s.simsession_type_name === 'Race')
-    || sessions.find(s => /race/i.test(s.simsession_type_name || ''))
-    || sessions[sessions.length - 1];
-  const rows = (race && race.results || []).filter(r => !r.ai);
-  if (!rows.length) throw new Error('No race results found in this file.');
-  const winnerLaps = Math.max(0, ...rows.map(r => r.laps_complete || 0));
-  const results = rows.map(r => ({
-    c: r.cust_id,
-    n: r.display_name,
-    car: r.car_name || '',
-    no: String(r.livery && r.livery.car_number != null ? r.livery.car_number : (r.car_number != null ? r.car_number : '')),
-    st: (r.starting_position >= 0 ? r.starting_position : r.starting_position_in_class || 0) + 1,
-    fin: r.finish_position + 1,
-    out: r.reason_out || 'Running',
-    iv: r.interval,
-    lc: r.laps_complete || 0,
-    ll: r.laps_lead || 0,
-    inc: r.incidents || 0,
-    pts: r.league_points == null || r.league_points < 0 ? 0 : r.league_points,
-    ir: r.newi_rating > 0 ? r.newi_rating : null,
-    srl: r.new_license_level > 0 ? r.new_license_level : null,
-    srs: r.new_sub_level > 0 ? r.new_sub_level : null,
-    cc: r.country_code || '',
-  })).sort((a, b) => a.fin - b.fin);
-  const track = D.track || {};
-  const cfgName = track.config_name && track.config_name !== 'N/A' ? ` ${track.config_name}` : '';
-  return {
-    id: D.subsession_id,
-    seasonId: D.league_season_id || 0,
-    seasonName: D.league_season_name || D.season_name || 'Season',
-    leagueName: D.league_name || '',
-    track: (track.track_name || 'Unknown track') + cfgName,
-    date: D.start_time,
-    laps: D.event_laps_complete || winnerLaps,
-    cautions: D.num_cautions || 0,
-    leadChanges: D.num_lead_changes || 0,
-    sof: D.event_strength_of_field || null,
-    results,
-  };
-}
-// </parse>
 
 /* ------------------------------ the league engine ------------------------------ */
 let DATA = { config: {}, teams: [], drivers: {}, seasons: {}, races: [] };
@@ -824,6 +755,7 @@ function rankHistory(d){
   });
   return counts.filter(c => c.count > 0);
 }
+
 /* ------------------------------ teams ------------------------------ */
 // average of a stat over members who have actually raced this season
 function avgOver(members, key){
@@ -927,7 +859,7 @@ const f1 = (n) => n == null ? '—' : n.toFixed(1);
 function viewToggle(active){
   return `
     <div class="view-toggle">
-      <button class="vt-btn ${active === 'drivers' ? 'active' : ''}" onclick="location.hash=''">Drivers</button>
+      <button class="vt-btn ${active === 'drivers' ? 'active' : ''}" onclick="location.hash='${HOME}'">Drivers</button>
       <button class="vt-btn ${active === 'teams' ? 'active' : ''}" onclick="location.hash='teams'">Teams</button>
       <button class="vt-btn ${active === 'dash' ? 'active' : ''}" onclick="location.hash='dash'">The Dash For Cash tournament</button>
     </div>`;
@@ -1156,7 +1088,7 @@ function careerCardHTML(d){
 
 function driverOr404(id){
   const d = L.driverById[id];
-  if (!d) setApp(`<div class="detail-wrap"><button class="back-link" onclick="location.hash=''">&larr; All Drivers</button>${emptyState('Driver not found', 'That driver has no races in the league data.')}</div>`);
+  if (!d) setApp(`<div class="detail-wrap"><button class="back-link" onclick="location.hash='${HOME}'">&larr; All Drivers</button>${emptyState('Driver not found', 'That driver has no races in the league data.')}</div>`);
   return d;
 }
 
@@ -1166,8 +1098,8 @@ function renderDetail(id){
   setApp(`
     <div class="detail-wrap">
       <div class="back-row">
-        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
-        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='${HOME}')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash='${HOME}'">All Drivers</button>
       </div>
       <div class="list-header"><h1>Career Total Driver Stats</h1></div>
       <div class="page-title"><h1>${esc(L.cfg.leagueName)} Driver Card</h1><p>CAREER STATS · ${d.career.races} RACE${d.career.races === 1 ? '' : 'S'}</p></div>
@@ -1180,7 +1112,7 @@ function renderSeasonDetail(id){
   setIntro('');
   setApp(`
     <div class="detail-wrap">
-      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='')">&larr; Back</button>
+      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='${HOME}')">&larr; Back</button>
       <div class="list-header"><h1>Current Season Driver Card</h1></div>
       ${d.cur ? cardHTML(d) : emptyState('Not in the current season', `${esc(d.name)} has no races in ${esc(L.current.name)}.`)}
       <div class="season-actions"><button class="log-btn" onclick="location.hash='driver-${d.id}'">View Career Card &rarr;</button></div>
@@ -1386,6 +1318,7 @@ function renderDash(sid){
       </details>
     </div>`);
 }
+
 /* ------------------------------ Teams pages ------------------------------ */
 function teamCardHTML(t){
   const initials = t.name.split(/\s+/).filter(w => w.toLowerCase() !== 'team').map(w => w[0]).join('').slice(0, 2).toUpperCase() || t.name.slice(0, 2).toUpperCase();
@@ -1475,7 +1408,7 @@ function renderTeamDetail(id){
     <div class="team-detail">
       <div class="back-row">
         <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='teams')">&larr; Back</button>
-        <button class="back-link" onclick="location.hash=''">All Drivers</button>
+        <button class="back-link" onclick="location.hash='${HOME}'">All Drivers</button>
         <button class="back-link" onclick="location.hash='teams'">All Teams</button>
       </div>
       <div class="list-header"><h1>${esc(t.name)} — Team Stats</h1></div>
@@ -1567,452 +1500,13 @@ function renderTeamHistory(id){
     </div>`);
 }
 
-/* ------------------------------ Admin ------------------------------ */
-// Edits happen in memory; "Download league-data.json" saves them. Upload that file to
-// your repository (data/league-data.json) to publish the changes for everyone.
-let adminMsg = '', adminRaceId = null;
-function rebuild(){ DATA.seasons = DATA.seasons || {}; DATA.drivers = DATA.drivers || {}; DATA.teams = DATA.teams || []; DATA.races = DATA.races || []; L = buildLeague(DATA); document.title = `${L.cfg.leagueName} — Driver Stats`; }
-const ensureOv = (id) => (DATA.drivers[id] = DATA.drivers[id] || {});
-const numList = (str) => String(str).split(/[,\s]+/).filter(Boolean).map(Number).filter(n => !isNaN(n));
-const toInt = (v, d) => { const n = parseInt(v, 10); return isNaN(n) ? d : n; };
-const toNum = (v, d) => { const n = parseFloat(v); return isNaN(n) ? d : n; };
-const dateLabel = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-const nextNegativeId = (taken) => { let id = -1; while (taken(id)) id--; return id; };
-
-/* ---- league settings ---- */
-function adminSet(field, val){
-  DATA.config = withDefaults(DATA.config);
-  if (field === 'leagueName') DATA.config.leagueName = val.trim() || DEFAULT_CONFIG.leagueName;
-  else DATA.config[field] = Math.max(1, +val || 1);
-  rebuild();
-}
-function adminSetDash(field, val){
-  DATA.config = withDefaults(DATA.config);
-  const d = DATA.config.dash;
-  if (field === 'enabled') d.enabled = !!val;
-  else if (field === 'base' || field === 'share'){ const l = numList(val); if (l.length) d[field] = l; }
-  else d[field] = +val || 0;
-  rebuild(); renderAdmin(true);
-}
-function adminSetTiers(text){
-  const tiers = String(text).split('\n').map(l => l.split(',').map(x => x.trim())).filter(p => p.length >= 3 && p[0])
-    .map(p => ({ name: p[0], min: +p[1], max: +p[2], color: p[3] || '#E8A33D' })).filter(t => !isNaN(t.min) && !isNaN(t.max));
-  if (!tiers.length){ adminMsg = 'Rank tiers need at least one line like: Ruby, 1, 5, #FF5C7A'; renderAdmin(true); return; }
-  DATA.config = withDefaults(DATA.config);
-  DATA.config.tiers = tiers.sort((a, b) => a.min - b.min);
-  rebuild(); renderAdmin(true);
+let dataLoaded = false;   // true once a league-data.json has been read in this session
+function rebuild(){
+  DATA.seasons = DATA.seasons || {}; DATA.drivers = DATA.drivers || {}; DATA.teams = DATA.teams || []; DATA.races = DATA.races || [];
+  L = buildLeague(DATA);
+  document.title = `${L.cfg.leagueName} — ${PRIVATE ? 'Private copy' : 'Driver Stats'}`;
 }
 
-/* ---- teams ---- */
-function adminAddTeam(){
-  const name = document.getElementById('newTeamName').value.trim();
-  if (!name) return;
-  let id = slugify(name) || 'team', n = 2;
-  while (DATA.teams.some(t => t.id === id)) id = slugify(name) + '-' + n++;
-  DATA.teams.push({ id, name, color: document.getElementById('newTeamColor').value });
-  rebuild(); renderAdmin(true);
-}
-function adminTeamField(id, field, val){
-  const t = DATA.teams.find(x => x.id === id);
-  if (t){ t[field] = val; rebuild(); }
-}
-function adminRemoveTeam(id){
-  DATA.teams = DATA.teams.filter(t => t.id !== id);
-  Object.values(DATA.drivers).forEach(ov => {
-    if (ov.team === id) ov.team = '';
-    if (ov.teamBySeason) Object.keys(ov.teamBySeason).forEach(k => { if (ov.teamBySeason[k] === id) delete ov.teamBySeason[k]; });
-  });
-  rebuild(); renderAdmin(true);
-}
-
-/* ---- seasons ---- */
-function adminSeasonField(id, field, val){
-  const o = (DATA.seasons[id] = DATA.seasons[id] || {});
-  if (field === 'name') o.name = val.trim();
-  else if (field === 'complete'){ if (val === 'auto') delete o.complete; else o.complete = val === 'yes'; }
-  rebuild();
-}
-function adminAddSeason(){
-  const name = document.getElementById('newSeasonName').value.trim();
-  const date = document.getElementById('newSeasonDate').value;
-  if (!name) { adminMsg = 'Give the new season a name.'; renderAdmin(true); return; }
-  const id = nextNegativeId(i => DATA.seasons[i] || DATA.races.some(r => r.seasonId === i));
-  DATA.seasons[id] = { name, startDate: (date || new Date().toISOString().slice(0, 10)) + 'T12:00:00Z' };
-  rebuild(); adminMsg = `Added ${name}.`; renderAdmin(true);
-}
-function adminRemoveSeason(id){
-  if (DATA.races.some(r => r.seasonId === id)){ adminMsg = 'Remove or move that season\'s races first.'; renderAdmin(true); return; }
-  delete DATA.seasons[id];
-  rebuild(); renderAdmin(true);
-}
-
-/* ---- drivers ---- */
-function adminDriverField(id, field, val){
-  // Clearing a field removes the override and goes back to what the race files say.
-  const ov = ensureOv(id), t = String(val).trim();
-  if (field === 'age'){ const n = parseInt(t, 10); if (n > 0) ov.age = n; else delete ov.age; }
-  else if (field === 'iRating'){ const n = parseInt(t, 10); if (n > 0) ov.iRating = n; else delete ov.iRating; }
-  else if (t === '') delete ov[field];
-  else ov[field] = t;
-  rebuild();
-}
-function adminDriverTeam(id, val){ ensureOv(id).team = val; rebuild(); }
-function adminDriverSeasonTeam(id, sid, val){
-  const ov = ensureOv(id);
-  ov.teamBySeason = ov.teamBySeason || {};
-  if (val === '__default__') delete ov.teamBySeason[sid]; else ov.teamBySeason[sid] = val;
-  rebuild();
-}
-function adminAddDriver(){
-  const g = (i) => document.getElementById(i).value.trim();
-  const name = g('newDrvName');
-  if (!name){ adminMsg = 'Enter the driver\'s name.'; renderAdmin(true); return; }
-  let id = parseInt(g('newDrvId'), 10);
-  if (!id || id < 0){ id = nextNegativeId(i => DATA.drivers[i] || (L.driverById[i])); }
-  else if (L.driverById[id] || DATA.drivers[id]){ adminMsg = `A driver with iRacing customer ID ${id} already exists.`; renderAdmin(true); return; }
-  DATA.drivers[id] = { manual: true, name, number: g('newDrvNum'), hometown: g('newDrvTown'), team: g('newDrvTeam') };
-  const age = parseInt(g('newDrvAge'), 10); if (age > 0) DATA.drivers[id].age = age;
-  rebuild(); adminMsg = `Added ${name}. They appear on the Drivers page with zero stats until they have results.`; renderAdmin(true);
-}
-function adminRemoveDriver(id){
-  DATA.races.forEach(r => { r.results = r.results.filter(x => x.c !== id); });
-  delete DATA.drivers[id];
-  rebuild(); adminMsg = 'Driver and all of their results removed.'; renderAdmin(true);
-}
-
-/* ---- races ---- */
-function adminRemoveRace(id){
-  DATA.races = DATA.races.filter(r => r.id !== id);
-  if (adminRaceId === id) adminRaceId = null;
-  rebuild(); adminMsg = 'Race removed.'; renderAdmin();
-}
-function adminEditRace(id){ adminRaceId = id; adminMsg = ''; renderAdmin(); }
-function adminCloseRace(){ adminRaceId = null; renderAdmin(); }
-function adminNewRace(){
-  const sid = Number(document.getElementById('newRaceSeason').value);
-  const track = document.getElementById('newRaceTrack').value.trim() || 'Track';
-  const date = document.getElementById('newRaceDate').value || new Date().toISOString().slice(0, 10);
-  if (isNaN(sid) || !L.seasonById[sid]){ adminMsg = 'Add a season first (see Seasons).'; renderAdmin(true); return; }
-  const id = nextNegativeId(i => DATA.races.some(r => r.id === i));
-  DATA.races.push({ id, seasonId: sid, seasonName: L.seasonById[sid].name, leagueName: '', track, date: date + 'T12:00:00Z', laps: 0, cautions: 0, leadChanges: 0, sof: null, results: [] });
-  adminRaceId = id; rebuild(); adminMsg = 'Race created. Add each driver\'s result below.'; renderAdmin();
-}
-const getRace = () => DATA.races.find(r => r.id === adminRaceId);
-function adminRaceField(field, val){
-  const r = getRace(); if (!r) return;
-  if (field === 'track') r.track = val.trim();
-  else if (field === 'date') r.date = val + (r.date && r.date.length > 10 ? r.date.slice(10) : 'T12:00:00Z');
-  else if (field === 'laps') r.laps = toInt(val, 0);
-  else if (field === 'seasonId'){ r.seasonId = Number(val); r.seasonName = L.seasonById[r.seasonId] ? L.seasonById[r.seasonId].name : r.seasonName; }
-  rebuild();
-}
-function adminResultField(i, field, val){
-  const r = getRace(); if (!r || !r.results[i]) return;
-  const row = r.results[i];
-  if (field === 'c'){
-    const d = L.driverById[val];
-    row.c = Number(val); row.n = d ? d.name : row.n;
-    if (d && !row.no) row.no = d.number;
-  }
-  else if (field === 'no') row.no = val.trim();
-  else if (field === 'out') row.out = val.trim() || 'Running';
-  else if (field === 'gap'){
-    // Seconds behind the leader ("2.7952"), the raw number from the iRacing file ("27952"),
-    // laps down ("-1L", "-43L"), or any other text.
-    const t = val.trim();
-    delete row.ivt;
-    if (t === '' || t === '-') row.iv = -1;
-    else if (/^[+-]?\d+(\.\d+)?$/.test(t)){
-      const n = Math.abs(parseFloat(t));
-      row.iv = Math.round(/^[+-]?\d{4,}$/.test(t) ? n : n * 10000);
-    } else {
-      const m = t.match(/^[+-]?\s*(\d+)\s*(?:L|laps?)(?:\s*down)?$/i);
-      row.ivt = m ? `-${m[1]}L` : t;
-      row.iv = -1;
-    }
-  }
-  else row[field] = toInt(val, 0);
-  rebuild();
-}
-function adminAddResult(){
-  const r = getRace(); if (!r) return;
-  const id = Number(document.getElementById('newResultDriver').value);
-  const d = L.driverById[id];
-  if (!d){ adminMsg = 'Pick a driver first (add drivers under Drivers).'; renderAdmin(true); return; }
-  if (r.results.some(x => x.c === id)){ adminMsg = `${d.name} already has a result in this race.`; renderAdmin(true); return; }
-  const next = r.results.length + 1;
-  r.results.push({ c: id, n: d.name, car: d.car || '', no: d.number || '', st: next, fin: next, out: 'Running', iv: -1,
-    lc: r.laps || 0, ll: 0, inc: 0, pts: 0, ir: null, srl: null, srs: null, cc: d.country || '' });
-  rebuild(); adminMsg = ''; renderAdmin(true);
-}
-function adminRemoveResult(i){
-  const r = getRace(); if (!r) return;
-  r.results.splice(i, 1);
-  rebuild(); renderAdmin(true);
-}
-
-/* ---- files ---- */
-async function adminAddFiles(fileList){
-  const msgs = [];
-  for (const f of fileList){
-    try {
-      const race = parseEventResult(JSON.parse(await f.text()));
-      const had = DATA.races.some(r => r.id === race.id);
-      DATA.races = DATA.races.filter(r => r.id !== race.id).concat([race]);
-      msgs.push(`${had ? 'Updated' : 'Added'} ${race.track} · ${race.seasonName} (${race.results.length} drivers)`);
-    } catch (e) { msgs.push(`${f.name}: ${e.message}`); }
-  }
-  rebuild(); adminMsg = msgs.join(' | '); renderAdmin();
-}
-async function adminLoadFile(file){
-  try { DATA = normalizeData(JSON.parse(await file.text())); rebuild(); adminRaceId = null; adminMsg = 'Loaded league-data.json.'; }
-  catch (e) { adminMsg = 'Could not read that file: ' + e.message; }
-  renderAdmin();
-}
-function serializeData(){
-  const cleaned = {};
-  Object.keys(DATA.drivers).forEach(id => {
-    const ov = DATA.drivers[id], o = {};
-    ['name', 'number', 'hometown', 'team', 'srText'].forEach(k => { if (ov[k]) o[k] = ov[k]; });
-    if (ov.manual) o.manual = true;
-    if (ov.age) o.age = ov.age;
-    if (ov.iRating) o.iRating = ov.iRating;
-    if (ov.teamBySeason && Object.keys(ov.teamBySeason).length) o.teamBySeason = ov.teamBySeason;
-    if (Object.keys(o).length) cleaned[id] = o;
-  });
-  const seasons = {};
-  Object.keys(DATA.seasons).forEach(id => { if (Object.keys(DATA.seasons[id]).length) seasons[id] = DATA.seasons[id]; });
-  const head = JSON.stringify({ config: withDefaults(DATA.config), teams: DATA.teams, seasons, drivers: cleaned }, null, 2);
-  const races = DATA.races.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
-  return head.replace(/\n}$/, ',\n  "races": [\n' + races.map(r => '    ' + JSON.stringify(r)).join(',\n') + '\n  ]\n}\n');
-}
-function adminDownload(){
-  const blob = new Blob([serializeData()], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'league-data.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  adminMsg = 'Downloaded. Upload it to your repository as data/league-data.json to publish.'; renderAdmin(true);
-}
-
-/* ---- pages ---- */
-function renderAdmin(keepScroll){
-  setIntro('');
-  if (adminRaceId != null && getRace()) return renderRaceEditor(keepScroll);
-  adminRaceId = null;
-  const cfg = L.cfg, dc = cfg.dash;
-  const teamOpts = (sel, extra) => `${extra || ''}<option value="" ${sel === '' ? 'selected' : ''}>No team</option>` +
-    DATA.teams.map(t => `<option value="${esc(t.id)}" ${sel === t.id ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
-  const drivers = [...L.drivers].sort((a, b) => a.name.localeCompare(b.name));
-  const raceList = [...DATA.races].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const seasonOpts = [...L.seasons].reverse().map(se => `<option value="${se.id}">${esc(se.name)}</option>`).join('');
-
-  const seasonRows = [...L.seasons].reverse().map(se => {
-    const o = DATA.seasons[se.id] || {};
-    const mode = typeof o.complete === 'boolean' ? (o.complete ? 'yes' : 'no') : 'auto';
-    return `<tr>
-      <td><input class="ad-in" value="${esc(se.name)}" onchange="adminSeasonField(${se.id},'name',this.value)"></td>
-      <td>${se.year}</td><td>${se.raceCount}</td>
-      <td><select class="ad-in" onchange="adminSeasonField(${se.id},'complete',this.value)">
-        <option value="auto" ${mode === 'auto' ? 'selected' : ''}>Automatic (${se.complete ? 'complete' : 'in progress'})</option>
-        <option value="yes" ${mode === 'yes' ? 'selected' : ''}>Mark complete</option>
-        <option value="no" ${mode === 'no' ? 'selected' : ''}>Mark in progress</option></select></td>
-      <td>${se.raceCount === 0 ? `<button class="ad-x" onclick="adminRemoveSeason(${se.id})">Remove</button>` : ''}</td></tr>`;
-  }).join('');
-
-  const baseSR = (d) => d.sr == null ? '' : `${licenseClass(d.srl)} ${d.sr.toFixed(2)}`;
-  const driverRows = drivers.map(d => {
-    const ov = DATA.drivers[d.id] || {};
-    const last = d.rows.length ? d.rows[d.rows.length - 1] : null;
-    return `
-      <tr>
-        <td><input class="ad-in" value="${esc(d.name)}" onchange="adminDriverField(${d.id},'name',this.value)">
-          <div class="n-status">${d.manual ? 'Added by hand' : 'From race files · ID ' + d.id}${ov.name && last && ov.name !== last.name ? ' · iRacing: ' + esc(last.name) : ''}</div></td>
-        <td><input class="ad-in sm" value="${esc(d.number)}" onchange="adminDriverField(${d.id},'number',this.value)"></td>
-        <td><input class="ad-in sm" type="number" min="1" value="${esc(ov.age || '')}" onchange="adminDriverField(${d.id},'age',this.value)"></td>
-        <td><input class="ad-in" value="${esc(ov.hometown || '')}" placeholder="City, State, Country" onchange="adminDriverField(${d.id},'hometown',this.value)"></td>
-        <td><input class="ad-in sm" type="number" value="${esc(d.iRating == null ? '' : d.iRating)}" onchange="adminDriverField(${d.id},'iRating',this.value)"></td>
-        <td><input class="ad-in sm" value="${esc(d.srOverride || baseSR(d))}" placeholder="A 3.57" onchange="adminDriverField(${d.id},'srText',this.value)"></td>
-        <td><select class="ad-in" onchange="adminDriverTeam(${d.id}, this.value)">${teamOpts(ov.team || '')}</select></td>
-        <td>${L.seasons.length > 1 ? `<details class="ad-det"><summary>By season</summary>${L.seasons.map(se => {
-          const cur = ov.teamBySeason && Object.prototype.hasOwnProperty.call(ov.teamBySeason, se.id) ? (ov.teamBySeason[se.id] || '') : '__default__';
-          return `<label class="ad-lab">${esc(se.name)}<select class="ad-in" onchange="adminDriverSeasonTeam(${d.id},'${se.id}', this.value)">
-            ${teamOpts(cur, `<option value="__default__" ${cur === '__default__' ? 'selected' : ''}>Same as default</option>`)}</select></label>`;
-        }).join('')}</details>` : '<span class="dim">—</span>'}</td>
-        <td><button class="ad-x" onclick="if(confirm('Remove ${esc(d.name).replace(/'/g, '')} and every result they have?')) adminRemoveDriver(${d.id})">Remove</button></td>
-      </tr>`;
-  }).join('');
-
-  setApp(`
-    <div class="admin-wrap">
-      <div class="back-row"><button class="back-link" onclick="location.hash=''">&larr; Back to the site</button></div>
-      <div class="list-header"><h1>League Admin</h1></div>
-      <p class="dash-sub">Changes here are made in your browser only. When you're happy, press <b>Download league-data.json</b> and upload it to your repository's <b>data</b> folder to publish.</p>
-      ${adminMsg ? `<div class="ad-msg">${esc(adminMsg)}</div>` : ''}
-
-      <div class="hist-h">SAVE / LOAD</div>
-      <div class="ad-row">
-        <button class="log-btn ad-btn" onclick="adminDownload()">Download league-data.json</button>
-        <label class="ad-file">Load an existing league-data.json<input type="file" accept=".json" onchange="adminLoadFile(this.files[0])"></label>
-      </div>
-
-      <div class="hist-h">SEASONS</div>
-      <p class="ad-note">Seasons are created automatically from your race files. Rename them, force one complete or in progress, or add an empty season to set up your roster before the first race.</p>
-      <div class="drivers-wrap">
-        <table class="drivers-table ad-table">
-          <thead><tr><th>Name</th><th>Year</th><th>Races</th><th>Status</th><th></th></tr></thead>
-          <tbody>${seasonRows || '<tr><td colspan="5" class="dim">No seasons yet.</td></tr>'}</tbody>
-        </table>
-      </div>
-      <div class="ad-row" style="margin-top:12px">
-        <input class="ad-in" id="newSeasonName" placeholder="New season name" style="max-width:240px">
-        <input class="ad-in" id="newSeasonDate" type="date" style="max-width:170px">
-        <button class="ad-x add" onclick="adminAddSeason()">Add season</button>
-      </div>
-
-      <div class="hist-h">RACE RESULTS</div>
-      <p class="ad-note">Add an official iRacing <b>.json</b> result file, or create a race by hand. Use <b>Edit</b> to change any driver's start, finish, laps, incidents or points. Every statistic on the site is calculated from these results, so editing them updates everything.</p>
-      <label class="ad-file big">Add iRacing result file(s) (.json)<input type="file" accept=".json" multiple onchange="adminAddFiles(this.files)"></label>
-      <div class="ad-row" style="margin:14px 0">
-        <select class="ad-in" id="newRaceSeason" style="max-width:220px">${seasonOpts || '<option value="">No seasons</option>'}</select>
-        <input class="ad-in" id="newRaceTrack" placeholder="Track" style="max-width:220px">
-        <input class="ad-in" id="newRaceDate" type="date" style="max-width:170px">
-        <button class="ad-x add" onclick="adminNewRace()">Create race by hand</button>
-      </div>
-      <div class="drivers-wrap">
-        <table class="drivers-table">
-          <thead><tr><th>Date</th><th>Season</th><th>Wk</th><th>Track</th><th>Drivers</th><th>Winner</th><th></th></tr></thead>
-          <tbody>${raceList.length ? raceList.map(r => {
-            const w = r.results.find(x => x.fin === 1);
-            const se = L.seasonById[r.seasonId];
-            const wk = se ? se.races.find(x => x.id === r.id) : null;
-            return `<tr><td>${dateLabel(r.date)}</td>
-              <td>${esc(se ? se.name : r.seasonName)}</td><td>${wk ? wk.week : ''}</td><td>${esc(r.track)}</td><td>${r.results.length}</td>
-              <td>${w ? esc(w.n) : ''}</td>
-              <td><button class="ad-x add" onclick="adminEditRace(${r.id})">Edit</button>
-                <button class="ad-x" onclick="if(confirm('Remove this race?')) adminRemoveRace(${r.id})">Remove</button></td></tr>`;
-          }).join('') : '<tr><td colspan="7" class="dim">No races yet.</td></tr>'}</tbody>
-        </table>
-      </div>
-
-      <div class="hist-h">LEAGUE SETTINGS</div>
-      <div class="ad-grid">
-        <label class="ad-lab">League name<input class="ad-in" value="${esc(cfg.leagueName)}" onchange="adminSet('leagueName', this.value)"></label>
-        <label class="ad-lab">Races per season<input class="ad-in" type="number" min="1" value="${cfg.racesPerSeason}" onchange="adminSet('racesPerSeason', this.value)"></label>
-        <label class="ad-lab">Seasons per year<input class="ad-in" type="number" min="1" value="${cfg.seasonsPerYear}" onchange="adminSet('seasonsPerYear', this.value)"></label>
-      </div>
-      <p class="ad-note">A season counts as complete once it has the full number of races (or when the next season starts), unless you force it above. Titles, awards and the Dash For Cash payouts are decided when a season completes. Champion of the Year needs the same driver to win every season of a year.</p>
-
-      <div class="hist-h">RANK TIERS</div>
-      <p class="ad-note">One per line: <b>Name, first place, last place, color</b></p>
-      <textarea class="ad-text" rows="${cfg.tiers.length + 1}" onchange="adminSetTiers(this.value)">${esc(cfg.tiers.map(t => `${t.name}, ${t.min}, ${t.max}, ${t.color}`).join('\n'))}</textarea>
-
-      <div class="hist-h">THE DASH FOR CASH</div>
-      <div class="ad-grid">
-        <label class="ad-lab">Enabled<select class="ad-in" onchange="adminSetDash('enabled', this.value === '1')"><option value="1" ${dc.enabled ? 'selected' : ''}>On</option><option value="0" ${dc.enabled ? '' : 'selected'}>Off</option></select></label>
-        <label class="ad-lab">Prize pool ($)<input class="ad-in" type="number" min="0" value="${dc.pot}" onchange="adminSetDash('pot', this.value)"></label>
-        <label class="ad-lab">Final races counted<input class="ad-in" type="number" min="1" value="${dc.finalRaces}" onchange="adminSetDash('finalRaces', this.value)"></label>
-        <label class="ad-lab">Max deduction (%)<input class="ad-in" type="number" min="0" max="100" value="${dc.maxDeductionPct}" onchange="adminSetDash('maxDeductionPct', this.value)"></label>
-      </div>
-      <label class="ad-lab">Base payouts by position ($, comma separated)<input class="ad-in" value="${esc(dc.base.join(', '))}" onchange="adminSetDash('base', this.value)"></label>
-      <label class="ad-lab">Clean bonus shares by cleanliness rank (%, comma separated)<input class="ad-in" value="${esc(dc.share.join(', '))}" onchange="adminSetDash('share', this.value)"></label>
-      <p class="ad-note">Base payouts add up to $${fmt(sumOf(dc.base, x => x))} against a $${fmt(dc.pot)} pool, and bonus shares add up to ${sumOf(dc.share, x => x)}%.</p>
-
-      <div class="hist-h">TEAMS</div>
-      <div class="ad-teams">
-        ${DATA.teams.map(t => `
-          <div class="ad-team">
-            <input type="color" value="${esc(t.color)}" onchange="adminTeamField('${esc(t.id)}','color',this.value)">
-            <input class="ad-in" value="${esc(t.name)}" onchange="adminTeamField('${esc(t.id)}','name',this.value)">
-            <button class="ad-x" onclick="if(confirm('Remove this team?')) adminRemoveTeam('${esc(t.id)}')">Remove</button>
-          </div>`).join('') || '<p class="ad-note">No teams yet.</p>'}
-        <div class="ad-team">
-          <input type="color" id="newTeamColor" value="#E8A33D"><input class="ad-in" id="newTeamName" placeholder="New team name">
-          <button class="ad-x add" onclick="adminAddTeam()">Add team</button>
-        </div>
-      </div>
-
-      <div class="hist-h">ADD A DRIVER</div>
-      <p class="ad-note">Add a driver without a race result, for example to set up your roster before the season starts. They show on the Drivers page with zero stats and fill in once they have results. The iRacing customer ID is optional; if you know it, results from iRacing files will match them automatically.</p>
-      <div class="ad-grid">
-        <label class="ad-lab">Name<input class="ad-in" id="newDrvName" placeholder="Full name"></label>
-        <label class="ad-lab">iRacing customer ID (optional)<input class="ad-in" id="newDrvId" type="number" placeholder="e.g. 703766"></label>
-        <label class="ad-lab">Car #<input class="ad-in" id="newDrvNum"></label>
-        <label class="ad-lab">Age<input class="ad-in" id="newDrvAge" type="number" min="1"></label>
-        <label class="ad-lab">Hometown<input class="ad-in" id="newDrvTown" placeholder="City, State, Country"></label>
-        <label class="ad-lab">Team<select class="ad-in" id="newDrvTeam">${teamOpts('')}</select></label>
-      </div>
-      <button class="ad-x add" onclick="adminAddDriver()">Add driver</button>
-
-      <div class="hist-h" style="margin-top:28px">DRIVERS</div>
-      <p class="ad-note">Every driver here can be edited, including the ones added automatically from race files. Change any field and it applies straight away; clear a name, car number, iRating or safety rating to go back to what iRacing reported. iRacing gives no team, age or hometown, so fill those in here. Use "By season" if a driver changed teams.</p>
-      <div class="drivers-wrap">
-        <table class="drivers-table ad-table">
-          <thead><tr><th>Name</th><th>Car #</th><th>Age</th><th>Hometown</th><th>iRating</th><th>Safety rating</th><th>Team</th><th>Team history</th><th></th></tr></thead>
-          <tbody>${driverRows || '<tr><td colspan="9" class="dim">No drivers yet.</td></tr>'}</tbody>
-        </table>
-      </div>
-      <div class="ad-row" style="margin-top:20px"><button class="log-btn ad-btn" onclick="location.hash=''">Preview the site</button></div>
-    </div>`, keepScroll);
-}
-
-function renderRaceEditor(keepScroll){
-  const r = getRace();
-  const drivers = [...L.drivers].sort((a, b) => a.name.localeCompare(b.name));
-  const driverOpts = (sel) => drivers.map(d => `<option value="${d.id}" ${d.id === sel ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
-  const order = r.results.map((x, i) => ({ x, i })).sort((a, b) => a.x.fin - b.x.fin);
-  const finishes = r.results.map(x => x.fin);
-  const warn = [];
-  if (r.results.length && !finishes.includes(1)) warn.push('No driver has finishing position 1.');
-  if (new Set(finishes).size !== finishes.length) warn.push('Two drivers share the same finishing position.');
-  if (new Set(r.results.map(x => x.c)).size !== r.results.length) warn.push('A driver appears more than once.');
-  if (new Set(r.results.map(x => x.st)).size !== r.results.length) warn.push('Two drivers share the same starting position.');
-  const led = sumOf(r.results, x => x.ll), laps = r.laps || Math.max(0, ...r.results.map(x => x.lc));
-  if (r.results.length && laps && led !== laps) warn.push(`Laps led add up to ${led}, but the race was ${laps} laps.`);
-  const row = ({ x, i }) => `
-    <tr>
-      <td><select class="ad-in" onchange="adminResultField(${i},'c',this.value)">${driverOpts(x.c)}</select></td>
-      <td><input class="ad-in sm" value="${esc(x.no)}" onchange="adminResultField(${i},'no',this.value)"></td>
-      <td><input class="ad-in sm" type="number" min="1" value="${x.st}" onchange="adminResultField(${i},'st',this.value)"></td>
-      <td><input class="ad-in sm" type="number" min="1" value="${x.fin}" onchange="adminResultField(${i},'fin',this.value)"></td>
-      <td><input class="ad-in" style="width:120px" value="${esc(x.out)}" onchange="adminResultField(${i},'out',this.value)"></td>
-      <td><input class="ad-in sm" type="text" value="${esc(x.fin === 1 ? '-' : (x.ivt || (x.iv > 0 ? (x.iv / 10000).toFixed(4) : '')))}" placeholder="${x.fin === 1 ? '-' : '2.7952 or -1L'}" onchange="adminResultField(${i},'gap',this.value)"></td>
-      <td><input class="ad-in sm" type="number" min="0" value="${x.lc}" onchange="adminResultField(${i},'lc',this.value)"></td>
-      <td><input class="ad-in sm" type="number" min="0" value="${x.ll}" onchange="adminResultField(${i},'ll',this.value)"></td>
-      <td><input class="ad-in sm" type="number" min="0" value="${x.inc}" onchange="adminResultField(${i},'inc',this.value)"></td>
-      <td><input class="ad-in sm" type="number" value="${x.pts}" onchange="adminResultField(${i},'pts',this.value)"></td>
-      <td><button class="ad-x" onclick="adminRemoveResult(${i})">Remove</button></td>
-    </tr>`;
-  setApp(`
-    <div class="admin-wrap">
-      <div class="back-row"><button class="back-link" onclick="adminCloseRace()">&larr; Back to admin</button></div>
-      <div class="list-header"><h1>Edit Race</h1></div>
-      <p class="dash-sub">Changes apply straight away in this browser. Press <b>Back to admin</b>, then <b>Download league-data.json</b> to save them.</p>
-      ${adminMsg ? `<div class="ad-msg">${esc(adminMsg)}</div>` : ''}
-      ${warn.length ? `<div class="ad-msg warn">${warn.map(esc).join('<br>')}</div>` : ''}
-      <div class="ad-grid">
-        <label class="ad-lab">Season<select class="ad-in" onchange="adminRaceField('seasonId', this.value)">${[...L.seasons].reverse().map(se => `<option value="${se.id}" ${se.id === r.seasonId ? 'selected' : ''}>${esc(se.name)}</option>`).join('')}</select></label>
-        <label class="ad-lab">Track<input class="ad-in" value="${esc(r.track)}" onchange="adminRaceField('track', this.value)"></label>
-        <label class="ad-lab">Date<input class="ad-in" type="date" value="${esc(String(r.date).slice(0, 10))}" onchange="adminRaceField('date', this.value)"></label>
-        <label class="ad-lab">Race length (laps)<input class="ad-in" type="number" min="0" value="${r.laps || 0}" onchange="adminRaceField('laps', this.value)"></label>
-      </div>
-      <div class="hist-h">RESULTS (${r.results.length} DRIVERS)</div>
-      <div class="drivers-wrap">
-        <table class="drivers-table ad-table">
-          <thead><tr><th>Driver</th><th>Car #</th><th>Start</th><th>Finish</th><th>Status</th><th>Gap</th><th>Laps done</th><th>Laps led</th><th>Incidents</th><th>Points</th><th></th></tr></thead>
-          <tbody>${order.map(row).join('') || '<tr><td colspan="11" class="dim">No results yet. Add a driver below.</td></tr>'}</tbody>
-        </table>
-      </div>
-      <div class="ad-row" style="margin-top:14px">
-        <select class="ad-in" id="newResultDriver" style="max-width:260px">${driverOpts(-1)}</select>
-        <button class="ad-x add" onclick="adminAddResult()">Add driver to this race</button>
-      </div>
-      <p class="ad-note">Gap works like iRacing: the leader shows <b>-</b>, cars on the lead lap show their gap in seconds (for example <b>2.7952</b>, or the raw number from the iRacing file such as <b>27952</b>), and cars laps down show <b>-1L</b>, <b>-43L</b> and so on. Leave it blank to work it out from laps completed. Status is "Running" for a normal finish; anything else (for example "Crash" or "Disconnected") counts as a DNF. Points are entered as awarded by your league scoring.</p>
-      <div class="ad-row" style="margin-top:18px">
-        <button class="log-btn ad-btn" onclick="adminCloseRace()">Done</button>
-        <button class="ad-x" onclick="if(confirm('Delete this whole race?')) adminRemoveRace(${r.id})">Delete race</button>
-      </div>
-    </div>`, keepScroll);
-}
 
 /* ------------------------------ boot and routing ------------------------------ */
 function normalizeData(d){
@@ -2024,7 +1518,6 @@ let loadError = '';
 function route(){
   closeDriverMenu();
   const hash = location.hash.replace('#', '');
-  if (hash === 'admin'){ renderAdmin(); return; }
   if (loadError && !L.drivers.length){
     setIntro('');
     setApp(emptyState('Could not load the league data', `${esc(loadError)}<br><br>If you opened this file straight from your computer, browsers block loading data that way — open the published website instead.`));
@@ -2032,6 +1525,7 @@ function route(){
   }
   const m = hash.match(/^([a-z]+)(?:-(.+))?$/) || [];
   switch (m[1]){
+    case 'drivers':     return renderDrivers(window.__lastSort);
     case 'driver':      return renderDetail(m[2]);
     case 'season':      return renderSeasonDetail(m[2]);
     case 'log':         return renderLog(m[2]);
@@ -2045,16 +1539,21 @@ function route(){
 
 async function boot(){
   DATA = normalizeData({});
-  try {
-    const res = await fetch('data/league-data.json?v=' + Date.now());
-    if (!res.ok) throw new Error(`data/league-data.json returned ${res.status}`);
-    DATA = normalizeData(await res.json());
-  } catch (e) { loadError = e.message; }
+  // A private copy opened straight from a computer cannot read data files, so it waits for you to load one.
+  if (!(PRIVATE && location.protocol === 'file:')){
+    try {
+      const res = await fetch('data/league-data.json?v=' + Date.now());
+      if (!res.ok) throw new Error(`data/league-data.json returned ${res.status}`);
+      DATA = normalizeData(await res.json());
+      dataLoaded = true;
+    } catch (e) { loadError = e.message; }
+  }
   rebuild();
   route();
 }
 window.addEventListener('hashchange', route);
 if (typeof document !== 'undefined' && document.getElementById('app')) boot();
+
 </script>
 </body>
 </html>
