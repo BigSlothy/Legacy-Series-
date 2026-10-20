@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Driver Stats</title>
+<meta name="description" content="League driver stats, standings, teams, career logs and the Dash For Cash tournament.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Driver Stats">
+<meta property="og:description" content="League driver stats, standings, teams, career logs and the Dash For Cash tournament.">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0A0C0E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0C0E; --panel:#14181D; --panel-2:#1B2028;
+    --steel-line:#3A4350; --paper:#ECE9E2; --paper-dim:#A8AEB8;
+    --red:#D8342A; --amber:#E8A33D;
+  }
+  html,body{height:100%;}
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ink); color:var(--paper);
+    font-family:'Inter',sans-serif;
+    padding: max(28px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom));
+    min-height:100%;
+  }
+  .intro{max-width:640px; margin:0 auto 20px; text-align:center; color:var(--paper-dim); font-size:13px; line-height:1.5;}
+  .intro b{color:var(--paper); font-weight:600;}
+
+  .view-toggle{
+    max-width:720px; margin:0 auto 20px; display:flex; background:var(--panel);
+    border:1px solid var(--steel-line); border-radius:6px; padding:3px;
+  }
+  .vt-btn{
+    flex:1; border:none; background:none; cursor:pointer; padding:9px 10px; border-radius:4px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.3px; color:var(--paper-dim);
+  }
+  .vt-btn.active{ background:var(--amber); color:#0b0d10; }
+  .vt-btn:nth-child(3){ flex:2.2; }
+
+
+  .team-top{ display:flex; align-items:center; gap:14px; padding:22px 22px 14px; position:relative; }
+  .team-badge{
+    flex:0 0 auto; width:56px; height:56px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; color:#0b0d10; letter-spacing:.5px;
+  }
+  .team-name{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; letter-spacing:.3px; line-height:1.1; }
+  .team-sub{ color:var(--paper-dim); font-size:12px; margin-top:4px; }
+  .team-pos{ margin-left:auto; text-align:right; flex:0 0 auto; }
+  .team-pos .v{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:26px; line-height:1; }
+  .team-pos .l{ font-size:9px; letter-spacing:.5px; color:var(--paper-dim); margin-top:3px; }
+  .roster{ margin:0 22px 18px; }
+  .roster-row{
+    display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--steel-line);
+    cursor:pointer; font-size:12.5px;
+  }
+  .roster-row:hover .r-name{ color:var(--amber); }
+  .roster-row .r-num{ font-family:'Rajdhani',sans-serif; font-weight:700; width:30px; color:var(--paper-dim); }
+  .roster-row .r-name{ flex:1; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; }
+  .roster-row .r-pos{ color:var(--paper-dim); font-size:11.5px; }
+  .roster-row .r-pts{ font-family:'Rajdhani',sans-serif; font-weight:700; width:52px; text-align:right; }
+
+  .team-list{ max-width:1180px; margin:0 auto; display:flex; flex-direction:column; gap:18px; }
+  .team-row{
+    display:grid; grid-template-columns:230px minmax(300px,1.25fr) 170px minmax(280px,1.15fr);
+    align-items:stretch; cursor:default;
+  }
+  .team-row > div{ position:relative; padding:20px 20px; border-left:1px solid var(--steel-line); min-width:0; }
+  .team-row > div:first-child{ border-left:none; }
+  .team-row.clickable{ cursor:pointer; }
+  .team-row .tr-id{ display:flex; flex-direction:column; justify-content:center; gap:14px; }
+  .team-row .tr-id .team-pos{ margin-left:0; text-align:left; }
+  .team-row .tr-id-text{ min-width:0; }
+  .team-row .tr-season .headline, .team-row .tr-season .stats{ margin-left:0; margin-right:0; }
+  .team-row .tr-season .stats{ margin-bottom:0; }
+  .team-row .tr-career .h, .team-row .tr-roster .h{ font-size:11px; letter-spacing:.5px; color:var(--paper-dim); margin-bottom:10px; }
+  .team-row .tr-career .chips{ flex-direction:column; align-items:flex-start; }
+  .team-row .roster{ margin:0; }
+  @media (max-width:1100px){
+    .team-row{ grid-template-columns:1fr 1fr; }
+    .team-row > div:nth-child(odd){ border-left:none; }
+    .team-row > div:nth-child(n+3){ border-top:1px solid var(--steel-line); }
+  }
+  @media (max-width:640px){
+    .team-row{ grid-template-columns:1fr; }
+    .team-row > div{ border-left:none; }
+    .team-row > div + div{ border-top:1px solid var(--steel-line); }
+    .team-row .tr-id{ flex-direction:row; align-items:center; justify-content:flex-start; flex-wrap:wrap; }
+    .team-row .tr-id .team-pos{ margin-left:auto; text-align:right; }
+  }
+
+  .driver-menu{
+    position:fixed; z-index:50; min-width:210px; background:var(--panel-2);
+    border:1px solid var(--steel-line); border-radius:6px; overflow:hidden;
+    box-shadow:0 18px 40px -10px rgba(0,0,0,.7);
+  }
+  .driver-menu .dm-title{
+    padding:10px 14px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px;
+    letter-spacing:.3px; color:var(--paper-dim); border-bottom:1px solid var(--steel-line);
+  }
+  .driver-menu button{
+    display:block; width:100%; text-align:left; background:none; border:none; cursor:pointer;
+    color:var(--paper); font-family:'Inter',sans-serif; font-size:13px; padding:11px 14px;
+  }
+  .driver-menu button:hover{ background:var(--panel); color:var(--amber); }
+  .driver-menu button + button{ border-top:1px solid var(--steel-line); }
+  .season-actions{ margin-top:16px; }
+
+  .drivers-wrap{
+    max-width:1180px; margin:0 auto; overflow-x:auto; border:1px solid var(--steel-line);
+    border-radius:6px; background:var(--panel);
+  }
+  .drivers-table{ width:100%; border-collapse:collapse; white-space:nowrap; font-size:13px; }
+  .drivers-table th, .drivers-table td{ padding:12px 14px; text-align:left; border-bottom:1px solid var(--steel-line); }
+  .drivers-table thead th{
+    background:var(--panel-2); color:var(--paper-dim); font-family:'Rajdhani',sans-serif;
+    font-weight:700; font-size:11px; letter-spacing:.6px; text-transform:uppercase;
+  }
+  .drivers-table tr.grp th{ border-bottom:1px solid var(--steel-line); }
+  .drivers-table tr.grp th.grp-title{
+    text-align:center; color:var(--amber); font-size:17px; font-weight:700; letter-spacing:1.5px; padding:14px;
+  }
+  .drivers-table tbody tr:hover{ background:rgba(255,255,255,.03); }
+  .drivers-table td{ font-family:'Rajdhani',sans-serif; font-weight:600; font-size:15px; }
+  .drivers-table .c-sep{ border-left:1px solid var(--steel-line); }
+  .drivers-table .c-pts{ font-weight:700; color:var(--amber); }
+  .pos-wrap{ display:inline-flex; align-items:center; gap:8px; }
+  .pos-wrap b{ font-size:16px; min-width:20px; }
+  .name-link{
+    background:none; border:none; padding:0; cursor:pointer; text-align:left;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; color:var(--paper);
+    text-decoration:underline; text-decoration-color:var(--steel-line); text-underline-offset:4px;
+  }
+  .name-link:hover{ color:var(--amber); text-decoration-color:var(--amber); }
+  .name-link .n-num{ color:var(--paper-dim); font-weight:600; margin-right:2px; }
+  .n-tier{ font-family:'Inter',sans-serif; font-size:10px; letter-spacing:.7px; margin-top:3px; font-weight:600; }
+  .team-link{ font-size:14px; }
+  .team-detail{ max-width:1180px; margin:0 auto; }
+  .c-team{ font-family:'Inter',sans-serif; font-size:12.5px; line-height:1.35; }
+  .c-team b{ font-family:'Rajdhani',sans-serif; font-size:14px; }
+  .c-team div{ color:var(--paper-dim); font-weight:400; }
+
+  .hist-sub{ text-align:center; color:var(--paper-dim); font-size:13px; margin:-6px 0 22px; }
+  .hist-h{
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:1.2px;
+    color:var(--paper); border-left:4px solid var(--amber); padding:2px 0 2px 12px; margin:6px 0 14px;
+  }
+  .totals-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:12px; margin-bottom:28px; }
+  .tot{ background:var(--panel); border:1px solid var(--steel-line); border-radius:6px; padding:16px 10px; text-align:center; }
+  .tot .n{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:28px; color:var(--amber); line-height:1.1; }
+  .tot .l{ font-size:11px; letter-spacing:.4px; color:var(--paper-dim); margin-top:5px; }
+  .n-status{ font-family:'Inter',sans-serif; font-size:10.5px; color:var(--paper-dim); margin-top:3px; font-weight:500; }
+  .plain-name{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; }
+  .plain-name .n-num{ color:var(--paper-dim); font-weight:600; }
+  .drivers-table td.c-award{ white-space:normal; min-width:150px; }
+  .drivers-table td.c-award .chip{ font-size:11.5px; padding:3px 7px; }
+  .dim{ color:var(--paper-dim); }
+
+  .dash-wrap{ max-width:1180px; margin:0 auto; }
+  .dash-sub{ text-align:center; color:var(--paper-dim); font-size:13px; line-height:1.5; margin:-6px auto 22px; max-width:680px; }
+  .pool-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:26px; }
+  .dash-table .c-final{ font-weight:700; color:var(--paper); }
+  .dash-table td small{ display:block; font-family:'Inter',sans-serif; font-size:10.5px; color:var(--paper-dim); font-weight:500; }
+  .neg{ color:#E5694D; } .pos{ color:#3EA66B; }
+  .pos-badge{
+    display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; color:#101214;
+  }
+  .clean-pill{
+    display:inline-block; padding:2px 10px; border-radius:999px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px;
+    background:#F4E7D3; color:#6a3d12;
+  }
+  .clean-pill.p1{ background:#D8F3EA; color:#0e5a43; }
+  .mult{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12.5px; margin-right:6px; color:var(--paper-dim); }
+  .mult.m0{ color:var(--paper-dim); } .mult.m2{ color:var(--amber); } .mult.m4{ color:#E5694D; }
+  .rules-box{ margin-top:26px; border:1px solid var(--steel-line); border-radius:6px; background:var(--panel); }
+  .rules-box > summary{ padding:14px 16px; cursor:pointer; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:.5px; }
+  .rules-body{ padding:0 18px 18px; font-size:13px; line-height:1.6; color:var(--paper-dim); }
+  .rules-body h3{ font-family:'Rajdhani',sans-serif; font-size:14px; letter-spacing:.8px; color:var(--paper); margin:16px 0 6px; }
+  .rules-cols{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  .mini-table{ border-collapse:collapse; font-size:12.5px; }
+  .mini-table td{ padding:4px 16px 4px 0; border-bottom:1px solid var(--steel-line); }
+  .mini-table td:last-child{ color:var(--paper); font-weight:600; }
+
+  .cutoff{ display:flex; align-items:center; gap:14px; margin:26px 0 8px; }
+  .cutoff::before, .cutoff::after{ content:''; flex:1; border-top:2px dashed #E5694D; }
+  .cutoff span{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:2px; color:#E5694D; }
+  .cutoff-sub{ text-align:center; color:var(--paper-dim); font-size:12.5px; margin:0 0 14px; }
+  .pos-badge.out{ background:var(--panel-2); color:var(--paper-dim); border:1px solid var(--steel-line); }
+
+  .cutoff.in{ margin:4px 0 12px; }
+  .cutoff.in::before, .cutoff.in::after{ border-top-color:#3EA66B; }
+  .cutoff.in span{ color:#3EA66B; }
+
+  .name-line{ display:flex; align-items:center; gap:10px; }
+  .rank-tag{ display:inline-flex; align-items:center; gap:4px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.6px; text-transform:uppercase; }
+  .rank-tag .gem-sm{ width:14px; height:14px; }
+
+  .totals-flex{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-right:14px; }
+  .dash-btn{
+    flex:0 0 auto; border:none; cursor:pointer; background:var(--amber); color:#0b0d10; border-radius:5px; padding:10px 14px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.4px; white-space:nowrap;
+  }
+  .dash-btn:hover{ filter:brightness(1.08); }
+  .dash-tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tot.sm{ padding:12px 6px; }
+  .tot.sm .n{ font-size:20px; }
+  .tot.sm .n .of{ font-size:13px; color:var(--paper-dim); font-weight:600; }
+  .tot.sm .l{ font-size:10px; }
+
+  .list-header{ max-width:1180px; margin:0 auto 18px; text-align:center; }
+  .list-header h1{
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:24px; letter-spacing:.5px;
+    margin:0; color:var(--paper);
+  }
+  .legend{
+    max-width:1180px; margin:0 auto 20px; padding:12px 16px; border-radius:6px;
+    background:var(--panel); border:1px solid var(--steel-line);
+    display:flex; flex-wrap:wrap; justify-content:center; gap:14px 22px;
+  }
+  .legend-item{ display:flex; align-items:center; gap:6px; }
+  .legend-item span:first-of-type{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; letter-spacing:.3px; }
+  .legend-range{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--paper-dim); }
+
+  .controls{ max-width:1180px; margin:0 auto 20px; display:flex; justify-content:flex-end; position:relative; }
+  .sort-btn{
+    display:flex; align-items:center; gap:8px;
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:13px; letter-spacing:.4px; color:var(--paper);
+    background:var(--panel); border:1px solid var(--steel-line); border-radius:5px;
+    padding:9px 14px; cursor:pointer;
+  }
+  .sort-btn:hover{ border-color:var(--amber); }
+  .sort-btn svg{ transition:transform .15s ease; }
+  .sort-btn[aria-expanded="true"] svg{ transform:rotate(180deg); }
+  .sort-menu{
+    display:none; position:absolute; top:calc(100% + 6px); right:0; z-index:5;
+    background:var(--panel-2); border:1px solid var(--steel-line); border-radius:5px;
+    overflow:hidden; min-width:200px; box-shadow:0 14px 30px -10px rgba(0,0,0,.6);
+  }
+  .sort-menu.open{ display:block; }
+  .sort-menu button{
+    display:block; width:100%; text-align:left; background:none; border:none;
+    color:var(--paper); font-family:'Inter',sans-serif; font-size:13px;
+    padding:10px 14px; cursor:pointer;
+  }
+  .sort-menu button:hover{ background:var(--panel); color:var(--amber); }
+  .sort-menu button + button{ border-top:1px solid var(--steel-line); }
+
+  .grid{
+    max-width:1180px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:22px;
+  }
+
+  .card{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:3px solid var(--steel-line);
+    border-radius:6px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+    cursor:pointer;
+  }
+  .card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0px, rgba(255,255,255,.02) 1px, transparent 1px, transparent 34px);
+    pointer-events:none;
+  }
+
+  .head{ padding:22px 22px 14px; display:flex; gap:16px; align-items:center; position:relative;}
+  .number-plate{
+    flex:0 0 auto; width:56px; height:56px; border-radius:50%;
+    border:3px solid var(--paper); display:flex; align-items:center; justify-content:center;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; color:var(--paper);
+    background:radial-gradient(circle at 30% 25%, #262b32, #14171b);
+  }
+  .id{flex:1; min-width:0;}
+  .id .name{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:22px; letter-spacing:.3px; line-height:1.1;}
+
+  .ratings{flex:0 0 auto; text-align:right;}
+  .ratings .row{margin-bottom:6px;}
+  .ratings .row:last-child{margin-bottom:0;}
+  .ratings .v{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; color:var(--paper); line-height:1;}
+  .ratings .l{font-size:9px; color:var(--paper-dim); letter-spacing:.5px; margin-top:2px;}
+
+  .subhead{ margin:0 22px 18px; padding-bottom:14px; border-bottom:1px solid var(--steel-line); }
+  .subhead .team{color:var(--paper-dim); font-size:12.5px;}
+  .subhead .team b{color:var(--amber); font-weight:600;}
+  .subhead .meta{color:var(--paper-dim); font-size:11.5px; margin-top:6px;}
+
+  .rank{
+    margin:0 22px 18px; padding:12px 14px; border-radius:5px;
+    background:var(--panel); border:1px solid var(--steel-line);
+    display:flex; align-items:center; gap:12px;
+  }
+  .rank .gem{flex:0 0 auto; width:30px; height:30px;}
+  .rank .gem polygon{stroke:rgba(0,0,0,.25); stroke-width:1;}
+  .rank .rtext{flex:1; min-width:0;}
+  .rank .tier{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; letter-spacing:.5px;}
+  .rank .pos{font-size:11px; color:var(--paper-dim); margin-top:1px;}
+
+  .headline{
+    margin:0 22px 18px; padding:16px; border-radius:5px;
+    background:var(--panel); border:1px solid var(--steel-line);
+    display:grid; grid-template-columns:repeat(3,1fr); text-align:center;
+  }
+  .headline div + div{border-left:1px solid var(--steel-line);}
+  .headline .n{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:26px;}
+  .headline .l{font-size:10.5px; color:var(--paper-dim); margin-top:2px;}
+
+  .stats{ margin:0 22px 18px; display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+  .stat{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--steel-line); }
+  .stat .l{font-size:11.5px; color:var(--paper-dim);}
+  .stat .v{font-family:'Rajdhani',sans-serif; font-weight:600; font-size:15px;}
+  .stat .v.hot{color:var(--red);}
+  .stat .v.good{color:#3EA66B;}
+
+  .section{ margin:0 22px 16px; }
+  .section .h{ font-size:11px; letter-spacing:.5px; color:var(--paper-dim); margin-bottom:8px; }
+  .section .empty{ font-size:12.5px; color:var(--paper-dim); font-style:italic; }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:12.5px;
+    padding:5px 10px; border-radius:3px; background:var(--amber); color:#241a08;
+  }
+  .chip.green{ background:#3EA66B; color:#06210f; }
+  .chip.champ{ background:linear-gradient(135deg,#8b5cf6,#6d28d9); color:#fff; }
+  .chip.clean{ background:var(--panel); border:1px solid var(--steel-line); color:var(--paper); }
+
+  .rank-history{ display:flex; flex-wrap:wrap; gap:8px; }
+  .rank-chip{
+    display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:4px;
+    background:var(--panel); border:1px solid var(--steel-line);
+  }
+  .gem-sm{ width:16px; height:16px; flex:0 0 auto; }
+  .gem-sm polygon{ stroke:rgba(0,0,0,.25); stroke-width:1; }
+  .rank-chip-name{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.3px; }
+  .rank-chip-count{ font-family:'Rajdhani',sans-serif; font-weight:600; font-size:12.5px; color:var(--paper-dim); }
+
+  .foot{
+    margin-top:22px; padding:14px 22px; border-top:1px solid var(--steel-line);
+    font-family:'Rajdhani',sans-serif; letter-spacing:1.5px; font-size:11px; color:var(--paper-dim); text-align:center;
+  }
+
+  .log-btn{
+    display:block; width:100%; text-align:center; text-decoration:none; border:none; cursor:pointer;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; letter-spacing:.5px;
+    color:#0b0d10; background:var(--amber); border-radius:5px; padding:11px 14px;
+  }
+  .log-btn:hover{ filter:brightness(1.08); }
+
+  .detail-wrap{ max-width:420px; margin:0 auto; }
+  .log-wrap{ max-width:900px; margin:0 auto; }
+
+  .year-acc{
+    border:1px solid var(--steel-line); border-radius:6px; margin-bottom:12px;
+    background:var(--panel-2); overflow:hidden;
+  }
+  .year-acc > summary{
+    padding:14px 16px; cursor:pointer; list-style:none;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; letter-spacing:.3px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .year-acc > summary::-webkit-details-marker{ display:none; }
+  .year-acc > summary::before{ content:'▸'; color:var(--amber); transition:transform .15s ease; font-size:12px; }
+  .year-acc[open] > summary::before{ transform:rotate(90deg); }
+  .year-body{ padding:0 14px 14px; }
+
+  .season-acc{ border:1px solid var(--steel-line); border-radius:5px; margin-top:10px; overflow:hidden; background:var(--panel); }
+  .season-acc > summary{
+    padding:10px 14px; cursor:pointer; list-style:none;
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:13px; letter-spacing:.3px; color:var(--paper-dim);
+    display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px;
+  }
+  .season-acc > summary::-webkit-details-marker{ display:none; }
+  .season-acc > summary::before{ content:'▸'; color:var(--amber); transition:transform .15s ease; font-size:10px; }
+  .season-acc[open] > summary::before{ transform:rotate(90deg); }
+  .season-acc > summary .s-name{ color:var(--paper); flex:0 0 auto; font-weight:700; }
+  .season-acc > summary .s-stats{
+    font-weight:700; font-size:12.5px; letter-spacing:.6px; color:var(--paper); white-space:nowrap;
+    margin-left:28px;
+  }
+  .season-acc > summary .s-stats b{ color:var(--amber); font-weight:700; }
+  .count{ font-size:11px; color:var(--paper-dim); font-weight:500; }
+  .season-acc > summary .count{ margin-left:auto; }
+  .year-acc > summary .count{ margin-left:auto; }
+
+  .log-table-wrap{
+    overflow:auto; max-height:50vh; border-top:1px solid var(--steel-line);
+  }
+  .log-table{ width:100%; border-collapse:collapse; font-size:12.5px; white-space:nowrap; }
+  .log-table th, .log-table td{ padding:7px 12px; text-align:left; border-bottom:1px solid var(--steel-line); }
+  .log-table th{
+    position:sticky; top:0; background:var(--panel-2); color:var(--paper-dim);
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase;
+    z-index:1;
+  }
+  .log-table td{ font-family:'Rajdhani',sans-serif; font-weight:600; }
+  .log-table tr:nth-child(even){ background:rgba(255,255,255,.02); }
+  .log-table tr.dnf td{ color:var(--red); }
+  .log-table tr.totals-row td{ padding:0; background:var(--panel-2); border-bottom:none; }
+  .season-totals{
+    display:flex; flex-direction:column; gap:5px; padding:11px 14px;
+    font-family:'Inter',sans-serif; font-size:11.5px; color:var(--paper-dim); white-space:normal;
+  }
+  .season-totals b{ font-family:'Rajdhani',sans-serif; font-weight:700; color:var(--paper); }
+  .season-totals .award-yes{ color:var(--amber); font-weight:600; }
+  .season-totals .award-no{ font-style:italic; }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+    font-family:'Rajdhani',sans-serif; font-weight:600; font-size:13px; letter-spacing:.4px;
+    color:var(--paper-dim); background:none; border:none; cursor:pointer; padding:0;
+  }
+  .back-link:hover{ color:var(--amber); }
+  .back-row{ display:flex; gap:18px; margin-bottom:16px; }
+  .back-row .back-link{ margin-bottom:0; }
+  .page-title{ text-align:center; margin:0 auto 20px; max-width:420px; }
+  .page-title h1{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:18px; margin:0 0 4px; letter-spacing:.3px; }
+  .page-title p{ margin:0; font-size:11px; letter-spacing:.5px; color:var(--paper-dim); }
+
+  @media (prefers-reduced-motion: no-preference){
+    .card{ transition: transform .35s ease; }
+    .card:hover{ transform: translateY(-4px); }
+  }
+
+  .empty-state{ max-width:640px; margin:30px auto; text-align:center; padding:34px 26px; border:1px dashed var(--steel-line); border-radius:8px; background:var(--panel); }
+  .empty-state h2{ font-family:'Rajdhani',sans-serif; font-size:22px; margin:0 0 10px; }
+  .empty-state p{ color:var(--paper-dim); font-size:14px; line-height:1.6; margin:0; }
+  .inline-link{ color:var(--amber); text-decoration:underline; text-underline-offset:3px; }
+  .site-foot{ max-width:1180px; margin:40px auto 0; text-align:center; font-size:12px; color:var(--paper-dim); }
+  .site-foot a{ color:var(--paper-dim); }
+  .season-pick{ text-align:center; margin:-6px 0 18px; }
+  .season-select{
+    background:var(--panel); color:var(--paper); border:1px solid var(--steel-line); border-radius:5px;
+    padding:9px 12px; font-family:'Inter',sans-serif; font-size:13px;
+  }
+</style>
+</head>
+<body>
+  <p class="intro" id="intro"></p>
+  <div id="app"><div class="empty-state"><p>Loading league data…</p></div></div>
+
+<script>
+'use strict';
+// ============================================================================
+// League tracker. Every page is calculated from real race results (official iRacing
+// event_result data) stored in data/league-data.json. Nothing is simulated.
+// ============================================================================
+
+// Build flags set by the build script.
+const PRIVATE = false;
+const HOME = PRIVATE ? 'drivers' : '';
+
+/* ------------------------------ helpers ------------------------------ */
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const fmt = (n) => Number(n).toLocaleString();
+const ordinal = (n) => { const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+const sumOf = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+const slugify = (name) => String(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const money = (c) => (c < 0 ? '-' : '') + '$' + (Math.abs(c) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const lastName = (full) => String(full).trim().split(/\s+/).slice(-1)[0];
+const gemSVG = (fill, cls) => `<svg class="${cls || 'gem-sm'}" viewBox="0 0 32 32"><polygon points="16,2 29,12 24,30 8,30 3,12" style="fill:${esc(fill)}"/></svg>`;
+
+/* ------------------------------ configuration ------------------------------ */
+const DEFAULT_CONFIG = {
+  leagueName: 'My League',
+  racesPerSeason: 15,
+  seasonsPerYear: 2,
+  tiers: [
+    { name: 'Ruby',     min: 1,  max: 5,  color: '#FF5C7A' },
+    { name: 'Diamond',  min: 6,  max: 10, color: '#8FC7FF' },
+    { name: 'Platinum', min: 11, max: 15, color: '#7EE8D0' },
+    { name: 'Gold',     min: 16, max: 20, color: '#F2C94C' },
+    { name: 'Silver',   min: 21, max: 30, color: '#C7CDD3' },
+    { name: 'Bronze',   min: 31, max: 40, color: '#C08A52' },
+  ],
+  dash: {
+    enabled: true, pot: 600, finalRaces: 5, maxDeductionPct: 100,
+    base:  [160, 100, 80, 64, 52, 40, 32, 26, 24, 22],   // $ by final standings position
+    share: [25, 20, 15, 12, 10, 7, 5, 3, 2, 1],          // % of the Clean Bonus Pool by cleanliness rank
+  },
+};
+function withDefaults(c){
+  c = c || {};
+  const d = c.dash || {};
+  return {
+    leagueName: c.leagueName || DEFAULT_CONFIG.leagueName,
+    racesPerSeason: Math.max(1, +c.racesPerSeason || DEFAULT_CONFIG.racesPerSeason),
+    seasonsPerYear: Math.max(1, +c.seasonsPerYear || DEFAULT_CONFIG.seasonsPerYear),
+    tiers: (c.tiers && c.tiers.length ? c.tiers : DEFAULT_CONFIG.tiers).map(t => ({ name: t.name, min: +t.min, max: +t.max, color: t.color || '#E8A33D' })),
+    dash: {
+      enabled: d.enabled !== false,
+      pot: +d.pot || DEFAULT_CONFIG.dash.pot,
+      finalRaces: Math.max(1, +d.finalRaces || DEFAULT_CONFIG.dash.finalRaces),
+      maxDeductionPct: d.maxDeductionPct == null ? 100 : +d.maxDeductionPct,
+      base: (d.base && d.base.length ? d.base : DEFAULT_CONFIG.dash.base).map(Number),
+      share: (d.share && d.share.length ? d.share : DEFAULT_CONFIG.dash.share).map(Number),
+    },
+  };
+}
+
+/* ------------------------------ iRacing parser ------------------------------ */
+
+/* ------------------------------ the league engine ------------------------------ */
+let DATA = { config: {}, teams: [], drivers: {}, seasons: {}, races: [] };
+let L = null;   // derived league, rebuilt from DATA whenever it changes
+
+function licenseClass(level){ return level >= 21 ? 'Pro' : level >= 17 ? 'A' : level >= 13 ? 'B' : level >= 9 ? 'C' : level >= 5 ? 'D' : 'R'; }
+
+function aggregate(rows){
+  const a = { races: rows.length, wins: 0, top5: 0, top10: 0, poles: 0, points: 0, lapsLed: 0, lapsRun: 0, inc: 0, dnfs: 0,
+    finishSum: 0, startSum: 0, bestStreak: 0 };
+  let run = 0;
+  rows.forEach(r => {
+    a.points += r.points; a.lapsLed += r.lapsLed; a.lapsRun += r.lapsComp; a.inc += r.inc;
+    a.finishSum += r.finish; a.startSum += r.start;
+    if (r.dnf) a.dnfs++;
+    if (r.finish <= 5) a.top5++;
+    if (r.finish <= 10) a.top10++;
+    if (r.start === 1) a.poles++;
+    if (r.finish === 1){ a.wins++; run++; a.bestStreak = Math.max(a.bestStreak, run); } else run = 0;
+  });
+  a.avgFinish = rows.length ? a.finishSum / rows.length : null;
+  a.avgStart = rows.length ? a.startSum / rows.length : null;
+  a.incRace = rows.length ? a.inc / rows.length : null;
+  return a;
+}
+
+function buildLeague(data){
+  const cfg = withDefaults(data.config);
+  const overrides = data.drivers || {};
+  const seasonOv = data.seasons || {};
+  const teams = (data.teams || []).map(t => ({ id: t.id, name: t.name, color: t.color || '#E8A33D' }));
+  const teamById = Object.fromEntries(teams.map(t => [t.id, t]));
+  const races = (data.races || []).filter(r => r.results && r.results.length)
+    .slice().sort((a, b) => new Date(a.date) - new Date(b.date) || a.id - b.id);
+
+  // seasons: every season that has races, plus any season added by hand
+  const seasonMap = new Map();
+  const getSeason = (id) => { if (!seasonMap.has(id)) seasonMap.set(id, { id, name: '', races: [] }); return seasonMap.get(id); };
+  Object.keys(seasonOv).forEach(k => getSeason(Number(k)));
+  races.forEach(r => getSeason(r.seasonId).races.push(r));
+  const seasons = [...seasonMap.values()];
+  seasons.forEach(se => {
+    const o = seasonOv[se.id] || {};
+    se.name = o.name || (se.races[0] ? se.races[0].seasonName : `Season ${Math.abs(se.id)}`);
+    se.startDate = se.races[0] ? se.races[0].date : (o.startDate || new Date().toISOString());
+  });
+  seasons.sort((a, b) => new Date(a.startDate) - new Date(b.startDate) || a.id - b.id);
+  seasons.forEach((se, i) => {
+    const o = seasonOv[se.id] || {};
+    se.index = i;
+    se.year = new Date(se.startDate).getUTCFullYear();
+    se.raceCount = se.races.length;
+    se.complete = typeof o.complete === 'boolean' ? o.complete
+      : ((i < seasons.length - 1 && se.raceCount > 0) || se.raceCount >= cfg.racesPerSeason);
+    se.races.forEach((r, k) => { r.week = k + 1; });
+  });
+  const seasonById = Object.fromEntries(seasons.map(se => [se.id, se]));
+  const current = seasons.length ? seasons[seasons.length - 1] : null;
+
+  const teamFor = (id, seasonId) => {
+    const ov = overrides[id] || {};
+    if (ov.teamBySeason && Object.prototype.hasOwnProperty.call(ov.teamBySeason, seasonId)) return ov.teamBySeason[seasonId] || null;
+    return ov.team || null;
+  };
+
+  // drivers and their race rows (chronological)
+  const driverMap = new Map();
+  races.forEach(r => {
+    const winnerLaps = Math.max(0, ...r.results.map(x => x.lc));
+    r.results.forEach(res => {
+      let d = driverMap.get(res.c);
+      if (!d){ d = { id: res.c, rows: [] }; driverMap.set(res.c, d); }
+      const lapsDown = winnerLaps - res.lc;
+      // Same layout as iRacing: the leader shows "-", cars on the lead lap show their gap in seconds,
+      // and cars that are laps down show "-1L", "-2L" and so on.
+      const interval = res.fin === 1 ? '-'
+        : res.ivt ? res.ivt
+        : res.iv > 0 ? (res.iv / 10000).toFixed(4)
+        : lapsDown > 0 ? `-${lapsDown}L` : '-';
+      const dnf = res.out !== 'Running';
+      d.rows.push({
+        seasonId: r.seasonId, raceId: r.id, week: r.week, date: r.date, track: r.track,
+        start: res.st, finish: res.fin, status: dnf ? res.out : 'Running', dnf, interval,
+        lapsLed: res.ll, lapsComp: res.lc, inc: res.inc, points: res.pts, field: r.results.length,
+        teamId: teamFor(res.c, r.seasonId), number: res.no, carName: res.car, name: res.n,
+        ir: res.ir, srl: res.srl, srs: res.srs, cc: res.cc,
+      });
+    });
+  });
+  // drivers added by hand exist even before they have a result
+  Object.keys(overrides).forEach(k => {
+    const id = Number(k);
+    if (overrides[k] && overrides[k].manual && !driverMap.has(id)) driverMap.set(id, { id, rows: [] });
+  });
+  const drivers = [...driverMap.values()];
+  drivers.forEach(d => {
+    const last = d.rows.length ? d.rows[d.rows.length - 1] : null, ov = overrides[d.id] || {};
+    d.manual = !!ov.manual;
+    d.name = ov.name || (last ? last.name : `Driver ${Math.abs(d.id)}`);
+    d.number = ov.number || (last ? last.number : '');
+    d.age = ov.age || null;
+    d.hometown = ov.hometown || '';
+    d.car = last ? last.carName : '';
+    d.country = last ? last.cc : '';
+    d.iRating = ov.iRating != null && ov.iRating !== '' && !isNaN(+ov.iRating) ? +ov.iRating : (last ? last.ir : null);
+    d.srl = last ? last.srl : null;
+    d.sr = last && last.srs != null ? last.srs / 100 : null;
+    d.srOverride = ov.srText || '';
+    d.firstSeasonIndex = d.rows.length ? seasonById[d.rows[0].seasonId].index : Infinity;
+  });
+  const driverById = Object.fromEntries(drivers.map(d => [d.id, d]));
+
+  // standings for every season (hand-added drivers show in the current season even with no races yet)
+  seasons.forEach(se => {
+    const list = drivers.map(d => {
+      const rows = d.rows.filter(r => r.seasonId === se.id);
+      if (!rows.length && !(se === current && d.manual)) return null;
+      const rowsByRace = Object.fromEntries(rows.map(r => [r.raceId, r]));
+      return Object.assign({ d, rows, rowsByRace }, aggregate(rows));
+    }).filter(Boolean);
+    list.sort((a, b) => ((b.races > 0) - (a.races > 0)) || b.points - a.points || b.wins - a.wins || ((a.avgFinish == null ? 99 : a.avgFinish) - (b.avgFinish == null ? 99 : b.avgFinish)) || a.d.name.localeCompare(b.d.name));
+    // drivers who have not raced yet are listed but not ranked
+    list.forEach((st, i) => { st.standing = st.races > 0 ? i + 1 : null; st.behind = list[0].points - st.points; });
+    se.standings = list;
+    se.byId = Object.fromEntries(list.map(st => [st.d.id, st]));
+  });
+
+  // awards, decided only for completed seasons that have races
+  drivers.forEach(d => { d.titles = []; d.champion = []; d.cleanest = []; d.mostImproved = []; d.rookie = []; });
+  seasons.filter(se => se.complete && se.raceCount > 0 && se.standings.length).forEach(se => {
+    se.standings[0].d.titles.push(se.id);
+    const eligible = se.standings.filter(st => st.races >= Math.ceil(se.raceCount / 2));
+    if (eligible.length){
+      [...eligible].sort((a, b) => a.incRace - b.incRace || a.standing - b.standing)[0].d.cleanest.push(se.id);
+    }
+    if (se.index > 0){
+      const rk = se.standings.find(st => st.races > 0 && st.d.firstSeasonIndex === se.index);
+      if (rk) rk.d.rookie.push(se.id);
+      const prev = seasons[se.index - 1];
+      let best = null, bestGain = 0;
+      se.standings.forEach(st => {
+        const was = prev.byId[st.d.id];
+        if (was && was.races > 0 && st.races > 0 && was.standing - st.standing > bestGain){ bestGain = was.standing - st.standing; best = st; }
+      });
+      if (best) best.d.mostImproved.push(se.id);
+    }
+  });
+  const byYear = {};
+  seasons.forEach(se => { (byYear[se.year] = byYear[se.year] || []).push(se); });
+  Object.keys(byYear).forEach(y => {
+    const group = byYear[y];
+    if (group.length >= cfg.seasonsPerYear && group.every(se => se.complete && se.raceCount > 0 && se.standings.length)){
+      const w = group[0].standings[0].d;
+      if (group.every(se => se.standings[0].d === w)) w.champion.push(String(y));
+    }
+  });
+
+  // career and current-season summaries
+  drivers.forEach(d => {
+    const car = aggregate(d.rows);
+    car.streak = car.bestStreak === 0 ? null : car.bestStreak === 1 ? '1 win' : `${car.bestStreak} in a row`;
+    d.career = car;
+    d.cur = current && current.byId[d.id] ? current.byId[d.id] : null;
+    d.standingsPosition = d.cur ? d.cur.standing : null;
+  });
+
+  const tierFor = (pos) => {
+    if (pos == null) return UNRANKED;
+    const T = cfg.tiers;
+    return T.find(t => pos >= t.min && pos <= t.max) || (pos < T[0].min ? T[0] : T[T.length - 1]);
+  };
+
+  return { cfg, teams, teamById, seasons, seasonById, drivers, driverById, current, tierFor, teamFor, dashCache: {}, historyCache: {} };
+}
+const UNRANKED = { name: 'Unranked', min: 0, max: 0, color: '#6B7280' };
+const tierFor = (pos) => L.tierFor(pos);
+const posText = (n) => n == null ? '—' : ordinal(n);
+const teamOf = (d, seasonId) => { const id = L.teamFor(d.id, seasonId); return id && L.teamById[id] ? L.teamById[id] : null; };
+const currentTeam = (d) => L.current ? teamOf(d, L.current.id) : null;
+const seasonLabel = (id) => (L.seasonById[id] ? L.seasonById[id].name : String(id));
+const shortCar = (n) => String(n || '').replace(/^NASCAR Cup Series Next Gen /, '');
+const srText = (d) => d.srOverride ? d.srOverride : d.sr == null ? '—' : `${licenseClass(d.srl)} ${d.sr.toFixed(2)}`;
+
+/* ------------------------------ The Dash For Cash ------------------------------ */
+// Top finishers after the final race are paid from the pot on the season's last races.
+// Each driver's incident points over those races = the % deducted from their base payout;
+// all deductions fund the Clean Bonus Pool, shared out by cleanliness rank.
+function getDash(sid){
+  if (L.dashCache[sid]) return L.dashCache[sid];
+  const se = L.seasonById[sid], cfg = L.cfg, dc = cfg.dash;
+  const ranked = se.standings.filter(st => st.standing != null);
+  const places = Math.min(dc.base.length, ranked.length);
+  const startWeek = se.complete ? Math.max(1, se.raceCount - dc.finalRaces + 1) : cfg.racesPerSeason - dc.finalRaces + 1;
+  let res;
+  if (!dc.enabled) res = { state: 'disabled', se };
+  else if (se.raceCount < startWeek) res = { state: 'notStarted', se, startWeek };
+  else {
+    const windowRaces = se.races.filter(r => r.week >= startWeek);
+    const incOf = (st) => windowRaces.map(r => st.rowsByRace[r.id] ? st.rowsByRace[r.id].inc : null);
+    const rows = ranked.slice(0, places).map((st, i) => {
+      const mults = incOf(st);
+      const incPts = sumOf(mults, x => x || 0);
+      const pct = Math.min(dc.maxDeductionPct, incPts);
+      const baseC = Math.round(dc.base[i] * 100);
+      const dedC = Math.round(baseC * pct / 100);
+      return { d: st.d, st, pos: i + 1, mults, incPts, pct, baseC, dedC, afterC: baseC - dedC };
+    });
+    const order = [...rows].sort((a, b) => (a.incPts - b.incPts) || (a.pos - b.pos));
+    const poolC = sumOf(rows, r => r.dedC);
+    let paid = 0;
+    order.forEach((r, i) => {
+      r.cleanRank = i + 1;
+      r.share = dc.share[i] || 0;
+      r.bonusC = Math.floor(poolC * r.share / 100);
+      paid += r.bonusC;
+    });
+    if (order.length) order[0].bonusC += poolC - paid;       // leftover cents go to the cleanest driver
+    rows.forEach(r => { r.finalC = r.afterC + r.bonusC; r.diffC = r.finalC - r.baseC; });
+    const payoutOrder = [...rows].sort((a, b) => b.finalC - a.finalC);
+    rows.forEach(r => { r.payoutRank = payoutOrder.indexOf(r) + 1; });
+    const cutPts = rows.length ? rows[rows.length - 1].st.points : 0;
+    const out = ranked.slice(places).map(st => {
+      const mults = incOf(st);
+      return { d: st.d, st, pos: st.standing, behind: cutPts - st.points, mults, incPts: sumOf(mults, x => x || 0) };
+    });
+    res = { state: 'ok', se, provisional: !se.complete, startWeek, windowRaces, rows, out, poolC,
+      basePaidC: sumOf(rows, r => r.afterC), cutPts, places };
+  }
+  return (L.dashCache[sid] = res);
+}
+// A driver's Dash For Cash career across completed seasons.
+function dashCareer(d){
+  let earnedC = 0, inMoney = 0, seasons = 0; const ranks = [];
+  L.seasons.filter(se => se.complete && se.byId[d.id] && se.byId[d.id].races > 0).forEach(se => {
+    seasons++;
+    const dd = getDash(se.id);
+    if (dd.state !== 'ok') return;
+    const row = dd.rows.find(r => r.d === d);
+    if (row){ earnedC += row.finalC; inMoney++; ranks.push(row.cleanRank); }
+  });
+  return { earnedC, inMoney, seasons, ranks, avgClean: ranks.length ? sumOf(ranks, x => x) / ranks.length : null };
+}
+function rankHistory(d){
+  const counts = L.cfg.tiers.map(t => ({ tier: t, count: 0 }));
+  L.seasons.filter(se => se.complete && se.byId[d.id] && se.byId[d.id].races > 0).forEach(se => {
+    const t = tierFor(se.byId[d.id].standing);
+    counts.find(c => c.tier === t).count++;
+  });
+  return counts.filter(c => c.count > 0);
+}
+
+/* ------------------------------ teams ------------------------------ */
+// average of a stat over members who have actually raced this season
+function avgOver(members, key){
+  const raced = members.filter(d => d.cur.races > 0);
+  return raced.length ? sumOf(raced, d => d.cur[key]) / raced.length : null;
+}
+
+function buildTeams(){
+  const cur = L.current;
+  const teams = L.teams.map(t => {
+    const members = cur ? L.drivers.filter(d => d.cur && currentTeam(d) === t).sort((a, b) => (a.standingsPosition ?? 999) - (b.standingsPosition ?? 999)) : [];
+    const h = getTeamHistory(t.id);
+    const tot = h.reduce((a, e) => { Object.keys(a).forEach(k => { a[k] += e.totals[k]; }); return a; }, emptyTotals());
+    return {
+      id: t.id, name: t.name, color: t.color, members,
+      cars: [...new Set(members.map(d => shortCar(d.car)))],
+      wins: sumOf(members, d => d.cur.wins), top5: sumOf(members, d => d.cur.top5), top10: sumOf(members, d => d.cur.top10),
+      poles: sumOf(members, d => d.cur.poles), points: sumOf(members, d => d.cur.points),
+      lapsLed: sumOf(members, d => d.cur.lapsLed), dnfs: sumOf(members, d => d.cur.dnfs),
+      avgFinish: avgOver(members, 'avgFinish'),
+      incRace: avgOver(members, 'incRace'),
+      cWins: tot.wins, cPoints: tot.points,
+      cTitles: sumOf(h, e => e.titles.length), cChamps: sumOf(h, e => e.champion.length),
+    };
+  });
+  teams.sort((a, b) => b.points - a.points || b.wins - a.wins);
+  let rank = 0;
+  teams.forEach(t => { t.standing = t.members.some(d => d.cur.races > 0) ? ++rank : null; });
+  return teams;
+}
+
+function emptyTotals(){ return { points: 0, wins: 0, top5: 0, top10: 0, poles: 0, inc: 0, dnfs: 0, races: 0 }; }
+
+// Every driver who raced for a team, grouped into stints of consecutive seasons.
+function getTeamHistory(teamId){
+  if (L.historyCache[teamId]) return L.historyCache[teamId];
+  const cur = L.current;
+  const entries = [];
+  L.drivers.forEach(d => {
+    const rows = d.rows.filter(r => r.teamId === teamId);
+    if (!rows.length) return;
+    const idxs = [...new Set(rows.map(r => L.seasonById[r.seasonId].index))].sort((a, b) => a - b);
+    let i = 0;
+    while (i < idxs.length){
+      let j = i;
+      while (j + 1 < idxs.length && idxs[j + 1] === idxs[j] + 1) j++;
+      const stintSeasons = L.seasons.filter(se => se.index >= idxs[i] && se.index <= idxs[j]);
+      const ids = new Set(stintSeasons.map(se => se.id));
+      const stintRows = rows.filter(r => ids.has(r.seasonId));
+      const a = aggregate(stintRows);
+      const years = [...new Set(stintSeasons.map(se => se.year))];
+      const present = !!cur && ids.has(cur.id);
+      const now = cur && d.cur ? currentTeam(d) : null;
+      entries.push({
+        d, name: d.name, number: d.number, seasons: stintSeasons,
+        startLabel: stintSeasons[0].name, endLabel: stintSeasons[stintSeasons.length - 1].name,
+        startYear: Math.min(...years), endYear: Math.max(...years), present,
+        status: present ? 'current' : (d.cur && now ? 'former' : 'historic'), nowWith: now ? now.name : null,
+        totals: { points: a.points, wins: a.wins, top5: a.top5, top10: a.top10, poles: a.poles, inc: a.inc, dnfs: a.dnfs, races: a.races },
+        titles: d.titles.filter(id => ids.has(id)),
+        champion: d.champion.filter(y => years.includes(Number(y))),
+      });
+      i = j + 1;
+    }
+  });
+  // drivers added by hand who are on the team this season but have no race yet
+  if (cur) L.drivers.forEach(d => {
+    if (d.cur && d.cur.races === 0 && currentTeam(d) && currentTeam(d).id === teamId){
+      entries.push({ d, name: d.name, number: d.number, seasons: [cur], startLabel: cur.name, endLabel: cur.name,
+        startYear: cur.year, endYear: cur.year, present: true, status: 'current', nowWith: null,
+        totals: { points: 0, wins: 0, top5: 0, top10: 0, poles: 0, inc: 0, dnfs: 0, races: 0 }, titles: [], champion: [] });
+    }
+  });
+  return (L.historyCache[teamId] = entries);
+}
+
+// Dash For Cash results for a team: every time one of its drivers made the tournament while driving for it.
+function teamDashStats(teamId){
+  const byDriver = new Map(), apps = [];
+  L.seasons.filter(se => se.complete).forEach(se => {
+    const dd = getDash(se.id);
+    if (dd.state !== 'ok') return;
+    dd.rows.forEach(r => {
+      if (r.st.rows[0].teamId !== teamId) return;
+      const e = { d: r.d, seasonId: se.id, pos: r.payoutRank, finalC: r.finalC };
+      apps.push(e);
+      if (!byDriver.has(r.d)) byDriver.set(r.d, []);
+      byDriver.get(r.d).push(e);
+    });
+  });
+  const avg = (f) => apps.length ? sumOf(apps, f) / apps.length : null;
+  return { apps, byDriver, count: apps.length, avgPos: avg(e => e.pos), totalC: sumOf(apps, e => e.finalC),
+    best: apps.length ? Math.min(...apps.map(e => e.pos)) : null };
+}
+
+/* ------------------------------ shared UI ------------------------------ */
+const setApp = (html, keepScroll) => { document.getElementById('app').innerHTML = html; if (!keepScroll) window.scrollTo(0, 0); };
+const setIntro = (t) => { document.getElementById('intro').textContent = t || ''; };
+const f1 = (n) => n == null ? '—' : n.toFixed(1);
+
+function viewToggle(active){
+  return `
+    <div class="view-toggle">
+      <button class="vt-btn ${active === 'drivers' ? 'active' : ''}" onclick="location.hash='${HOME}'">Drivers</button>
+      <button class="vt-btn ${active === 'teams' ? 'active' : ''}" onclick="location.hash='teams'">Teams</button>
+      <button class="vt-btn ${active === 'dash' ? 'active' : ''}" onclick="location.hash='dash'">The Dash For Cash tournament</button>
+    </div>`;
+}
+function emptyState(title, body){
+  return `<div class="empty-state"><h2>${title}</h2><p>${body}</p></div>`;
+}
+const noDataState = () => emptyState('No race data yet', 'No race results have been added yet. Check back soon!');
+
+function rankTag(standing){
+  const t = tierFor(standing);
+  return `<span class="rank-tag" style="color:${esc(t.color)}">${gemSVG(t.color)}${esc(t.name)}</span>`;
+}
+
+// Driver chooser: season stats or career stats
+function closeDriverMenu(){ const m = document.getElementById('driverMenu'); if (m) m.remove(); }
+function goTo(hash){ closeDriverMenu(); location.hash = hash; }
+function openDriverMenu(e, el, id){
+  e.stopPropagation();
+  closeDriverMenu();
+  const d = L.driverById[id];
+  const m = document.createElement('div');
+  m.className = 'driver-menu'; m.id = 'driverMenu';
+  m.innerHTML = `
+    <div class="dm-title">#${esc(d.number)} ${esc(d.name)}</div>
+    ${d.cur ? `<button onclick="goTo('season-${id}')">Current Season Stats</button>` : ''}
+    <button onclick="goTo('driver-${id}')">Career Total Stats</button>`;
+  document.body.appendChild(m);
+  const r = el.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left + 30, window.innerWidth - m.offsetWidth - 8));
+  let top = r.bottom + 4;
+  if (top + m.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - m.offsetHeight - 4);
+  m.style.left = left + 'px'; m.style.top = top + 'px';
+}
+document.addEventListener('click', closeDriverMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDriverMenu(); });
+window.addEventListener('hashchange', closeDriverMenu);
+
+function wireSortMenu(onPick){
+  const btn = document.getElementById('sortBtn'), menu = document.getElementById('sortMenu');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('button[data-sort]').forEach(b => b.addEventListener('click', () => onPick(b.dataset.sort)));
+  document.addEventListener('click', () => { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }, { once: true });
+}
+const sortControl = (label, options) => `
+  <div class="controls">
+    <button class="sort-btn" id="sortBtn" aria-haspopup="true" aria-expanded="false">
+      <span id="sortLabel">${esc(label)}</span>
+      <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
+    </button>
+    <div class="sort-menu" id="sortMenu">${options.map(([k, t]) => `<button data-sort="${k}">${esc(t)}</button>`).join('')}</div>
+  </div>`;
+
+/* ------------------------------ Drivers page ------------------------------ */
+const DRIVER_SORTS = {
+  default: { label: 'Sort: Points Standings/Rank',      fn: (a, b) => (a.standingsPosition ?? 999) - (b.standingsPosition ?? 999) || a.name.localeCompare(b.name) },
+  team:    { label: 'Sort: Team (A–Z)',                 fn: (a, b) => (currentTeam(a) ? currentTeam(a).name : '~').localeCompare(currentTeam(b) ? currentTeam(b).name : '~') || ((a.standingsPosition ?? 999) - (b.standingsPosition ?? 999)) },
+  name:    { label: 'Sort: A–Z (Last Name)',            fn: (a, b) => lastName(a.name).localeCompare(lastName(b.name)) },
+  number:  { label: 'Sort: Car Number (Low–High)',      fn: (a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0) },
+  cPoints: { label: 'Sort: Career Points (Best–Worst)', fn: (a, b) => b.career.points - a.career.points },
+  cWins:   { label: 'Sort: Career Wins (Most–Least)',   fn: (a, b) => b.career.wins - a.career.wins },
+  champs:  { label: 'Sort: Championships (Most–Least)', fn: (a, b) => (b.champion.length - a.champion.length) || (b.titles.length - a.titles.length) },
+};
+
+function driverRowHTML(d, leaderPts){
+  const tier = tierFor(d.standingsPosition), c = d.cur, team = currentTeam(d);
+  const behind = leaderPts - c.points;
+  return `
+    <tr style="box-shadow:inset 4px 0 0 ${esc(tier.color)}">
+      <td class="c-pos"><span class="pos-wrap">${gemSVG(tier.color)}<b>${d.standingsPosition == null ? "–" : d.standingsPosition}</b></span></td>
+      <td class="c-name">
+        <button class="name-link" onclick="openDriverMenu(event, this, ${d.id})"><span class="n-num">#${esc(d.number)}</span> ${esc(d.name)}</button>
+        <div class="n-tier" style="color:${esc(tier.color)}">${esc(tier.name.toUpperCase())}</div>
+      </td>
+      <td class="c-team">${team
+        ? `<button class="name-link team-link" style="color:${esc(team.color)}" onclick="location.hash='team-${esc(team.id)}'">${esc(team.name)}</button>`
+        : '<span class="dim">—</span>'}<div>${esc(shortCar(d.car))}</div></td>
+      <td>${c.wins}</td><td>${c.top5}</td><td>${c.top10}</td><td>${c.poles}</td>
+      <td>${c.races}</td><td>${c.inc}</td>
+      <td class="c-pts">${fmt(c.points)}</td>
+      <td class="${behind > 0 ? 'neg' : ''}">${behind > 0 ? '-' + behind : 'Leader'}</td>
+      <td>${fmt(c.lapsRun)}</td>
+    </tr>`;
+}
+
+function renderDrivers(sortKey){
+  sortKey = DRIVER_SORTS[sortKey] ? sortKey : 'default';
+  window.__lastSort = sortKey;
+  const se = L.current;
+  if (!se) { setIntro(''); setApp(`${viewToggle('drivers')}${noDataState()}`); return; }
+  setIntro("Click a driver's name to choose between their current season stats and their career total stats.");
+  const list = L.drivers.filter(d => d.cur).sort(DRIVER_SORTS[sortKey].fn);
+  const leaderPts = Math.max(...list.map(d => d.cur.points));
+  setApp(`
+    ${viewToggle('drivers')}
+    <div class="list-header"><h1>Driver Stats</h1></div>
+    <p class="dash-sub">${esc(se.name)} · ${se.raceCount} of ${L.cfg.racesPerSeason} races completed${se.complete ? ' · season complete' : ''}</p>
+    <div class="legend">
+      ${L.cfg.tiers.map(t => `
+        <div class="legend-item">${gemSVG(t.color)}<span style="color:${esc(t.color)}">${esc(t.name)}</span>
+          <span class="legend-range">${ordinal(t.min)}–${ordinal(t.max)}</span></div>`).join('')}
+    </div>
+    ${sortControl(DRIVER_SORTS[sortKey].label, Object.keys(DRIVER_SORTS).map(k => [k, DRIVER_SORTS[k].label.replace('Sort: ', '')]))}
+    <div class="drivers-wrap">
+      <table class="drivers-table">
+        <thead>
+          <tr class="grp"><th colspan="12" class="grp-title">CURRENT SEASON · ${esc(se.name.toUpperCase())}</th></tr>
+          <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Wins</th><th>Top 5</th><th>Top 10</th><th>Poles</th><th>Races</th><th>Incident Points</th><th>Points</th><th>Points Behind</th><th>Total Laps Run</th></tr>
+        </thead>
+        <tbody>${list.map(d => driverRowHTML(d, leaderPts)).join('')}</tbody>
+      </table>
+    </div>`);
+  wireSortMenu(renderDrivers);
+}
+
+/* ------------------------------ driver cards ------------------------------ */
+function headerHTML(d, showRank){
+  const team = currentTeam(d), c = d.cur, tier = c ? tierFor(d.standingsPosition) : null;
+  const meta = [d.age ? `Age ${esc(d.age)}` : '', d.hometown ? esc(d.hometown) : ''].filter(Boolean).join(' · ');
+  return `
+    <div class="head">
+      <div class="number-plate">${esc(d.number)}</div>
+      <div class="id"><div class="name">${esc(d.name)}</div></div>
+      <div class="ratings">
+        <div class="row"><div class="v">${d.iRating == null ? '—' : esc(d.iRating)}</div><div class="l">IRATING</div></div>
+        <div class="row"><div class="v">${esc(srText(d))}</div><div class="l">SAFETY RATING</div></div>
+      </div>
+    </div>
+    <div class="subhead">
+      <div class="team">${team ? `<b style="color:${esc(team.color)}">${esc(team.name)}</b> · ` : ''}${esc(shortCar(d.car))}</div>
+      ${meta ? `<div class="meta">${meta}</div>` : ''}
+    </div>
+    ${showRank && tier ? `
+    <div class="rank">
+      ${gemSVG(tier.color, 'gem')}
+      <div class="rtext">
+        <div class="tier" style="color:${esc(tier.color)}">${esc(tier.name.toUpperCase())}</div>
+        <div class="pos">${d.standingsPosition == null ? 'No races yet this season' : ordinal(d.standingsPosition) + ' in season points'}</div>
+      </div>
+    </div>` : ''}`;
+}
+
+function cardHTML(d){
+  const c = d.cur, tier = tierFor(d.standingsPosition);
+  return `
+  <div class="card" style="border-color:${esc(tier.color)}" onclick="location.hash='driver-${d.id}'">
+    ${headerHTML(d, true)}
+    <div class="headline">
+      <div><div class="n">${c.wins}</div><div class="l">WINS</div></div>
+      <div><div class="n">${c.top5}</div><div class="l">TOP 5</div></div>
+      <div><div class="n">${c.top10}</div><div class="l">TOP 10</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="l">Season starts</span><span class="v">${c.races}</span></div>
+      <div class="stat"><span class="l">Season points</span><span class="v">${fmt(c.points)}</span></div>
+      <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(c.avgFinish)}</span></div>
+      <div class="stat"><span class="l">Avg start</span><span class="v">${f1(c.avgStart)}</span></div>
+      <div class="stat"><span class="l">Poles</span><span class="v">${c.poles}</span></div>
+      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(c.lapsLed)}</span></div>
+      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(c.lapsRun)}</span></div>
+      <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(c.incRace)}</span></div>
+      <div class="stat"><span class="l">DNFs</span><span class="v hot">${c.dnfs}</span></div>
+      <div class="stat"><span class="l">Race wins in a row</span><span class="v good">${c.bestStreak}</span></div>
+    </div>
+    <div class="foot">${esc(L.cfg.leagueName.toUpperCase())}</div>
+  </div>`;
+}
+
+function chipRow(items, cls){
+  return items.length ? `<div class="chips">${items.map(x => `<span class="chip ${cls}">${esc(x)}</span>`).join('')}</div>` : '<div class="empty">—</div>';
+}
+
+function careerCardHTML(d){
+  const c = d.career, dc = dashCareer(d), ranks = rankHistory(d);
+  return `
+  <div class="card" style="border-color:#ffffff; cursor:default;">
+    ${headerHTML(d, false)}
+    <div class="headline">
+      <div><div class="n">${c.wins}</div><div class="l">WINS</div></div>
+      <div><div class="n">${c.top5}</div><div class="l">TOP 5</div></div>
+      <div><div class="n">${c.top10}</div><div class="l">TOP 10</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="l">Career starts</span><span class="v">${fmt(c.races)}</span></div>
+      <div class="stat"><span class="l">Career points</span><span class="v">${fmt(c.points)}</span></div>
+      <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(c.avgFinish)}</span></div>
+      <div class="stat"><span class="l">Avg start</span><span class="v">${f1(c.avgStart)}</span></div>
+      <div class="stat"><span class="l">Poles</span><span class="v">${c.poles}</span></div>
+      <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(c.lapsLed)}</span></div>
+      <div class="stat"><span class="l">Total laps run</span><span class="v">${fmt(c.lapsRun)}</span></div>
+      <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(c.incRace)}</span></div>
+      <div class="stat"><span class="l">DNFs</span><span class="v hot">${c.dnfs}</span></div>
+      <div class="stat"><span class="l">Longest win streak</span><span class="v good">${c.streak || '—'}</span></div>
+    </div>
+    <div class="section"><div class="h">SEASON TITLES WON</div>
+      ${d.titles.length ? chipRow(d.titles.map(seasonLabel), '') : '<div class="empty">No titles yet</div>'}</div>
+    <div class="section"><div class="h">CHAMPION OF THE YEAR</div>${chipRow(d.champion, 'champ')}</div>
+    <div class="section"><div class="h">CLEANEST DRIVER AWARD</div>${chipRow(d.cleanest.map(seasonLabel), 'clean')}</div>
+    <div class="section"><div class="h">MOST IMPROVED DRIVER</div>${chipRow(d.mostImproved.map(seasonLabel), 'clean')}</div>
+    <div class="section"><div class="h">ROOKIE OF THE SEASON</div>${chipRow(d.rookie.map(seasonLabel), 'clean')}</div>
+    <div class="section">
+      <div class="h">RANKS ACHIEVED</div>
+      ${ranks.length ? `<div class="rank-history">${ranks.map(r => `
+        <div class="rank-chip">${gemSVG(r.tier.color)}<span class="rank-chip-name" style="color:${esc(r.tier.color)}">${esc(r.tier.name)}</span>
+          <span class="rank-chip-count">×${r.count}</span></div>`).join('')}</div>`
+        : '<div class="empty">Ranks are awarded when a season is completed</div>'}
+    </div>
+    <div class="section">
+      <div class="h">THE DASH FOR CASH</div>
+      <div class="dash-tiles">
+        <div class="tot sm"><div class="n">${money(dc.earnedC)}</div><div class="l">Total Earned</div></div>
+        <div class="tot sm"><div class="n">${dc.inMoney}<span class="of"> / ${dc.seasons}</span></div><div class="l">Seasons In The Money</div></div>
+        <div class="tot sm"><div class="n">${dc.avgClean === null ? '—' : '#' + dc.avgClean.toFixed(1)}</div><div class="l">Avg Cleanliness Rank</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <button class="log-btn" onclick="location.hash='log-${d.id}'">Career Performance Log &nearr;</button>
+    </div>
+    <div class="foot">${esc(L.cfg.leagueName.toUpperCase())}</div>
+  </div>`;
+}
+
+function driverOr404(id){
+  const d = L.driverById[id];
+  if (!d) setApp(`<div class="detail-wrap"><button class="back-link" onclick="location.hash='${HOME}'">&larr; All Drivers</button>${emptyState('Driver not found', 'That driver has no races in the league data.')}</div>`);
+  return d;
+}
+
+function renderDetail(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  setApp(`
+    <div class="detail-wrap">
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='${HOME}')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash='${HOME}'">All Drivers</button>
+      </div>
+      <div class="list-header"><h1>Career Total Driver Stats</h1></div>
+      <div class="page-title"><h1>${esc(L.cfg.leagueName)} Driver Card</h1><p>CAREER STATS · ${d.career.races} RACE${d.career.races === 1 ? '' : 'S'}</p></div>
+      ${careerCardHTML(d)}
+    </div>`);
+}
+
+function renderSeasonDetail(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  setApp(`
+    <div class="detail-wrap">
+      <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='${HOME}')">&larr; Back</button>
+      <div class="list-header"><h1>Current Season Driver Card</h1></div>
+      ${d.cur ? cardHTML(d) : emptyState('Not in the current season', `${esc(d.name)} has no races in ${esc(L.current.name)}.`)}
+      <div class="season-actions"><button class="log-btn" onclick="location.hash='driver-${d.id}'">View Career Card &rarr;</button></div>
+    </div>`);
+}
+
+/* ------------------------------ career performance log ------------------------------ */
+function seasonSummary(d, se){
+  const rows = d.rows.filter(r => r.seasonId === se.id);
+  const a = aggregate(rows), st = se.byId[d.id];
+  const awards = [];
+  if (d.titles.includes(se.id)) awards.push('Season Title');
+  if (d.champion.includes(String(se.year)) && se.index === Math.max(...L.seasons.filter(x => x.year === se.year).map(x => x.index))) awards.push('Champion of the Year');
+  if (d.cleanest.includes(se.id)) awards.push('Cleanest Driver Award');
+  if (d.mostImproved.includes(se.id)) awards.push('Most Improved Driver');
+  if (d.rookie.includes(se.id)) awards.push('Rookie of the Season');
+  return Object.assign({ rows, standing: st.standing, tier: tierFor(st.standing), awards }, a);
+}
+
+function dashSeasonLine(d, se){
+  const dd = getDash(se.id);
+  if (dd.state === 'disabled') return '';
+  if (dd.state === 'notStarted') return `Dash For Cash: begins at Race ${dd.startWeek}`;
+  const row = dd.rows.find(r => r.d === d);
+  const tag = dd.provisional ? ' <span class="dim">(live — season in progress)</span>' : '';
+  if (row) return `Dash For Cash: <b>${ordinal(row.pos)}</b> · ${dd.provisional ? 'projected' : 'earned'} <b>${money(row.finalC)}</b> · cleanliness rank <b>#${row.cleanRank}</b>${tag}`;
+  const o = dd.out.find(r => r.d === d);
+  return `Dash For Cash: <b>Out of the money</b>${o && o.behind > 0 ? ` · ${o.behind} pts behind the cut` : ''}${tag}`;
+}
+
+function renderLog(id){
+  const d = driverOr404(id); if (!d) return;
+  setIntro('');
+  const mySeasons = L.seasons.filter(se => se.byId[d.id] && se.byId[d.id].races > 0);
+  const years = [...new Set(mySeasons.map(se => se.year))].sort((a, b) => b - a);
+  const raceRows = (rows) => rows.map(r => `
+    <tr class="${r.dnf ? 'dnf' : ''}">
+      <td>${r.week}</td><td>${new Date(r.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+      <td>${esc(r.track)}</td><td>${r.start}</td><td>${r.finish}</td><td>${esc(r.status)}</td>
+      <td>${esc(r.interval)}</td><td>${r.lapsLed}</td><td>${r.lapsComp}</td><td>${r.inc}</td><td>${r.points}</td>
+    </tr>`).join('');
+
+  const seasonBlock = (se) => {
+    const s = seasonSummary(d, se);
+    const awardText = s.awards.length ? s.awards.join(', ') : (se.complete ? 'No award this season' : 'Awards are decided when the season ends');
+    const dashLine = dashSeasonLine(d, se);
+    return `
+    <details class="season-acc">
+      <summary>
+        <span class="s-name">${esc(se.name)}</span>
+        <span class="s-stats">
+          <b>${s.wins}</b> Win${s.wins === 1 ? '' : 's'} · <b>${s.top5}</b> Top 5${s.top5 === 1 ? '' : 's'} ·
+          <b>${s.top10}</b> Top Ten${s.top10 === 1 ? '' : 's'} · <b>${fmt(s.points)}</b> Total Points ·
+          <span style="color:${esc(s.tier.color)}">${ordinal(s.standing)} · ${esc(s.tier.name)}</span>
+        </span>
+        <span class="count">${s.races} race${s.races === 1 ? '' : 's'}</span>
+      </summary>
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead><tr><th>Wk</th><th>Date</th><th>Track</th><th>Start</th><th>Fin</th><th>Status</th><th>Interval</th><th>Laps Led</th><th>Laps Comp</th><th>Inc</th><th>Pts</th></tr></thead>
+          <tbody>${raceRows(s.rows)}</tbody>
+          <tfoot><tr class="totals-row"><td colspan="11"><div class="totals-flex">
+            <div class="season-totals">
+              <span><b>${s.wins}</b> Wins · <b>${s.top5}</b> Top 5 · <b>${s.top10}</b> Top 10 · <b>${fmt(s.points)}</b> Pts</span>
+              <span><b>${fmt(s.lapsLed)}</b> Laps Led · <b>${fmt(s.lapsRun)}</b> Laps Run · <b>${s.inc}</b> Inc Pts · <b>${s.dnfs}</b> DNFs</span>
+              <span>${se.complete ? 'Final' : 'Current'} standing: <b>${ordinal(s.standing)}</b></span>
+              <span>${se.complete ? 'Final' : 'Current'} rank: <b style="color:${esc(s.tier.color)}">${esc(s.tier.name.toUpperCase())}</b></span>
+              <span class="${s.awards.length ? 'award-yes' : 'award-no'}">${esc(awardText)}</span>
+              ${dashLine ? `<span>${dashLine}</span>` : ''}
+            </div>
+            ${L.cfg.dash.enabled ? `<button class="dash-btn" onclick="location.hash='dash-${se.id}'">Dash For Cash standings &rarr;</button>` : ''}
+          </div></td></tr></tfoot>
+        </table>
+      </div>
+    </details>`;
+  };
+
+  const yearBlocks = years.map((y, idx) => {
+    const ss = mySeasons.filter(se => se.year === y).sort((a, b) => b.index - a.index);
+    return `
+    <details class="year-acc" ${idx === 0 ? 'open' : ''}>
+      <summary>${y} <span class="count">${sumOf(ss, se => se.byId[d.id].races)} races</span></summary>
+      <div class="year-body">${ss.map(seasonBlock).join('')}</div>
+    </details>`;
+  }).join('');
+
+  if (!mySeasons.length){
+    setApp(`<div class="log-wrap"><button class="back-link" onclick="location.hash='driver-${d.id}'">&larr; ${esc(d.name)}'s Career Card</button>${emptyState('No races yet', `${esc(d.name)} has no race results in the league data yet.`)}</div>`);
+    return;
+  }
+  setApp(`
+    <div class="log-wrap">
+      <button class="back-link" onclick="location.hash='driver-${d.id}'">&larr; ${esc(d.name)}'s Career Card</button>
+      <div class="page-title">
+        <h1>#${esc(d.number)} ${esc(d.name)} — Career Performance Log</h1>
+        <p>${d.career.races} RACE${d.career.races === 1 ? '' : 'S'} · ${mySeasons.length} SEASON${mySeasons.length === 1 ? '' : 'S'}</p>
+      </div>
+      ${yearBlocks}
+    </div>`);
+}
+
+/* ------------------------------ Dash For Cash page ------------------------------ */
+const BADGE_COLORS = ['#F5A524','#B9BEC6','#F28B6B','#5ED3B0','#A9A1F0','#78B4F2','#A4D65E','#F6B5CE','#FFD27A','#D5D5D5'];
+const multClass = (m) => m >= 8 ? 'm4' : m >= 4 ? 'm2' : 'm0';
+
+function renderDash(sid){
+  const se = sid != null && L.seasonById[sid] ? L.seasonById[sid] : L.current;
+  if (!se){ setIntro(''); setApp(`${viewToggle('dash')}${noDataState()}`); return; }
+  setIntro('');
+  const dc = L.cfg.dash, dd = getDash(se.id);
+  const isCurrent = se === L.current;
+  const select = `<select class="season-select" onchange="location.hash = this.value === '${L.current.id}' ? 'dash' : 'dash-' + this.value">
+    ${[...L.seasons].reverse().map(s => `<option value="${s.id}" ${s === se ? 'selected' : ''}>${esc(s.name)}${s.complete ? '' : ' (in progress)'}</option>`).join('')}</select>`;
+  const head = `
+    ${viewToggle('dash')}
+    <div class="dash-wrap">
+      <div class="list-header"><h1>The Dash For Cash Tournament</h1></div>
+      <div class="season-pick">${select}</div>`;
+
+  if (dd.state === 'disabled'){ setApp(`${head}${emptyState('The Dash For Cash is not running', 'The Dash For Cash is not active for this league right now.')}</div>`); return; }
+  if (dd.state === 'notStarted'){
+    setApp(`${head}${emptyState('The Dash For Cash has not started', `It covers the final ${dc.finalRaces} races of the season, starting at Race ${dd.startWeek}. ${esc(se.name)} has completed ${se.raceCount} of ${L.cfg.racesPerSeason} races.`)}</div>`);
+    return;
+  }
+  const { rows, out, poolC, basePaidC, cutPts, windowRaces, startWeek } = dd;
+  const first = windowRaces[0].week, lastW = windowRaces[windowRaces.length - 1].week;
+  const nameCell = (d, standing, st) => {
+    const team = teamOf(d, se.id);
+    return `
+      <td class="c-name"><div class="name-line"><button class="name-link" onclick="openDriverMenu(event, this, ${d.id})">${esc(d.name)}</button>${rankTag(standing)}</div>
+        <div class="n-status">#${esc(st.rows[0].number)}${team ? ' · ' + esc(team.name) : ''}</div></td>`;
+  };
+  const tile = (n, l) => `<div class="tot"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  const multCells = (mults, pts) => `${mults.map(m => m == null ? '<span class="mult m0">–</span>' : `<span class="mult ${multClass(m)}">${m}x</span>`).join('')}<small>${pts} incident points</small>`;
+  const body = rows.map(r => `
+    <tr>
+      <td><span class="pos-badge" style="background:${BADGE_COLORS[r.pos - 1] || '#D5D5D5'}">${r.pos}</span></td>
+      ${nameCell(r.d, r.pos, r.st)}
+      <td>${fmt(r.st.points)}</td>
+      <td>${multCells(r.mults, r.incPts)}</td>
+      <td>${money(r.baseC)}</td>
+      <td class="${r.dedC ? 'neg' : ''}">${r.dedC ? '-' + money(r.dedC) : money(0)}<small>${r.pct}%</small></td>
+      <td>${money(r.afterC)}</td>
+      <td>${r.cleanRank <= 3 ? `<span class="clean-pill ${r.cleanRank === 1 ? 'p1' : ''}">#${r.cleanRank}</span>` : `#${r.cleanRank}`}</td>
+      <td class="pos">${r.share}%</td>
+      <td class="pos">+${money(r.bonusC)}</td>
+      <td class="c-final">${money(r.finalC)}</td>
+      <td class="${r.diffC >= 0 ? 'pos' : 'neg'}">${r.diffC >= 0 ? '+' : ''}${money(r.diffC)}</td>
+    </tr>`).join('');
+  const outRows = out.map(o => `
+    <tr>
+      <td><span class="pos-badge out">${o.pos}</span></td>
+      ${nameCell(o.d, o.pos, o.st)}
+      <td>${fmt(o.st.points)}</td>
+      <td class="${o.behind > 0 ? 'neg' : ''}">${o.behind > 0 ? '-' + o.behind + ' pts' : 'Tied with the cut'}</td>
+      <td>${multCells(o.mults, o.incPts)}</td>
+    </tr>`).join('');
+
+  setApp(`
+    ${head}
+      <p class="dash-sub">${dd.provisional
+        ? `<b class="neg">LIVE</b> — ${esc(se.name)} is in progress (${se.raceCount} of ${L.cfg.racesPerSeason} races). Standings and payouts below are projected from the current standings.`
+        : `The final ${windowRaces.length} races (Races ${first}–${lastW}) of ${esc(se.name)}.`}
+        Only the top ${dc.base.length} in the standings are eligible for the $${fmt(dc.pot)} prize pool.</p>
+      <div class="hist-h">PRIZE POOL BREAKDOWN</div>
+      <div class="pool-grid">
+        ${tile(money(dc.pot * 100), 'Total prize pool')}${tile(money(basePaidC), 'Base payouts paid')}
+        ${tile(money(poolC), 'Clean bonus pool')}${tile((poolC / (dc.pot * 100) * 100).toFixed(1) + '%', 'Pool % of prize')}
+      </div>
+      <div class="hist-h">FINAL PAYOUTS</div>
+      <div class="cutoff in"><span>IN THE MONEY</span></div>
+      <div class="drivers-wrap">
+        <table class="drivers-table dash-table">
+          <thead><tr><th>Pos</th><th>Driver</th><th>Season points</th><th>Last ${windowRaces.length} races</th><th>Base</th><th>Deduction</th><th>After ded.</th>
+            <th>Clean rank</th><th>Clean %</th><th>Bonus</th><th>Final</th><th>vs base</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+      ${out.length ? `
+      <div class="cutoff"><span>OUT OF THE MONEY</span></div>
+      <p class="cutoff-sub">Every other driver in the league. Points behind the last paid position (${fmt(cutPts)} pts) show how far from the payout line they are.</p>
+      <div class="drivers-wrap">
+        <table class="drivers-table dash-table">
+          <thead><tr><th>Pos</th><th>Driver</th><th>Season points</th><th>Behind the cut</th><th>Last ${windowRaces.length} races</th></tr></thead>
+          <tbody>${outRows}</tbody>
+        </table>
+      </div>` : ''}
+      <details class="rules-box">
+        <summary>Dash For Cash rules</summary>
+        <div class="rules-body">
+          <p>The Dash For Cash covers the final ${dc.finalRaces} races of the ${L.cfg.racesPerSeason}-race season. Only the top ${dc.base.length} drivers in the overall standings after the final race are eligible for the $${fmt(dc.pot)} prize pool.</p>
+          <div class="rules-cols">
+            <div><h3>1. BASE POSITIONAL PAYOUTS</h3>
+              <table class="mini-table">${dc.base.map((b, i) => `<tr><td>${ordinal(i + 1)}</td><td>$${fmt(b)}</td></tr>`).join('')}</table></div>
+            <div><h3>3. CLEAN BONUS POOL SHARES</h3>
+              <table class="mini-table">${dc.share.map((b, i) => `<tr><td>${i === 0 ? '1st (cleanest)' : i === dc.share.length - 1 ? ordinal(i + 1) + ' (dirtiest)' : ordinal(i + 1) + ' cleanest'}</td><td>${b}%</td></tr>`).join('')}</table></div>
+          </div>
+          <h3>2. INCIDENT PENALTY RULE (LAST ${dc.finalRaces} RACES ONLY)</h3>
+          <p>Each driver's incident points for every race in the window are added up. That total is the percentage deducted from the driver's base payout${dc.maxDeductionPct < 100 || true ? ` (never more than ${dc.maxDeductionPct}%)` : ''}, and all deducted money goes into the Clean Bonus Pool.</p>
+          <h3>FINAL PAYOUT</h3>
+          <p>(Base payout − % deduction) + share of the Clean Bonus Pool. Cleanliness ranks go to the fewest total incident points; ties are broken by the better standing.</p>
+        </div>
+      </details>
+    </div>`);
+}
+
+/* ------------------------------ Teams pages ------------------------------ */
+function teamCardHTML(t){
+  const initials = t.name.split(/\s+/).filter(w => w.toLowerCase() !== 'team').map(w => w[0]).join('').slice(0, 2).toUpperCase() || t.name.slice(0, 2).toUpperCase();
+  const best = t.members.length ? t.members.reduce((a, b) => (b.cur.points > a.cur.points ? b : a)) : null;
+  const f1 = (n) => n == null ? '—' : n.toFixed(1);
+  const roster = t.members.map(d => `
+    <div class="roster-row" onclick="openDriverMenu(event, this, ${d.id})">
+      <span class="r-num">#${esc(d.number)}</span>${gemSVG(tierFor(d.standingsPosition).color)}
+      <span class="r-name">${esc(d.name)}</span><span class="r-pos">${ordinal(d.standingsPosition)}</span>
+      <span class="r-pts">${fmt(d.cur.points)}</span>
+    </div>`).join('') || '<div class="empty">No drivers on this team in the current season</div>';
+  return `
+  <div class="card team-row" data-id="${esc(t.id)}" style="border-color:${esc(t.color)};">
+    <div class="tr-id">
+      <div class="team-badge" style="background:${esc(t.color)}">${esc(initials)}</div>
+      <div class="tr-id-text">
+        <div class="team-name">${esc(t.name)}</div>
+        <div class="team-sub">${t.members.length} driver${t.members.length === 1 ? '' : 's'}${t.cars.length ? ' · ' + esc(t.cars.join(' · ')) : ''}</div>
+      </div>
+      <div class="team-pos"><div class="v" style="color:${esc(t.color)}">${t.standing ? ordinal(t.standing) : '—'}</div><div class="l">TEAM STANDING</div></div>
+    </div>
+    <div class="tr-season">
+      <div class="headline">
+        <div><div class="n">${t.wins}</div><div class="l">WINS</div></div>
+        <div><div class="n">${t.top5}</div><div class="l">TOP 5</div></div>
+        <div><div class="n">${t.top10}</div><div class="l">TOP 10</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="l">Season points</span><span class="v">${fmt(t.points)}</span></div>
+        <div class="stat"><span class="l">Poles</span><span class="v">${t.poles}</span></div>
+        <div class="stat"><span class="l">Laps led</span><span class="v">${fmt(t.lapsLed)}</span></div>
+        <div class="stat"><span class="l">Avg finish</span><span class="v">${f1(t.avgFinish)}</span></div>
+        <div class="stat"><span class="l">Incidents / race</span><span class="v">${f1(t.incRace)}</span></div>
+        <div class="stat"><span class="l">DNFs</span><span class="v hot">${t.dnfs}</span></div>
+        <div class="stat" style="grid-column:1 / -1"><span class="l">Top driver</span><span class="v">${best ? '#' + esc(best.number) + ' ' + esc(best.name) : '—'}</span></div>
+      </div>
+    </div>
+    <div class="tr-career">
+      <div class="h">TEAM CAREER TOTALS</div>
+      <div class="chips">
+        <span class="chip">${fmt(t.cWins)} Wins</span>
+        <span class="chip">${t.cTitles} Season Titles</span>
+        <span class="chip champ">${t.cChamps} Championships</span>
+      </div>
+    </div>
+    <div class="tr-roster">
+      <div class="h">DRIVER ROSTER · SEASON STANDING · POINTS</div>
+      <div class="roster">${roster}</div>
+    </div>
+  </div>`;
+}
+
+const TEAM_SORTS = {
+  default: { label: 'Sort: Team Standings',           fn: (a, b) => (a.standing || 99) - (b.standing || 99) },
+  wins:    { label: 'Sort: Season Wins (Most–Least)', fn: (a, b) => b.wins - a.wins },
+  career:  { label: 'Sort: Career Wins (Most–Least)', fn: (a, b) => b.cWins - a.cWins },
+  name:    { label: 'Sort: A–Z',                      fn: (a, b) => a.name.localeCompare(b.name) },
+};
+
+function renderTeams(sortKey){
+  sortKey = TEAM_SORTS[sortKey] ? sortKey : 'default';
+  window.__lastTeamSort = sortKey;
+  if (!L.teams.length){
+    setIntro('');
+    setApp(`${viewToggle('teams')}${emptyState('No teams yet', 'No teams have been set up for this league yet. Check back soon!')}`);
+    return;
+  }
+  setIntro('Team standings are the combined season points of every driver on the team. Click a team to open its page, or a driver in a roster to choose their season or career stats.');
+  const teams = buildTeams().sort(TEAM_SORTS[sortKey].fn);
+  setApp(`
+    ${viewToggle('teams')}
+    <div class="list-header"><h1>Team Stats</h1></div>
+    ${sortControl(TEAM_SORTS[sortKey].label, Object.keys(TEAM_SORTS).map(k => [k, TEAM_SORTS[k].label.replace('Sort: ', '')]))}
+    <div class="team-list">${teams.map(teamCardHTML).join('')}</div>`);
+  document.querySelectorAll('.team-list .team-row').forEach(el => {
+    el.classList.add('clickable');
+    el.addEventListener('click', () => { location.hash = 'team-' + el.dataset.id; });
+  });
+  wireSortMenu(renderTeams);
+}
+
+function renderTeamDetail(id){
+  const t = buildTeams().find(x => x.id === id);
+  if (!t){ setApp(`<div class="team-detail"><button class="back-link" onclick="location.hash='teams'">&larr; All Teams</button>${emptyState('Team not found', 'That team is not in the league data.')}</div>`); return; }
+  setIntro('');
+  setApp(`
+    <div class="team-detail">
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='teams')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash='${HOME}'">All Drivers</button>
+        <button class="back-link" onclick="location.hash='teams'">All Teams</button>
+      </div>
+      <div class="list-header"><h1>${esc(t.name)} — Team Stats</h1></div>
+      ${teamCardHTML(t)}
+      <div class="season-actions"><button class="log-btn" onclick="location.hash='teamhistory-${esc(t.id)}'">Team History &amp; Statistics &rarr;</button></div>
+    </div>`);
+}
+
+function renderTeamHistory(id){
+  const t = buildTeams().find(x => x.id === id);
+  if (!t){ renderTeamDetail(id); return; }
+  setIntro('');
+  const entries = getTeamHistory(id);
+  const all = entries.reduce((a, e) => { Object.keys(a).forEach(k => { a[k] += e.totals[k]; }); return a; }, emptyTotals());
+  const tile = (n, l) => `<div class="tot"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  const timeline = (e) => {
+    const end = e.present ? 'Present' : e.endLabel;
+    return e.startLabel === end ? e.startLabel : `${e.startLabel} – ${end}`;
+  };
+  const chipList = (arr, cls) => arr.length ? `<div class="chips">${arr.map(x => `<span class="chip ${cls || ''}">${esc(x)}</span>`).join('')}</div>` : '<span class="dim">—</span>';
+  const statusLabel = (e) => e.status === 'current' ? 'Current driver' : e.status === 'former' ? `Now with ${esc(e.nowWith)}` : 'Not racing this season';
+  const rowHTML = (e) => `
+    <tr>
+      <td class="c-name"><button class="name-link" onclick="openDriverMenu(event, this, ${e.d.id})"><span class="n-num">#${esc(e.number)}</span> ${esc(e.name)}</button>
+        <div class="n-status">${statusLabel(e)}</div></td>
+      <td>${esc(timeline(e))}</td>
+      <td class="c-pts">${fmt(e.totals.points)}</td>
+      <td>${e.totals.wins}</td><td>${e.totals.top5}</td><td>${e.totals.top10}</td>
+      <td>${e.totals.poles}</td><td>${e.totals.inc}</td><td>${e.totals.dnfs}</td>
+      <td class="c-award">${chipList(e.titles.map(seasonLabel))}</td>
+      <td class="c-award">${chipList(e.champion, 'champ')}</td>
+    </tr>`;
+  const table = (list) => list.length ? `
+    <div class="drivers-wrap" style="margin-bottom:26px">
+      <table class="drivers-table">
+        <thead><tr><th>Driver</th><th>Years With Team</th><th>Points</th><th>Wins</th><th>Top 5s</th><th>Top 10s</th>
+          <th>Poles</th><th>Incidents</th><th>DNFs</th><th>Season Titles</th><th>Champion of the Year</th></tr></thead>
+        <tbody>${list.map(rowHTML).join('')}</tbody>
+      </table>
+    </div>` : '<p class="hist-sub" style="margin:0 0 26px">None yet.</p>';
+  const current = entries.filter(e => e.status === 'current').sort((a, b) => a.d.standingsPosition - b.d.standingsPosition);
+  const past = entries.filter(e => e.status !== 'current').sort((a, b) => b.seasons[b.seasons.length - 1].index - a.seasons[a.seasons.length - 1].index);
+
+  const dash = teamDashStats(id);
+  const dashRows = [...dash.byDriver.entries()].map(([d, list]) => ({
+    d, list, total: sumOf(list, e => e.finalC), avgPos: sumOf(list, e => e.pos) / list.length, best: Math.min(...list.map(e => e.pos)),
+  })).sort((a, b) => b.total - a.total);
+  const dashTable = dashRows.length ? `
+    <div class="drivers-wrap" style="margin-bottom:26px">
+      <table class="drivers-table">
+        <thead><tr><th>Driver</th><th>Times In The Money</th><th>Avg Finish (Payout Order)</th><th>Best Finish</th><th>Total Earned</th><th>Seasons In The Money (payout finish · payout)</th></tr></thead>
+        <tbody>${dashRows.map(r => `
+          <tr>
+            <td class="c-name"><button class="name-link" onclick="openDriverMenu(event, this, ${r.d.id})"><span class="n-num">#${esc(r.d.number)}</span> ${esc(r.d.name)}</button></td>
+            <td>${r.list.length}</td><td>${ordinal(Math.round(r.avgPos))} <small class="dim">(${r.avgPos.toFixed(1)})</small></td>
+            <td>${ordinal(r.best)}</td><td class="c-pts">${money(r.total)}</td>
+            <td class="c-award"><div class="chips">${r.list.map(e => `<span class="chip green">${esc(seasonLabel(e.seasonId))} · ${ordinal(e.pos)} · ${money(e.finalC)}</span>`).join('')}</div></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>` : '<p class="hist-sub" style="margin:0 0 26px">No driver has made the Dash For Cash for this team yet. Results appear once a season is completed.</p>';
+
+  setApp(`
+    <div class="team-detail">
+      <div class="back-row">
+        <button class="back-link" onclick="history.length > 1 ? history.back() : (location.hash='team-${esc(id)}')">&larr; Back</button>
+        <button class="back-link" onclick="location.hash='team-${esc(id)}'">Team Page</button>
+        <button class="back-link" onclick="location.hash='teams'">All Teams</button>
+      </div>
+      <div class="list-header"><h1>${esc(t.name)} — History &amp; Statistics</h1></div>
+      <p class="hist-sub">${entries.length} driver stint${entries.length === 1 ? '' : 's'} all-time</p>
+      <div class="hist-h" style="border-color:${esc(t.color)}">ALL-TIME TEAM TOTALS · EVERY DRIVER COMBINED</div>
+      <div class="totals-grid">
+        ${tile(fmt(all.points), 'Total Combined Points')}${tile(fmt(all.wins), 'Wins')}${tile(fmt(all.top5), 'Top 5s')}
+        ${tile(fmt(all.top10), 'Top 10s')}${tile(fmt(all.poles), 'Poles')}${tile(fmt(all.inc), 'Incident Points')}${tile(fmt(all.dnfs), 'DNFs')}
+      </div>
+      <div class="hist-h" style="border-color:${esc(t.color)}">THE DASH FOR CASH · ALL-TIME TEAM RESULTS</div>
+      <div class="totals-grid">
+        ${tile(dash.count, 'Times A Driver Made The Tournament')}
+        ${tile(dash.avgPos === null ? '—' : dash.avgPos.toFixed(1), 'Avg Finishing Position (Payout Order)')}
+        ${tile(money(dash.totalC), 'Total Money Earned')}
+        ${tile(dash.best === null ? '—' : ordinal(dash.best), 'Best Finish')}
+      </div>
+      <div class="hist-h" style="border-color:${esc(t.color)}">DRIVERS WHO WERE IN THE MONEY</div>
+      ${dashTable}
+      <div class="hist-h" style="border-color:${esc(t.color)}">CURRENT DRIVERS</div>
+      ${table(current)}
+      <div class="hist-h" style="border-color:${esc(t.color)}">HISTORIC DRIVERS</div>
+      ${table(past)}
+    </div>`);
+}
+
+let dataLoaded = false;   // true once a league-data.json has been read in this session
+function rebuild(){
+  DATA.seasons = DATA.seasons || {}; DATA.drivers = DATA.drivers || {}; DATA.teams = DATA.teams || []; DATA.races = DATA.races || [];
+  L = buildLeague(DATA);
+  document.title = `${L.cfg.leagueName} — ${PRIVATE ? 'Private copy' : 'Driver Stats'}`;
+}
+
+
+/* ------------------------------ boot and routing ------------------------------ */
+function normalizeData(d){
+  d = d || {};
+  return { config: d.config || {}, teams: Array.isArray(d.teams) ? d.teams : [], seasons: d.seasons || {}, drivers: d.drivers || {}, races: Array.isArray(d.races) ? d.races : [] };
+}
+let loadError = '';
+
+function route(){
+  closeDriverMenu();
+  const hash = location.hash.replace('#', '');
+  if (loadError && !L.drivers.length){
+    setIntro('');
+    setApp(emptyState('Could not load the league data', `${esc(loadError)}<br><br>If you opened this file straight from your computer, browsers block loading data that way — open the published website instead.`));
+    return;
+  }
+  const m = hash.match(/^([a-z]+)(?:-(.+))?$/) || [];
+  switch (m[1]){
+    case 'drivers':     return renderDrivers(window.__lastSort);
+    case 'driver':      return renderDetail(m[2]);
+    case 'season':      return renderSeasonDetail(m[2]);
+    case 'log':         return renderLog(m[2]);
+    case 'teams':       return renderTeams(window.__lastTeamSort);
+    case 'team':        return renderTeamDetail(m[2]);
+    case 'teamhistory': return renderTeamHistory(m[2]);
+    case 'dash':        return renderDash(m[2]);
+    default:            return renderDrivers(window.__lastSort);
+  }
+}
+
+async function boot(){
+  DATA = normalizeData({});
+  // A private copy opened straight from a computer cannot read data files, so it waits for you to load one.
+  if (!(PRIVATE && location.protocol === 'file:')){
+    try {
+      const res = await fetch('data/league-data.json?v=' + Date.now());
+      if (!res.ok) throw new Error(`data/league-data.json returned ${res.status}`);
+      DATA = normalizeData(await res.json());
+      dataLoaded = true;
+    } catch (e) { loadError = e.message; }
+  }
+  rebuild();
+  route();
+}
+window.addEventListener('hashchange', route);
+if (typeof document !== 'undefined' && document.getElementById('app')) boot();
+
+</script>
+</body>
+</html>
